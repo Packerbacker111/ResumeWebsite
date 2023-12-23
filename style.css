@@ -119,7 +119,7 @@
     border-radius: 10px;
   }
   
-  /* scroll bar Handle on hover */
+  /* scroll bar handle on hover */
   ::-webkit-scrollbar-thumb:hover {
     background: var(--headerColor);
   }
@@ -128,7 +128,7 @@
     padding: 25px;
   }
   
-  /* other styles */
+  /* Other Styles */
   
   /* nav Section */
   .topHeader .logo {
@@ -163,7 +163,7 @@
     }
   }
   
-  /* experience section */
+  /* Experience Section */
   .experience-section .resume {
     margin-top: 30px;
     display: block;
@@ -176,6 +176,9 @@
   .portfolio-section .portfolio-image {
     height: 250px;
     width: 100%;
+    background-size: contain; 
+    background-position: center;
+    background-repeat: no-repeat;
   }
   @media (max-width: 800px) {
     .portfolio-section .grid3 {
@@ -199,12 +202,11 @@
   }
   
   .dark-mode .accentColor {
-    color: #e2ce15; /* Your dark mode accent color */
+    color: #e2ce15; /* Dark mode accent color */
   }
   
   .dark-mode .paragraph {
     color: #aaa;
   }
   
-  /* Add other dark mode styles as needed */
   
