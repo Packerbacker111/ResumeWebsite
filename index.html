@@ -27,12 +27,16 @@
         const isDarkModeEnabled = body.classList.contains("dark-mode");
         localStorage.setItem("darkModeEnabled", isDarkModeEnabled.toString());
       }
+    
       // Check if the user has a preference for dark mode and apply it
-      const storedDarkMode = localStorage.getItem("darkModeEnabled");
-      if (storedDarkMode && storedDarkMode === "true") {
-        document.body.classList.add("dark-mode");
-      }
+      document.addEventListener("DOMContentLoaded", function() {
+        const storedDarkMode = localStorage.getItem("darkModeEnabled");
+        if (storedDarkMode && storedDarkMode === "true") {
+          document.body.classList.add("dark-mode");
+        }
+      });
     </script>
+    
     <title>Samuel Regelbrugge's Web Resume</title>
   </head>
   <body>
