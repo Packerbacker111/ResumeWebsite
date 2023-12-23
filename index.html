@@ -19,20 +19,20 @@
     />
     <link rel="stylesheet" href="style.css" />
     <script>
-        function toggleDarkMode() {
-          const body = document.body;
-          body.classList.toggle("dark-mode");
-      
-          // Save the user's preference in localStorage
-          const isDarkModeEnabled = body.classList.contains("dark-mode");
-          localStorage.setItem("darkModeEnabled", isDarkModeEnabled);
-        }
-        // Check if the user has a preference for dark mode and apply it
-        const storedDarkMode = localStorage.getItem("darkModeEnabled");
-        if (storedDarkMode && storedDarkMode === "true") {
-          document.body.classList.add("dark-mode");
-        }
-      </script>
+      function toggleDarkMode() {
+        const body = document.body;
+        body.classList.toggle("dark-mode");
+    
+        // Save the user's preference in localStorage
+        const isDarkModeEnabled = body.classList.contains("dark-mode");
+        localStorage.setItem("darkModeEnabled", isDarkModeEnabled.toString());
+      }
+      // Check if the user has a preference for dark mode and apply it
+      const storedDarkMode = localStorage.getItem("darkModeEnabled");
+      if (storedDarkMode && storedDarkMode === "true") {
+        document.body.classList.add("dark-mode");
+      }
+    </script>
     <title>Samuel Regelbrugge's Web Resume</title>
   </head>
   <body>
