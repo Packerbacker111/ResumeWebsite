@@ -4,223 +4,165 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="This webpage showcases the accomplishments and credentials of Samuel Regelbrugge"
-    />
-    <meta
-      name="keywords"
-      content="Samuel Regelbrugge, Tech Cyber Warriors, Samuel, Regelbrugge, Cybersecurity, Cyber, Security, Cyber Security, Penetration Testing, PenTest+, CompTIA, CompTIA PenTest+, CompTIA CSIS, CSIS, INE, eJPT, INE eJPT, CPTC, CPTC Great Lakes, CPTC Global Finals, CCDC, CCDC Indiana, CCDC Midwest, CCDC National, UBuff Lockdown, UBuff, Lockdown, University at Buffalo, Cybersecurity, Cybersecurity Competition, Cybersecurity Team, Cybersecurity Captain, Cybersecurity Leader, Cybersecurity Winner, Cybersecurity First Place, Cybersecurity Second Place, Cybersecurity Finalist, Cybersecurity Alt, Cybersecurity Regional, Cybersecurity State, Cybersecurity Qualifier, Cybersecurity Competition, Cybersecurity Defense, Cybersecurity Offense, Cybersecurity Blue Team, Cybersecurity Red Team, Cybersecurity Purple Team, Cybersecurity Skills, Cybersecurity Strategy, Cybersecurity Foundation, Cybersecurity Certifications, Cybersecurity Accomplishments, Cybersecurity Resume, Cybersecurity Resume PDF, Cybersecurity Resume Download, Cybersecurity Resume View, Cybersecurity Resume Samuel Regelbrugge, Cybersecurity Resume Samuel, Cybersecurity Resume Regelbrugge, Cybersecurity Resume Samuel Regelbrugge PDF, Cybersecurity Resume Samuel PDF, Cybersecurity Resume Regelbrugge PDF, Cybersecurity Resume Samuel Regelbrugge Download, Cybersecurity Resume Samuel Download, Cybersecurity Resume Regelbrugge Download, Cybersecurity Resume Samuel Regelbrugge View, Cybersecurity Resume Samuel View, Cybersecurity Resume Regelbrugge View, Cybersecurity Resume Samuel Regelbrugge Resume, Cybersecurity Resume Samuel Resume, Cybersecurity Resume Regelbrugge Resume, Cybersecurity Resume Samuel Regelbrugge Resume PDF, Cybersecurity Resume Samuel Resume PDF, Cybersecurity Resume Regelbrugge Resume PDF, Cybersecurity Resume Samuel Regelbrugge Resume Download, Cybersecurity Resume Samuel Resume Download, Cybersecurity Resume Regelbrugge Resume Download, Cybersecurity Resume Samuel Regelbrugge Resume View, Cybersecurity Resume Samuel Resume View, Cybersecurity Resume Regelbrugge Resume View, Cybersecurity Resume Samuel Regelbrugge Resume Samuel Regelbrugge, Cybersecurity Resume Samuel, Cybersecurity Resume Regelbrugge, Cybersecurity Resume Samuel Regelbrugge PDF, Cybersecurity Resume Samuel PDF, Cybersecurity Resume Regelbrugge PDF, Cybersecurity Resume Samuel Regelbrugge Download, Cybersecurity Resume Samuel Download, Cybersecurity Resume Regelbrugge"
-    />
-    <meta name="author" content="Samuel Regelbrugge" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
-      rel="stylesheet"
-    />
+    <meta name="description" content="Portfolio‑style résumé site for Samuel Regelbrugge—cyber‑security practitioner, competitor, and Indiana Tech graduate" />
+
+    <title>Samuel Regelbrugge · Cybersecurity Professional</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
+
     <script>
-      function toggleDarkMode() {
+      const persistKey = "samuel-dark";
+      document.addEventListener("DOMContentLoaded", () => {
         const body = document.body;
-        body.classList.toggle("dark-mode");
-    
-        // Save the user's preference in localStorage
-        const isDarkModeEnabled = body.classList.contains("dark-mode");
-        localStorage.setItem("darkModeEnabled", isDarkModeEnabled.toString());
-      }
-    
-      // Check if the user has a preference for dark mode and apply it
-      document.addEventListener("DOMContentLoaded", function() {
-        const storedDarkMode = localStorage.getItem("darkModeEnabled");
-        if (storedDarkMode && storedDarkMode === "true") {
-          document.body.classList.add("dark-mode");
-        }
+        const toggle = document.getElementById("themeToggle");
+        if (localStorage.getItem(persistKey) === "true") body.classList.add("dark");
+        toggle?.addEventListener("click", () => {
+          body.classList.toggle("dark");
+          localStorage.setItem(persistKey, body.classList.contains("dark"));
+        });
+        const burger = document.querySelector(".burger");
+        const links = document.querySelector(".nav-links");
+        burger?.addEventListener("click", () => {
+          links.classList.toggle("open");
+          burger.classList.toggle("open");
+        });
       });
     </script>
-    
-    <title>Samuel Regelbrugge's Web Resume</title>
   </head>
   <body>
-    <nav class='padChild topHeader'>
-      <div class='flex-space-btw'>
-        <a class="centered logo">Samuel<img src="favicon.ico" class="icon"></img></a>
-        <a href="https://www.linkedin.com/in/samuelregelbrugge" class="centered logo"><img src="images/linkedinBLUE.svg" class="icon"></img></a>
-        <a href="https://github.com/Packerbacker111" class="centered logo"><img src="images/GH.png" class="icon"></img></a>
-        <a href="https://www.discordapp.com/users/packerbacker111" class="centered logo"><img src="images/discordBLUE.svg" class="icon"></img></a>
-        <button id="darkModeToggle" onclick="toggleDarkMode()">
-            <img src="images/sun.svg" alt="Light Mode" class="icon" id="lightIcon">
-            <svg width="1.95" height="21.75" viewBox="0 0 1.95 21.75" xmlns="http://www.w3.org/2000/svg"><g id="svgGroup" stroke-linecap="round" fill-rule="evenodd" font-size="9pt" stroke="#000" stroke-width="0.25mm" fill="#000" style="stroke:#000;stroke-width:0.25mm;fill:#000"><path d="M 1.95 21.75 L 0 21.75 L 0 0 L 1.95 0 L 1.95 21.75 Z" vector-effect="non-scaling-stroke"/></g></svg>
-            <img src="images/moon.svg" alt="Dark Mode" class="icon" id="darkIcon">
-          </button>  
-          <a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a>        
-        <a href='mailto:samuel.regelbrugge@gmail.com' class='centered'>samuel.regelbrugge@gmail.com <img src='images/Gmail.svg' class='icon'></img></a>
-      </div>
-    </nav>
-<!------>
-<div class='container'>
-  <section class='grid2 aboutSection'>
-    <div class='centered'>
-      <div>
-        <h2>Hi, I'm <span class="accentColor">Samuel Regelbrugge</span></h2>
-        <p class='paragraph'>I am an aspiring Cybersecurity professional who started my journey into the field <script>document.write(new Date().getFullYear() - 2021)</script> years ago. I focus on having a Purple Team skillset, developing both defensive and offensive security strategies.   Currently, I am studying to get even better at 
-          <a href="https://www.indianatech.edu" class="accentColor bold">Indiana Institute of Technology
-           <img src="images/IndTech.png" height="25" width="20"></img>
-         </a>
-       </p>
-      </div>
-    </div>
-    <div class='aboutImg backgroundFix' style="background-image: url(images/pfp3.jpg)"></div>
-  </section>
-</div>
-<!------->
-    <div class='container experience-section'>
-      <section >
-        <h2>Experience</h2>
-        <div class='flex-wrap'>
-          <div>
-            <a href="https://rsmus.com/services/risk-fraud-cybersecurity/cybersecurity-business-vulnerability.html" class="accentColor bold">RSM US LLP
-              <img src="images/RSM_RGB.png" class="icon"></img>
-            </a>
-            <p>Cyber Testing Intern </p>
-            <p>June 2024 - November 2024</p>
-          </div>
-          <div>
-            <a href="https://titan-security.com/" class="accentColor bold">Titan Security Group
-              <img src="images/TSG.png" class="icon"></img>
-            </a>
-            <p>Information Technology & Security Intern </p>
-            <p>May 2023 - May 2024</p>
-          </div>
-          <div>
-            <a href="https://www.techcyberwarriors.org/index.php/roster/" class="accentColor bold">Indiana Tech Cyber Warriors
-              <img src="images/tcw.webp" height="25" width="20"></img>
-            </a>
-            <p>Team Lieutenant</p>
-            <p>April 2023 - Present</p>
-          </div>
-          <div>
-            <a href="https://www.techcyberwarriors.org/index.php/roster/" class="accentColor bold">Indiana Tech Cyber Warriors
-              <img src="images/tcw.webp" height="25" width="20"></img>
-            </a>
-            <p>Unix Primary</p>
-            <p>August 2022 - April 2023</p>
-          </div>
-          <div>
-            <a href="https://www.bestbuy.com" class="accentColor bold">Best Buy
-              <img src="images/BestBuy.svg" height="20" width="25"></img>
-            </a>
-            <p>Customer Experience Specialist</p>
-            <p>June 2021 - August 2022</p>
-          </div>
+    <header>
+      <nav>
+        <a href="#top" class="brand flex"><img src="favicon.ico" alt="logo" class="icon" /> <span class="accent">Samuel Regelbrugge</span></a>
+        <button aria-label="Toggle navigation" class="burger" id="burger"><span></span><span></span><span></span></button>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="https://www.linkedin.com/in/samuelregelbrugge" aria-label="LinkedIn"><img src="images/linkedinBLUE.svg" class="icon" alt="LinkedIn" /></a></li>
+          <li><a href="https://github.com/Packerbacker111" aria-label="GitHub"><img src="images/GH.png" class="icon" alt="GitHub" /></a></li>
+          <li><a href="https://www.discordapp.com/users/packerbacker111" aria-label="Discord"><img src="images/discordBLUE.svg" class="icon" alt="Discord" /></a></li>
+          <li><button id="themeToggle" aria-label="Toggle dark mode" class="btn" style="background:none;border:none"><img src="images/sun.svg" class="icon" alt="theme" /></button></li>
+          <li><a href="mailto:samuel.regelbrugge@gmail.com" class="btn">Email Me</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <!-- About -->
+      <section id="about" class="container grid about">
+        <div>
+          <h2>Hi, I’m <span class="accent">Samuel Regelbrugge</span></h2>
+          <p>Cyber‑security professional passionate about <strong>Purple Team</strong> methodologies—building defence‑in‑depth while mastering offensive tactics to stay a step ahead.</p>
+          <a href="content/SRegelbruggeResume.pdf" class="btn" target="_blank" rel="noopener">View Résumé ⇩</a>
         </div>
-        <a href="content/SRegelbruggeResume.pdf" class="accentColor bold resume">View Resume<img src="images/paper-icon.svg" class="icon"></img></a>
+        <img src="images/pfp3.jpg" alt="Portrait of Samuel Regelbrugge" loading="lazy" />
       </section>
-    </div>
-    <div class='container portfolio-section'>
-      <section>
-        <h2>Accomplishments and Certifications</h2>
-        <div class='grid3'>
-          <a href="https://www.credly.com/badges/17eabd65-7388-4915-b457-397b4d1fa538/public_url">
-            <div class="portfolio-image backgroundFix" style='background-image: url(images/secx.png)'>
-              
-            </div>
-            <h3 class="accentColor">CompTIA SecurityX Certification</h3>
-            <p>
-              The CompTIA SecurityX Certification
-            </p>
-          </a>
-          <a href="https://www.credly.com/badges/760823c6-b6ae-4003-bbdf-02657450ce8a/public_url">
-            <div class="portfolio-image backgroundFix" style='background-image: url(images/PenTest.png)'>
-              
-            </div>
-            <h3 class="accentColor">CompTIA PenTest+ Certification</h3>
-            <p>
-              The CompTIA PenTest+ Certification validates an individual's skills in penetration testing, a crucial aspect of cybersecurity. It demonstrates proficiency in identifying and exploiting vulnerabilities within systems to bolster security measures.
-            </p>
-          </a>
-          <a href="https://www.credly.com/badges/ede63dc9-8db9-4b77-ac46-3e571f0738b7/public_url">
-            <div class="portfolio-image backgroundFix" style='background-image: url(images/csis.jpg)'>
-              
-            </div>
-            <h3 class="accentColor">CompTIA CSIS Certification</h3>
-            <p>
-              This certification from CompTIA is a stackable cert that encompasses the CompTIA A+, Network+, and Security+ certifications. Together, these certifications showcase a very strong Cybersecurity foundation by those who posses them.
-            </p>
-          </a>
-          <a href="https://certs.ine.com/a610e037-4c20-416c-bb43-07ffaa13a929">
-            <div class="portfolio-image backgroundFix" style='background-image: url(images/eJPT.png)'>
-              
-            </div>
-            <h3 class="accentColor">INE eJPT Certification</h3>
-            <p>
-              The Junior Penetration Tester certification from INE is a hands-on, practical exam where the test taker demonstrates practical skills by exploiting various different systems using a variety of sophisticated Red Team techniques. 
-            </p>
-          </a>
-          <a href="https://cp.tc">
-              <div class="portfolio-image backgroundFix" style='background-image: url(images/CPTC.png)'>
-              </div>
-              <h3 class="accentColor">CPTC Placements</h3>
-              <p>
-                The Collegiate Penetration Testing Competition is focused around testing and growing the skills of students in the field of Cybersecurity, specifically in the realm of penetration testing. "In Character" engagments with staff prepare students for both the technical aspect and the soft skills needed to succeed as a Penetration Tester.<p></p>
-                
-                CPTC Great Lakes Regional Qualifer:
-                <ul>
-                  <li>2024 - First Place</li>
-                  <li>2023 - Second Place (alt)</li>
-                </ul>
-                CPTC Global Finals:
-                <ul>
-                  <li>2024 - Finalist</li>
-                  <li>2023 - Finalist (alt)</li>
-                </ul>
-              </p>
-            </a>
-          <a href="https://nccdc.org/">
-              <div class="portfolio-image backgroundFix" style='background-image: url(images/CCDC.jpg)'>
-                
-              </div>
-              <h3 class="accentColor">CCDC Placements</h3>
-              <p>
-                The Collegiate Cybersecurity Defense Competition is a competition using a real-world environment that competitors will race to secure and complete tasks in order to showcase their Cybersecurity skillset.<p></p>
-                CCDC Indiana State Qualifer:
-                <ul>
-                  <li>2025 - First Place</li>
-                  <li>2024 - First Place</li>
-                  <li>2023 - First Place</li>
-                </ul>
-                Midwest CCDC Regional:
-                <ul>
-                  <li>2025 - First Place</li>
-                  <li>2024 - First Place</li>
-                  <li>2023 - Second Place (12th Nationally)</li>
-                </ul>
-                National CCDC:
-                <ul>
-                  <li>2025 - 6th Nationally</li>
-                  <li>2024 - 10th Nationally</li>
-                </ul>
-              </p>
-            </a>
-          <a href="https://lockdown.ubnetdef.org/">
-              <div class="portfolio-image backgroundFix" style='background-image: url(images/ubuff.jfif)'>
-                
-              </div>
-              <h3 class="accentColor">UBuff Lockdown - First Place</h3>
-              <p>
-                As Competition Captain, I led the Tech Cyber Warriors to a first place finish during the Spring 2023 UBuff Competition. This is a student-run competition hosted by the University at Buffalo Cybersecurity team!
-              </p>
-            </a>
+
+      <!-- Education -->
+      <section id="education" class="container">
+        <h2>Education</h2>
+        <article class="card">
+          <h3 class="accent">Indiana Institute of Technology</h3>
+          <p><strong>B.S. Cybersecurity</strong> — GPA 3.8 <br>Relevant coursework: Web Development I & II, Computer Science II, Web & Network Security, Script Programming, Network
+            Design I & II, Intro to Server Systems, Digital Forensics, Defensive CyberOps, Disaster Recovery, and Database Systems.</p>
+        </article>
+      </section>
+
+      <!-- Experience -->
+      <section id="experience" class="container">
+        <h2>Professional Experience</h2>
+        
+        <article class="card">
+          <h3 class="accent"><a href="https://rsmus.com/services/risk-fraud-cybersecurity/cybersecurity-business-vulnerability.html" target="_blank">RSM US LLP</a></h3>
+          <p><strong>Cyber Testing Intern</strong> · Jun 2024 – Nov 2024 · Chicago, IL</p>
+          <ul>
+            <li>Performed network, API, and LLM penetration tests against OWASP LLM Top‑10.</li>
+            <li>Presented industry‑specific cyber‑risk research to executive leadership.</li>
+            <li>Supported red‑team live‑fire exercise validating client IR playbooks.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3 class="accent"><a href="https://titan-security.com/" target="_blank">Titan Security Group</a></h3>
+          <p><strong>IT & Security Intern</strong> · May 2023 – May 2024 · Chicago, IL</p>
+          <ul>
+            <li>Managed helpdesk tickets on Zendesk, supported the office and different sites with various daily technical issues.</li>
+            <li>Led deployment for NVR Servers, new employee laptops, printers, and other hardware for internal office and site needs.</li>
+            <li>Conducted live incident response regarding suspicious activity and unauthorized access to core systems.</li>
+            <li>Ran an assessment of core infrastructure and led crucial projects such as automated backups for core infrastructure.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3 class="accent"><a href="https://www.techcyberwarriors.org/index.php" target="_blank">Indiana Tech Cyber Warriors</a></h3>
+          <p><strong>Team Lieutenant & Unix Lead</strong> · Apr 2023 – May 2025 · Fort Wayne, IN</p>
+          <ul>
+            <li>Develop weekly Linux lab challenges and lead 20‑member team.</li>
+            <li>Led strategy for CCDC & CPTC podium finishes (see competitions).</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3 class="accent"><a href="https://www.bestbuy.com" target="_blank">Best Buy</a></h3>
+          <p><strong>Customer Experience Specialist</strong> · Jun 2021 – Aug 2022 · Geneva, IL</p>
+          <ul>
+            <li>Communicated effectively to inform customers and successfully leveraged credibility to close sales.</li>
+            <li>Coordinated with store leaders to meet sales goals and assisted in my areas of expertise.</li>
+          </ul>
+        </article>
+      </section>
+
+      <!-- Certifications -->
+      <section id="certs" class="container">
+        <h2>Certifications</h2>
+        <div class="grid certs">
+          <a href="https://www.credly.com/badges/17eabd65-7388-4915-b457-397b4d1fa538/public_url" class="cert-item"><div class="thumb" style="background-image:url(images/secx.png)"></div><h3 class="accent">SecurityX (CASP+)</h3><p>CompTIA · Jun 2024</p></a>
+          <a href="https://www.credly.com/badges/760823c6-b6ae-4003-bbdf-02657450ce8a/public_url" class="cert-item"><div class="thumb" style="background-image:url(images/PenTest.png)"></div><h3 class="accent">PenTest+</h3><p>CompTIA · Feb 2024</p></a>
+          <a href="https://certs.ine.com/a610e037-4c20-416c-bb43-07ffaa13a929" class="cert-item"><div class="thumb" style="background-image:url(images/eJPT.png)"></div><h3 class="accent">eJPT</h3><p>INE · Dec 2023</p></a>
+          <a href="https://www.credly.com/badges/ede63dc9-8db9-4b77-ac46-3e571f0738b7/public_url" class="cert-item"><div class="thumb" style="background-image:url(images/csis.jpg)"></div><h3 class="accent">CSIS</h3><p>CompTIA · May 2023</p></a>
         </div>
       </section>
-    </div>
-    <footer class='padChild topHeader'>
-      <div class='flex-space-btw'>
-        <a class="centered logo">Samuel<img src="favicon.ico" class="icon"></img></a>
-        <a href="https://www.linkedin.com/in/samuelregelbrugge" class="centered logo"><img src="images/linkedinBLUE.svg" class="icon"></img></a>
-        <a href="https://github.com/Packerbacker111" class="centered logo"><img src="images/GH.png" class="icon"></img></a>
-        <a href="https://www.discordapp.com/users/packerbacker111" class="centered logo"><img src="images/discordBLUE.svg" class="icon"></img></a>
-        <a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a><a></a>
-        <a href='mailto:samuel.regelbrugge@gmail.com' class='centered'>samuel.regelbrugge@gmail.com <img src='images/Gmail.svg' class='icon'></img></a>
-    </div>
+
+      <!-- Competitions -->
+      <section id="competitions" class="container">
+        <h2>Competitions</h2>
+        <div class="grid comp-grid">
+          <a href="https://nccdc.org/" class="comp-item" target="_blank" rel="noopener">
+            <div class="comp-thumb" style="background-image:url(images/CCDC.jpg)"></div>
+            <h3 class="accent">NCCDC</h3>
+            <p style="font-size:.9rem;">Collegiate Cybersecurity Defense Competition</p>
+            <ul>
+              <li><strong>Indiana State Qualifier</strong> — 1st Place 2025, 2024, 2023</li>
+              <li><strong>Midwest Regional</strong> — 1st Place 2024 · 2nd Place 2023 (12th National)</li>
+              <li><strong>National Finals</strong> — 10th Place 2024 · 6th Place 2025</li>
+            </ul>
+          </a>
+
+          <a href="https://cp.tc" class="comp-item" target="_blank" rel="noopener">
+            <div class="comp-thumb" style="background-image:url(images/CPTC.png)"></div>
+            <h3 class="accent">CPTC</h3>
+            <p style="font-size:.9rem;">Collegiate Penetration Testing Competition</p>
+            <ul>
+              <li>Great Lakes Champion 2024</li>
+              <li>Global Finals Finalist 2024</li>
+              <li>Global Alternate 2023</li>
+            </ul>
+          </a>
+
+          <a href="https://lockdown.ubnetdef.org/" class="comp-item" target="_blank" rel="noopener">
+            <div class="comp-thumb" style="background-image:url(images/ubuff.jfif)"></div>
+            <h3 class="accent">UBuff Lockdown</h3>
+            <ul>
+              <li>First Place (Captain) Spring 2023</li>
+            </ul>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; <span id="year"></span> Samuel Regelbrugge · Chicagoland Area · <a href="mailto:samuel.regelbrugge@gmail.com" class="accent">samuel.regelbrugge@gmail.com</a></p>
     </footer>
+
+    <script>document.getElementById("year").textContent = new Date().getFullYear()</script>
   </body>
 </html>
