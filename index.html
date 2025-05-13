@@ -22,8 +22,9 @@
           body.classList.toggle("dark");
           localStorage.setItem(persistKey, body.classList.contains("dark"));
         });
-        const burger = document.querySelector(".burger");
-        const links = document.querySelector(".nav-links");
+
+        const burger = document.getElementById("burger");
+        const links = document.getElementById("navLinks");
         burger?.addEventListener("click", () => {
           links.classList.toggle("open");
           burger.classList.toggle("open");
@@ -62,22 +63,21 @@
         <h2>Education</h2>
         <article class="card">
           <h3 class="accent">Indiana Institute of Technology</h3>
-          <p><strong>B.S. Cybersecurity</strong> — GPA 3.8 <br>Relevant coursework: Web Development I & II, Computer Science II, Web & Network Security, Script Programming, Network
-            Design I & II, Intro to Server Systems, Digital Forensics, Defensive CyberOps, Disaster Recovery, and Database Systems.</p>
+          <p><strong>B.S. Cybersecurity</strong> — GPA 3.8 <br>Relevant coursework: Web Development I & II, Computer Science II, Web & Network Security, Script Programming, Network Design I & II, Intro to Server Systems, Digital Forensics, Defensive CyberOps, Disaster Recovery, and Database Systems.</p>
         </article>
       </section>
 
       <!-- Experience -->
       <section id="experience" class="container">
         <h2>Professional Experience</h2>
-        
+
         <article class="card">
           <h3 class="accent"><a href="https://rsmus.com/services/risk-fraud-cybersecurity/cybersecurity-business-vulnerability.html" target="_blank">RSM US LLP</a></h3>
           <p><strong>Cyber Testing Intern</strong> · Jun 2024 – Nov 2024 · Chicago, IL</p>
           <ul>
-            <li>- Performed network, API, and LLM penetration tests against OWASP LLM Top‑10.</li>
-            <li>- Presented industry‑specific cyber‑risk research to executive leadership.</li>
-            <li>- Supported red‑team live‑fire exercise validating client IR playbooks.</li>
+            <li>Performed network, API, and LLM penetration tests against OWASP LLM Top‑10.</li>
+            <li>Presented industry‑specific cyber‑risk research to executive leadership.</li>
+            <li>Supported red‑team live‑fire exercise validating client IR playbooks.</li>
           </ul>
         </article>
 
@@ -85,10 +85,10 @@
           <h3 class="accent"><a href="https://titan-security.com/" target="_blank">Titan Security Group</a></h3>
           <p><strong>IT & Security Intern</strong> · May 2023 – May 2024 · Chicago, IL</p>
           <ul>
-            <li>- Managed helpdesk tickets on Zendesk, supported the office and different sites with various daily technical issues.</li>
-            <li>- Led deployment for NVR Servers, new employee laptops, printers, and other hardware for internal office and site needs.</li>
-            <li>- Conducted live incident response regarding suspicious activity and unauthorized access to core systems.</li>
-            <li>- Ran an assessment of core infrastructure and led crucial projects such as automated backups for core infrastructure.</li>
+            <li>Managed helpdesk tickets on Zendesk, supported the office and different sites with various daily technical issues.</li>
+            <li>Led deployment for NVR Servers, new employee laptops, printers, and other hardware for internal office and site needs.</li>
+            <li>Conducted live incident response regarding suspicious activity and unauthorized access to core systems.</li>
+            <li>Ran an assessment of core infrastructure and led crucial projects such as automated backups for core infrastructure.</li>
           </ul>
         </article>
 
@@ -96,8 +96,8 @@
           <h3 class="accent"><a href="https://www.techcyberwarriors.org/index.php" target="_blank">Indiana Tech Cyber Warriors</a></h3>
           <p><strong>Team Lieutenant & Unix Lead</strong> · Apr 2023 – May 2025 · Fort Wayne, IN</p>
           <ul>
-            <li>- Develop weekly Linux lab challenges and lead 20‑member team.</li>
-            <li>- Led strategy for CCDC & CPTC podium finishes (see competitions).</li>
+            <li>Develop weekly Linux lab challenges and lead 20‑member team.</li>
+            <li>Led strategy for CCDC & CPTC podium finishes (see competitions).</li>
           </ul>
         </article>
 
@@ -105,8 +105,8 @@
           <h3 class="accent"><a href="https://www.bestbuy.com" target="_blank">Best Buy</a></h3>
           <p><strong>Customer Experience Specialist</strong> · Jun 2021 – Aug 2022 · Geneva, IL</p>
           <ul>
-            <li>- Communicated effectively to inform customers and successfully leveraged credibility to close sales.</li>
-            <li>- Coordinated with store leaders to meet sales goals and assisted in my areas of expertise.</li>
+            <li>Communicated effectively to inform customers and successfully leveraged credibility to close sales.</li>
+            <li>Coordinated with store leaders to meet sales goals and assisted in my areas of expertise.</li>
           </ul>
         </article>
       </section>

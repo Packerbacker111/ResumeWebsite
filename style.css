@@ -54,6 +54,7 @@ p {
 
 ul {
   list-style: none;
+  padding-left: 0;
 }
 
 .container {
@@ -167,6 +168,8 @@ nav {
   flex-direction: column;
   gap: 4px;
   cursor: pointer;
+  background: none;
+  border: none;
 }
 
 .burger span {
@@ -184,7 +187,8 @@ nav {
     flex-direction: column;
     padding: 5rem 2rem;
     transform: translateX(100%);
-    transition: 0.4s;
+    transition: transform 0.4s ease;
+    z-index: 10000;
   }
 
   body.dark .nav-links {
