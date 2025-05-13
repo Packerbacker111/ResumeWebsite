@@ -15,7 +15,7 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 64px; /* sticky header offset */
+  scroll-padding-top: 64px;
 }
 
 body {
@@ -323,4 +323,12 @@ body.dark footer {
 main > section:first-child {
   margin-top: 0;
   padding-top: 2rem;
+}
+
+/* Improve hover visibility in dark mode */
+body.dark .card:hover,
+body.dark .cert-item:hover,
+body.dark .comp-item:hover {
+  filter: brightness(1.2) invert(0.05);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
 }
