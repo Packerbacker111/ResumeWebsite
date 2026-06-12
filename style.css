@@ -7,7 +7,7 @@
   --muted: #59636d;
   --line: rgba(20, 23, 25, 0.12);
   --accent: #b75d2a;
-  --accent-strong: #0f766e;
+  --accent-strong: #d6a63a;
   --accent-soft: #e9c46a;
   --shadow: 0 24px 70px rgba(36, 48, 58, 0.14);
   --radius: 8px;
@@ -23,7 +23,7 @@ body.dark {
   --muted: #b7c0bf;
   --line: rgba(241, 244, 243, 0.14);
   --accent: #f2a65a;
-  --accent-strong: #5eead4;
+  --accent-strong: #e9c46a;
   --accent-soft: #d6b257;
   --shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
 }
@@ -44,7 +44,7 @@ body {
   min-width: 320px;
   background:
     linear-gradient(120deg, rgba(183, 93, 42, 0.08), transparent 32rem),
-    linear-gradient(235deg, rgba(15, 118, 110, 0.1), transparent 30rem),
+    linear-gradient(235deg, rgba(233, 196, 106, 0.12), transparent 30rem),
     var(--bg);
   color: var(--text);
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -54,7 +54,7 @@ body {
 body.dark {
   background:
     linear-gradient(120deg, rgba(242, 166, 90, 0.09), transparent 32rem),
-    linear-gradient(235deg, rgba(94, 234, 212, 0.08), transparent 30rem),
+    linear-gradient(235deg, rgba(233, 196, 106, 0.08), transparent 30rem),
     var(--bg);
 }
 
@@ -278,11 +278,11 @@ body.dark .icon-button {
 .button.primary {
   border-color: var(--accent-strong);
   background: var(--accent-strong);
-  color: #ffffff;
+  color: #141719;
 }
 
 .button.primary:hover {
-  color: #ffffff;
+  color: #141719;
 }
 
 .button.secondary {
@@ -555,6 +555,12 @@ body.dark .icon-button {
   color: var(--bg);
 }
 
+.contact-band .button.primary {
+  border-color: var(--accent-soft);
+  background-color: var(--accent-soft);
+  color: #141719;
+}
+
 .contact-band p,
 .contact-band .eyebrow {
   color: color-mix(in srgb, var(--bg) 76%, transparent);
@@ -571,6 +577,35 @@ body.dark .icon-button {
   background: transparent;
   color: var(--bg);
   border-color: color-mix(in srgb, var(--bg) 28%, transparent);
+}
+
+body.dark .contact-band {
+  border-color: rgba(241, 244, 243, 0.12);
+  background: #161a1c;
+  color: var(--text);
+}
+
+body.dark .contact-band p {
+  color: var(--muted);
+}
+
+body.dark .contact-band .eyebrow {
+  color: var(--accent);
+}
+
+body.dark .contact-band h2 {
+  color: var(--text);
+}
+
+body.dark .contact-band .button.primary {
+  border-color: #f2a65a;
+  background-color: #f2a65a;
+  color: #101214;
+}
+
+body.dark .contact-band .button.secondary {
+  color: var(--text);
+  border-color: rgba(241, 244, 243, 0.22);
 }
 
 .site-footer {
@@ -703,4 +738,15 @@ body.dark .icon-button {
   .hero-actions .button {
     width: 100%;
   }
+}
+
+body.dark main .contact-band .contact-actions a.button.primary {
+  border-color: #f2a65a;
+  background: #f2a65a;
+  color: #101214;
+}
+
+body.dark main .contact-band .contact-actions a.button.secondary {
+  color: var(--text);
+  border-color: rgba(241, 244, 243, 0.22);
 }
