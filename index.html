@@ -4,175 +4,327 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Portfolio‑style résumé site for Samuel Regelbrugge—cyber‑security practitioner, competitor, and Indiana Tech graduate" />
+    <meta
+      name="description"
+      content="Samuel Regelbrugge is a Chicagoland cybersecurity professional focused on incident response, detection quality, vulnerability validation, and purple-team security outcomes."
+    />
 
-    <title>Samuel Regelbrugge · Cybersecurity Professional</title>
+    <title>Samuel Regelbrugge | Cybersecurity Professional</title>
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
 
     <script>
       const persistKey = "samuel-dark";
+
       document.addEventListener("DOMContentLoaded", () => {
         const body = document.body;
         const toggle = document.getElementById("themeToggle");
-        if (localStorage.getItem(persistKey) === "true") body.classList.add("dark");
-        toggle?.addEventListener("click", () => {
-          body.classList.toggle("dark");
-          localStorage.setItem(persistKey, body.classList.contains("dark"));
-        });
-
         const burger = document.getElementById("burger");
         const links = document.getElementById("navLinks");
+
+        if (localStorage.getItem(persistKey) === "true") {
+          body.classList.add("dark");
+          toggle?.setAttribute("aria-pressed", "true");
+        }
+
+        toggle?.addEventListener("click", () => {
+          body.classList.toggle("dark");
+          const isDark = body.classList.contains("dark");
+          localStorage.setItem(persistKey, isDark);
+          toggle.setAttribute("aria-pressed", String(isDark));
+        });
+
         burger?.addEventListener("click", () => {
-          links.classList.toggle("open");
-          burger.classList.toggle("open");
+          const isOpen = links.classList.toggle("open");
+          burger.classList.toggle("open", isOpen);
+          burger.setAttribute("aria-expanded", String(isOpen));
+        });
+
+        links?.querySelectorAll("a").forEach((link) => {
+          link.addEventListener("click", () => {
+            links.classList.remove("open");
+            burger?.classList.remove("open");
+            burger?.setAttribute("aria-expanded", "false");
+          });
         });
       });
     </script>
   </head>
-  <body>
-    <header>
-      <nav>
-        <a href="#top" class="brand flex"><img src="favicon.ico" alt="logo" class="icon" /> <span class="accent">Samuel Regelbrugge</span></a>
-        <button aria-label="Toggle navigation" class="burger" id="burger"><span></span><span></span><span></span></button>
+  <body id="top">
+    <header class="site-header">
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="#top" class="brand" aria-label="Samuel Regelbrugge home">
+          <img src="favicon.ico" alt="" class="brand-mark" />
+          <span>Samuel Regelbrugge</span>
+        </a>
+
+        <button class="burger" id="burger" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="navLinks">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
         <ul class="nav-links" id="navLinks">
-          <li><a href="https://www.linkedin.com/in/samuelregelbrugge" aria-label="LinkedIn"><img src="images/linkedinBLUE.svg" class="icon" alt="LinkedIn" /></a></li>
-          <li><a href="https://github.com/Packerbacker111" aria-label="GitHub"><img src="images/GH.png" class="icon" alt="GitHub" /></a></li>
-          <li><a href="https://www.discordapp.com/users/packerbacker111" aria-label="Discord"><img src="images/discordBLUE.svg" class="icon" alt="Discord" /></a></li>
-          <li><button id="themeToggle" aria-label="Toggle dark mode" class="btn" style="background:none;border:none"><img src="images/sun.svg" class="icon" alt="theme" /></button></li>
-          <li><a href="mailto:samuel@regelbrugge.net" class="btn">Email Me!</a></li>
+          <li><a href="#experience">Experience</a></li>
+          <li><a href="#impact">Impact</a></li>
+          <li><a href="#credentials">Credentials</a></li>
+          <li><a href="#competitions">Competitions</a></li>
+          <li><a href="content/SRegelbruggeResume.pdf" target="_blank" rel="noopener">Resume</a></li>
+          <li>
+            <button id="themeToggle" type="button" class="icon-button" aria-label="Toggle dark mode" aria-pressed="false">
+              <img src="images/sun.svg" alt="" />
+            </button>
+          </li>
         </ul>
       </nav>
     </header>
 
     <main>
-      <!-- About -->
-      <section id="about" class="container grid about">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Chicagoland cybersecurity analyst</p>
+          <h1 id="hero-title">Incident response, detection quality, and adversary-informed defense.</h1>
+          <p class="hero-summary">
+            I help security teams investigate incidents, validate vulnerability reports, tune noisy detections, and turn
+            offensive security experience into clearer defensive outcomes.
+          </p>
+          <div class="hero-actions">
+            <a href="content/SRegelbruggeResume.pdf" class="button primary" target="_blank" rel="noopener">View Resume</a>
+            <a href="mailto:samuel@regelbrugge.net" class="button secondary">Email Me</a>
+          </div>
+        </div>
+
+        <aside class="profile-panel" aria-label="Profile summary">
+          <img src="images/pfp3.jpg" alt="Portrait of Samuel Regelbrugge" class="portrait" />
+          <div>
+            <p class="panel-kicker">Current role</p>
+            <h2>Cybersecurity Analyst</h2>
+            <p>Equity Residential, Chicago</p>
+          </div>
+          <dl class="stat-grid">
+            <div>
+              <dt>$25B</dt>
+              <dd>enterprise supported</dd>
+            </div>
+            <div>
+              <dt>2,500+</dt>
+              <dd>employees protected</dd>
+            </div>
+            <div>
+              <dt>15-20</dt>
+              <dd>minutes saved daily</dd>
+            </div>
+            <div>
+              <dt>8</dt>
+              <dd>security certifications</dd>
+            </div>
+          </dl>
+        </aside>
+      </section>
+
+      <section id="impact" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Trajectory</p>
+          <h2>Building toward purple-team security leadership.</h2>
+          <p>
+            My path combines enterprise security operations, penetration testing, live-fire response, and competition
+            leadership. The through-line is practical security judgment: find what matters, reduce noise, and move risk
+            toward resolution.
+          </p>
+        </div>
+
+        <div class="impact-grid">
+          <article class="impact-card">
+            <span class="card-label">Respond</span>
+            <h3>First responder for enterprise incidents</h3>
+            <p>Triaged, investigated, contained, and escalated cybersecurity incidents across a large real estate enterprise.</p>
+          </article>
+          <article class="impact-card">
+            <span class="card-label">Validate</span>
+            <h3>Primary bug bounty contact</h3>
+            <p>Assessed HackerOne submissions, validated risk, and coordinated remediation with internal stakeholders.</p>
+          </article>
+          <article class="impact-card">
+            <span class="card-label">Automate</span>
+            <h3>Microsoft Entra Risky Users workflow</h3>
+            <p>Designed automation that eliminated repetitive analyst steps and saved approximately 15-20 minutes per day.</p>
+          </article>
+          <article class="impact-card">
+            <span class="card-label">Tune</span>
+            <h3>Detection quality improvements</h3>
+            <p>Reduced false positives and alert fatigue by tuning multiple alert categories for better fidelity.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="experience" class="section split-section">
+        <div class="section-heading">
+          <p class="eyebrow">Experience</p>
+          <h2>Security operations with offensive testing depth.</h2>
+        </div>
+
+        <div class="timeline">
+          <article class="timeline-item">
+            <div class="timeline-meta">
+              <h3>Equity Residential</h3>
+              <p>Cybersecurity Analyst</p>
+              <span>July 2025 - Present | Chicago, IL</span>
+            </div>
+            <ul>
+              <li>Served as first responder for cybersecurity incidents across a $25B enterprise supporting 2,500+ employees.</li>
+              <li>Led triage, investigation, containment, and escalation activities for suspicious activity and security alerts.</li>
+              <li>Acted as the primary contact for the HackerOne bug bounty program, validating submissions and coordinating remediation.</li>
+              <li>Built automation for Microsoft Entra Risky Users and tuned security detections to reduce false positives.</li>
+            </ul>
+          </article>
+
+          <article class="timeline-item">
+            <div class="timeline-meta">
+              <h3>RSM US LLP</h3>
+              <p>Cyber Testing Intern</p>
+              <span>June 2024 - November 2024 | Chicago, IL</span>
+            </div>
+            <ul>
+              <li>Contributed to internal network, external network, API, and related penetration testing engagements.</li>
+              <li>Performed LLM security testing against the OWASP Top 10 for LLMs and provided client-facing findings.</li>
+              <li>Researched and presented industry cybersecurity concerns to company leadership.</li>
+              <li>Assisted red-team execution during a live-fire engagement assessing a client incident response plan.</li>
+            </ul>
+          </article>
+
+          <article class="timeline-item">
+            <div class="timeline-meta">
+              <h3>Titan Security Group</h3>
+              <p>Information Technology &amp; Security Intern</p>
+              <span>May 2023 - May 2024 | Chicago, IL</span>
+            </div>
+            <ul>
+              <li>Managed Zendesk helpdesk tickets and supported office and field-site technical issues.</li>
+              <li>Led deployments for NVR servers, employee laptops, printers, and other operational hardware.</li>
+              <li>Assessed core infrastructure and led projects including automated backups for critical systems.</li>
+              <li>Conducted live incident response for suspicious activity and unauthorized access to core systems.</li>
+            </ul>
+          </article>
+
+          <article class="timeline-item">
+            <div class="timeline-meta">
+              <h3>Indiana Tech Cyber Warriors</h3>
+              <p>Team Lieutenant &amp; Unix Specialty Lead</p>
+              <span>Spring 2023 - May 2025 | Fort Wayne, IN</span>
+            </div>
+            <ul>
+              <li>Led weekly Unix specialty practices while co-leading team-wide cybersecurity training sessions.</li>
+              <li>Guided training for a team of around 20 members and maintained onboarding documentation.</li>
+              <li>Created technical writing based on cybersecurity engagements performed during competitions.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="credentials" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Credentials</p>
+          <h2>Certifications and technical foundation.</h2>
+        </div>
+
+        <div class="credential-grid">
+          <a href="https://www.credly.com/badges/17eabd65-7388-4915-b457-397b4d1fa538/public_url" class="credential-card" target="_blank" rel="noopener">
+            <img src="images/secx.png" alt="" />
+            <h3>SecurityX (CASP+)</h3>
+            <p>CompTIA | June 2024</p>
+          </a>
+          <a href="https://www.credly.com/badges/760823c6-b6ae-4003-bbdf-02657450ce8a/public_url" class="credential-card" target="_blank" rel="noopener">
+            <img src="images/PenTest.png" alt="" />
+            <h3>PenTest+</h3>
+            <p>CompTIA | February 2024</p>
+          </a>
+          <article class="credential-card">
+            <div class="badge-initials">CN</div>
+            <h3>Network Vulnerability Assessment Professional</h3>
+            <p>CompTIA | February 2024</p>
+          </article>
+          <a href="https://certs.ine.com/a610e037-4c20-416c-bb43-07ffaa13a929" class="credential-card" target="_blank" rel="noopener">
+            <img src="images/eJPT.png" alt="" />
+            <h3>Junior Penetration Tester</h3>
+            <p>INE | December 2023</p>
+          </a>
+          <a href="https://www.credly.com/badges/ede63dc9-8db9-4b77-ac46-3e571f0738b7/public_url" class="credential-card" target="_blank" rel="noopener">
+            <img src="images/csis.jpg" alt="" />
+            <h3>Secure Infrastructure Specialist</h3>
+            <p>CompTIA | May 2023</p>
+          </a>
+          <article class="credential-card compact">
+            <h3>Earlier foundations</h3>
+            <p>Network+ | A+ | Security+</p>
+          </article>
+        </div>
+
+        <article class="education-block">
+          <div>
+            <p class="eyebrow">Education</p>
+            <h3>Indiana Institute of Technology</h3>
+          </div>
+          <p>
+            Bachelor of Science in Cybersecurity, GPA 3.7. Coursework included web and network security, defensive
+            cyber operations, digital forensics, server systems, scripting, disaster recovery, database systems, and
+            network design.
+          </p>
+        </article>
+      </section>
+
+      <section id="competitions" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Competitions</p>
+          <h2>High-pressure practice, real security habits.</h2>
+        </div>
+
+        <div class="competition-grid">
+          <a href="https://nccdc.org/" class="competition-card" target="_blank" rel="noopener">
+            <img src="images/CCDC.jpg" alt="" />
+            <div>
+              <h3>National Collegiate Cyber Defense Competition</h3>
+              <p>3x Indiana Qualifier | 2x Midwest Regional Champion | 2x National Appearance</p>
+            </div>
+          </a>
+          <a href="https://cp.tc" class="competition-card" target="_blank" rel="noopener">
+            <img src="images/CPTC.png" alt="" />
+            <div>
+              <h3>Collegiate Penetration Testing Competition</h3>
+              <p>Global Finalist | Great Lakes Champion | Global Alternate</p>
+            </div>
+          </a>
+          <a href="https://lockdown.ubnetdef.org/" class="competition-card" target="_blank" rel="noopener">
+            <img src="images/ubuff.jfif" alt="" />
+            <div>
+              <h3>University at Buffalo Lockdown</h3>
+              <p>Competition Captain | First Place</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="contact-band" aria-label="Contact">
         <div>
-          <h2>Hi, I’m <span class="accent">Samuel Regelbrugge</span></h2>
-          <p>Cybersecurity professional passionate about <strong>Purple Team</strong> methodologies—building defence‑in‑depth while mastering offensive tactics to stay a step ahead.</p>
-          <a href="content/SRegelbruggeResume.pdf" class="btn" target="_blank" rel="noopener">View Résumé ⇩</a>
+          <p class="eyebrow">Open to the next challenge</p>
+          <h2>Security operations today, purple-team impact next.</h2>
         </div>
-        <img src="images/pfp3.jpg" alt="Portrait of Samuel Regelbrugge" loading="lazy" />
-      </section>
-
-      <!-- Experience -->
-      <section id="experience" class="container">
-        <h2>Professional Experience</h2>
-
-        <article class="card">
-          <h3 class="accent"><a href="https://investors.equityapartments.com/overview/corporate-profile/default.aspx" target="_blank">Equity Residential</a></h3>
-          <p><strong>IT Security Analyst</strong> · Current · Chicago, IL</p>
-          <ul>
-            <li></li>
-            <li></li>
-            <li></li>
-          </ul>
-        </article>
-
-        <article class="card">
-          <h3 class="accent"><a href="https://rsmus.com/services/risk-fraud-cybersecurity/cybersecurity-business-vulnerability.html" target="_blank">RSM US LLP</a></h3>
-          <p><strong>Cyber Testing Intern</strong> · Jun 2024 – Nov 2024 · Chicago, IL</p>
-          <ul>
-            <li>Performed network, API, and LLM penetration tests against OWASP LLM Top‑10.</li>
-            <li>Presented industry‑specific cyber‑risk research to executive leadership.</li>
-            <li>Supported red‑team live‑fire exercise validating client IR playbooks.</li>
-          </ul>
-        </article>
-
-        <article class="card">
-          <h3 class="accent"><a href="https://titan-security.com/" target="_blank">Titan Security Group</a></h3>
-          <p><strong>IT & Security Intern</strong> · May 2023 – May 2024 · Chicago, IL</p>
-          <ul>
-            <li>Managed helpdesk tickets on Zendesk, supported the office and different sites with various daily technical issues.</li>
-            <li>Led deployment for NVR Servers, new employee laptops, printers, and other hardware for internal office and site needs.</li>
-            <li>Conducted live incident response regarding suspicious activity and unauthorized access to core systems.</li>
-            <li>Ran an assessment of core infrastructure and led crucial projects such as automated backups for core infrastructure.</li>
-          </ul>
-        </article>
-
-        <article class="card">
-          <h3 class="accent"><a href="https://www.techcyberwarriors.org/index.php" target="_blank">Indiana Tech Cyber Warriors</a></h3>
-          <p><strong>Team Lieutenant & Unix Lead</strong> · Apr 2023 – May 2025 · Fort Wayne, IN</p>
-          <ul>
-            <li>Develop weekly Linux lab challenges and lead 20‑member team.</li>
-            <li>Led strategy for CCDC & CPTC podium finishes (see competitions).</li>
-          </ul>
-        </article>
-
-        <article class="card">
-          <h3 class="accent"><a href="https://www.bestbuy.com" target="_blank">Best Buy</a></h3>
-          <p><strong>Customer Experience Specialist</strong> · Jun 2021 – Aug 2022 · Geneva, IL</p>
-          <ul>
-            <li>Communicated effectively to inform customers and successfully leveraged credibility to close sales.</li>
-            <li>Coordinated with store leaders to meet sales goals and assisted in my areas of expertise.</li>
-          </ul>
-        </article>
-      </section>
-
-      <!-- Certifications -->
-      <section id="certs" class="container">
-        <h2>Certifications</h2>
-        <div class="grid certs">
-          <a href="https://www.credly.com/badges/17eabd65-7388-4915-b457-397b4d1fa538/public_url" class="cert-item"><div class="thumb" style="background-image:url(images/secx.png)"></div><h3 class="accent">SecurityX (CASP+)</h3><p>CompTIA · Jun 2024</p></a>
-          <a href="https://www.credly.com/badges/760823c6-b6ae-4003-bbdf-02657450ce8a/public_url" class="cert-item"><div class="thumb" style="background-image:url(images/PenTest.png)"></div><h3 class="accent">PenTest+</h3><p>CompTIA · Feb 2024</p></a>
-          <a href="https://certs.ine.com/a610e037-4c20-416c-bb43-07ffaa13a929" class="cert-item"><div class="thumb" style="background-image:url(images/eJPT.png)"></div><h3 class="accent">eJPT</h3><p>INE · Dec 2023</p></a>
-          <a href="https://www.credly.com/badges/ede63dc9-8db9-4b77-ac46-3e571f0738b7/public_url" class="cert-item"><div class="thumb" style="background-image:url(images/csis.jpg)"></div><h3 class="accent">CSIS</h3><p>CompTIA · May 2023</p></a>
-        </div>
-      </section>
-
-      <!-- Education -->
-      <section id="education" class="container">
-        <h2>Education</h2>
-        <article class="card">
-          <h3 class="accent">Indiana Institute of Technology</h3>
-          <p><strong>B.S. Cybersecurity</strong> — GPA 3.8 <br>Relevant coursework: Web Development I & II, Computer Science II, Web & Network Security, Script Programming, Network Design I & II, Intro to Server Systems, Digital Forensics, Defensive CyberOps, Disaster Recovery, and Database Systems.</p>
-        </article>
-      </section>
-      
-      <!-- Competitions -->
-      <section id="competitions" class="container">
-        <h2>Competitions</h2>
-        <div class="grid comp-grid">
-          <a href="https://nccdc.org/" class="comp-item" target="_blank" rel="noopener">
-            <div class="comp-thumb" style="background-image:url(images/CCDC.jpg)"></div>
-            <h3 class="accent">NCCDC</h3>
-            <p style="font-size:.9rem;">Collegiate Cybersecurity Defense Competition</p>
-            <ul>
-              <li><strong>Indiana State Qualifier</strong> — 1st Place 2025, 2024, 2023</li>
-              <li><strong>Midwest Regional</strong> — 1st Place 2025, 2024 · 2nd Place 2023 (12th National)</li>
-              <li><strong>National Finals</strong> — 6th Place 2025 · 10th Place 2024</li>
-            </ul>
-          </a>
-
-          <a href="https://cp.tc" class="comp-item" target="_blank" rel="noopener">
-            <div class="comp-thumb" style="background-image:url(images/CPTC.png)"></div>
-            <h3 class="accent">CPTC</h3>
-            <p style="font-size:.9rem;">Collegiate Penetration Testing Competition</p>
-            <ul>
-              <li>Great Lakes Champion 2024</li>
-              <li>Global Finals Finalist 2024</li>
-              <li>Global Alternate 2023</li>
-            </ul>
-          </a>
-
-          <a href="https://lockdown.ubnetdef.org/" class="comp-item" target="_blank" rel="noopener">
-            <div class="comp-thumb" style="background-image:url(images/ubuff.jfif)"></div>
-            <h3 class="accent">UBuff Lockdown</h3>
-            <ul>
-              <li>First Place (Competition Captain) Spring 2023</li>
-            </ul>
-          </a>
+        <div class="contact-actions">
+          <a href="mailto:samuel@regelbrugge.net" class="button primary">samuel@regelbrugge.net</a>
+          <a href="https://www.linkedin.com/in/samuelregelbrugge" class="button secondary" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://github.com/Packerbacker111" class="button secondary" target="_blank" rel="noopener">GitHub</a>
         </div>
       </section>
     </main>
 
-    <footer>
-      <p>&copy; <span id="year"></span> Samuel Regelbrugge · Chicagoland Area · <a href="mailto:samuel@regelbrugge.net" class="accent">samuel@regelbrugge.net</a></p>
+    <footer class="site-footer">
+      <p>&copy; <span id="year"></span> Samuel Regelbrugge | Chicagoland Area | <a href="mailto:samuel@regelbrugge.net">samuel@regelbrugge.net</a></p>
     </footer>
 
-    <script>document.getElementById("year").textContent = new Date().getFullYear()</script>
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
   </body>
 </html>
