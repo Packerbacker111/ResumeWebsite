@@ -31,6 +31,10 @@ test("security policy permits page assets without allowing inline execution", ()
     assert.ok(policy[directive].includes(source === origin ? "'self'" : source), url);
   };
   for (const [, attributes, body] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)) {
+    if (/\btype="application\/ld\+json"/.test(attributes)) {
+      assert.doesNotThrow(() => JSON.parse(body), "Structured data must be valid JSON");
+      continue; // JSON-LD is metadata, not executable JavaScript.
+    }
     assert.equal(body.trim(), "", "Inline script would be blocked");
     const src = attributes.match(/\bsrc="([^"]+)"/);
     assert.ok(src, "Scripts must use a local file");
@@ -41,6 +45,23 @@ test("security policy permits page assets without allowing inline execution", ()
   }
   for (const [, src] of html.matchAll(/<img\b[^>]*src="([^"]+)"/g)) allowed(src, "img-src");
   assert.doesNotMatch(headScript + script + labScript, /innerHTML|outerHTML|insertAdjacentHTML|document\.write|\beval\s*\(|new Function/);
+});
+
+test("search metadata and discovery files agree on the canonical profile", () => {
+  const canonical = html.match(/rel="canonical" href="([^"]+)"/)[1];
+  const profile = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+  assert.equal(profile.url, canonical);
+  assert.equal(profile.mainEntity.url, canonical);
+  assert.equal(profile.mainEntity.name, "Samuel Regelbrugge");
+  for (const url of profile.mainEntity.sameAs) assert.ok(html.includes('href="' + url + '"'));
+  assert.ok(fs.existsSync(path.join(root, new URL(profile.mainEntity.image).pathname)));
+  const robots = fs.readFileSync(path.join(root, "robots.txt"), "utf8");
+  const sitemap = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
+  assert.ok(robots.includes("Sitemap: " + canonical + "sitemap.xml"));
+  assert.doesNotMatch(robots, /^Disallow:\s*\/\s*$/m);
+  assert.ok(sitemap.includes("<loc>" + canonical + "</loc>"));
+  const workflow = fs.readFileSync(path.join(root, ".github/workflows/azure-static-web-apps-zealous-tree-00eae9110.yml"), "utf8");
+  assert.match(workflow, /cp index\.html[^\n]*robots\.txt[^\n]*sitemap\.xml[^\n]*_site\//);
 });
 
 // Small isolated event fixture: tests behavior without a browser or dependencies.

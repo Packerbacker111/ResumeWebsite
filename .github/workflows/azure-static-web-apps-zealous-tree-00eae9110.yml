@@ -30,7 +30,7 @@ jobs:
       - name: Stage public files only
         run: |
           mkdir -p _site/content _site/public _site/.well-known
-          cp index.html favicon.ico style.css response-lab.css theme.js script.js lab-model.js response-lab.js staticwebapp.config.json _site/
+          cp index.html favicon.ico robots.txt sitemap.xml style.css response-lab.css theme.js script.js lab-model.js response-lab.js staticwebapp.config.json _site/
           cp -R images _site/images
           cp content/SRegelbruggeResume.pdf _site/content/
           cp public/og.png _site/public/
