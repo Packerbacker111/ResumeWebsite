@@ -33,16 +33,7 @@
     <link rel="stylesheet" href="response-lab.css?v=20260902-r2" />
 
     <link rel="icon" href="favicon.ico" />
-    <script>
-      // Resolve a saved theme before painting; blocked storage is harmless.
-      try {
-        const preference = localStorage.getItem("samuel-theme");
-        const legacy = localStorage.getItem("samuel-dark");
-        if (preference === "light" || (!preference && legacy === "false")) {
-          document.documentElement.dataset.theme = "light";
-        }
-      } catch (_) {}
-    </script>
+    <script src="theme.js?v=20260902-r1"></script>
     <script src="script.js?v=20260902-r3" defer></script>
     <script src="lab-model.js?v=20260902-r6" defer></script>
     <script src="response-lab.js?v=20260902-r2" defer></script>

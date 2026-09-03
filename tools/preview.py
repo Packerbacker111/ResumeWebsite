@@ -1,8 +1,10 @@
 """Local-only static preview that always serves fresh assets. No dependencies."""
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+import json
 
 ROOT = Path(__file__).resolve().parent.parent
+SECURITY_HEADERS = json.loads((ROOT / "staticwebapp.config.json").read_text())["globalHeaders"]
 
 
 class PreviewHandler(SimpleHTTPRequestHandler):
@@ -10,6 +12,8 @@ class PreviewHandler(SimpleHTTPRequestHandler):
         super().__init__(*args, directory=str(ROOT), **kwargs)
 
     def end_headers(self):
+        for name, value in SECURITY_HEADERS.items():
+            self.send_header(name, value)
         self.send_header("Cache-Control", "no-store, max-age=0")
         super().end_headers()
 

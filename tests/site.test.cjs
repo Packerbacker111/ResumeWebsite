@@ -10,7 +10,38 @@ const script = fs.readFileSync(path.join(root, "script.js"), "utf8");
 const labScript = fs.readFileSync(path.join(root, "response-lab.js"), "utf8");
 const labCss = fs.readFileSync(path.join(root, "response-lab.css"), "utf8");
 const { Investigation, cases } = require("../lab-model.js");
-const headScript = html.match(/<script>([\s\S]*?)<\/script>/)[1];
+const headScript = fs.readFileSync(path.join(root, "theme.js"), "utf8");
+
+test("security policy permits page assets without allowing inline execution", () => {
+  const { globalHeaders: headers } = JSON.parse(fs.readFileSync(path.join(root, "staticwebapp.config.json"), "utf8"));
+  const policy = Object.fromEntries(headers["Content-Security-Policy"].split(";").map(part => {
+    const [name, ...sources] = part.trim().split(/\s+/);
+    return [name, sources];
+  }));
+  for (const name of ["default-src", "connect-src", "object-src", "base-uri", "form-action", "frame-ancestors"]) {
+    assert.deepEqual(policy[name], ["'none'"]);
+  }
+  assert.deepEqual(policy["script-src"], ["'self'"]);
+  assert.equal(headers["X-Content-Type-Options"], "nosniff");
+  assert.equal(headers["X-Frame-Options"], "DENY");
+  assert.doesNotMatch(html, /\son[a-z]+\s*=|\sstyle\s*=|<style\b/i);
+  const origin = "https://samuel.regelbrugge.net";
+  const allowed = (url, directive) => {
+    const source = new URL(url, origin).origin;
+    assert.ok(policy[directive].includes(source === origin ? "'self'" : source), url);
+  };
+  for (const [, attributes, body] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)) {
+    assert.equal(body.trim(), "", "Inline script would be blocked");
+    const src = attributes.match(/\bsrc="([^"]+)"/);
+    assert.ok(src, "Scripts must use a local file");
+    allowed(src[1], "script-src");
+  }
+  for (const [tag] of html.matchAll(/<link\b[^>]*>/g)) {
+    if (tag.includes('rel="stylesheet"')) allowed(tag.match(/href="([^"]+)"/)[1], "style-src");
+  }
+  for (const [, src] of html.matchAll(/<img\b[^>]*src="([^"]+)"/g)) allowed(src, "img-src");
+  assert.doesNotMatch(headScript + script + labScript, /innerHTML|outerHTML|insertAdjacentHTML|document\.write|\beval\s*\(|new Function/);
+});
 
 // Small isolated event fixture: tests behavior without a browser or dependencies.
 class Element {
