@@ -1,0 +1,2 @@
+# Prevent line-ending conversion from corrupting the public PDF.
+*.pdf binary
