@@ -70,6 +70,22 @@
     byId("labOutcome").hidden = model.phase !== "resolved";
     byId("labOutcomeTitle").textContent = incident.outcomeTitle;
     byId("labOutcomeText").textContent = incident.outcome;
+    const debrief = byId("labDebrief");
+    debrief.replaceChildren();
+    if (model.phase === "resolved") {
+      byId("labClosedLabel").textContent = model.key === "endpoint" ? "Incident closed" : "Alert closed / benign";
+      byId("labClosedCase").textContent = incident.id + " / Evidence reviewed. Decision documented.";
+      byId("labRationale").textContent = incident.rationale;
+      incident.debrief.forEach(evidence => {
+        const item = document.createElement("li");
+        const label = document.createElement("strong");
+        const finding = document.createElement("span");
+        label.textContent = evidence.label;
+        finding.textContent = evidence.finding;
+        item.append(label, finding);
+        debrief.append(item);
+      });
+    }
     const list = byId("labActivity");
     list.replaceChildren();
     model.events.forEach((message, index) => {
@@ -153,12 +169,16 @@
       render();
       if (model.phase === "evidence" && model.feedback) byId("labFeedback").focus();
       if (model.phase === "contained") byId("labRecover").focus();
-      if (model.phase === "resolved") byId("labNext").focus();
+      if (model.phase === "resolved") {
+        byId("labOutcome").focus({ preventScroll: true });
+        byId("labOutcome").scrollIntoView({ block: "start" });
+      }
     });
   }
   byId("labRecover").addEventListener("click", () => {
     model.recover();
     render();
-    byId("labNext").focus();
+    byId("labOutcome").focus({ preventScroll: true });
+    byId("labOutcome").scrollIntoView({ block: "start" });
   });
 })();

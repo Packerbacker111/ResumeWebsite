@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">RPM mark</title>
+  <desc id="desc">A mint R shaped like a continuous vault path on a rounded midnight square.</desc>
+  <rect x="16" y="16" width="224" height="224" rx="52" fill="#07121F"/>
+  <path
+    fill="#67E3C5"
+    fill-rule="evenodd"
+    d="M70 205V55h69c40 0 63 24 63 59 0 24-13 42-34 52l36 39h-46l-31-34h-19v34H70Zm38-113v45h29c17 0 26-8 26-23s-9-22-26-22h-29Z"/>
+  <path
+    fill="#07121F"
+    d="M89 143a8 8 0 0 0-5 14.2L80 176h18l-4-18.8A8 8 0 0 0 89 143Z"/>
+</svg>

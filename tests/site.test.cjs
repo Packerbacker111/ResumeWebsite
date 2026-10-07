@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
+const { createHash } = require("node:crypto");
 const root = path.resolve(__dirname, "..");
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const css = fs.readFileSync(path.join(root, "style.css"), "utf8");
@@ -91,6 +92,9 @@ class Element {
   dispatch(event, data = {}) { for (const callback of this.events[event] ?? []) callback(data); }
   contains(target) { return this === target || this.children.includes(target); }
   focus() { this.focused = true; }
+  click() { this.dispatch("click"); }
+  scrollIntoView() { this.scrolled = true; }
+  closest() { return this.editable ? this : null; }
   querySelectorAll() { return this.children; }
   replaceChildren(...children) { this.children = children; }
   append(...children) { this.children.push(...children); }
@@ -105,10 +109,20 @@ function fixture(saved = {}, blocked = false, reducedMotion = false, observeVisi
   elements.incidentDemo.children = Array.from({ length: 4 }, () => new Element());
   elements.incidentDemo.children[0].setAttribute("aria-current", "step");
   elements.navLinks.children = Array.from({ length: 4 }, () => new Element());
+  elements.commandResults.children = [...html.matchAll(/<button\b[^>]*data-command="([^"]+)"[^>]*data-keywords="([^"]+)"[^>]*>([\s\S]*?)<\/button>/g)].map(([, action, keywords, copy]) => {
+    const command = action === "theme" ? elements.commandTheme : new Element();
+    command.dataset = { command: action, keywords };
+    command.textContent = copy.replace(/<[^>]+>/g, " ");
+    command.parentElement = new Element();
+    command.parentElement.hidden = false;
+    return command;
+  });
   const document = new Element();
   document.hidden = false;
   document.documentElement = new Element();
   document.body = new Element();
+  document.querySelectorAll = () => [];
+  document.activeElement = elements.commandToggle;
   document.getElementById = id => elements[id] ?? null;
   document.createElement = () => new Element();
   document.createTextNode = value => value;
@@ -122,22 +136,25 @@ function fixture(saved = {}, blocked = false, reducedMotion = false, observeVisi
   const motionPreference = new Element();
   motionPreference.matches = reducedMotion;
   let visibilityCallback;
+  const opened = [];
   const context = vm.createContext({ document, localStorage, Date,
     ResponseLabModel: { Investigation, cases },
-    window: { matchMedia: () => motionPreference },
+    window: { matchMedia: () => motionPreference, open: (...args) => opened.push(args) },
     setTimeout: callback => { timers.set(++timerId, callback); return timerId; },
     clearTimeout: id => timers.delete(id)
   });
   if (observeVisibility) context.IntersectionObserver = class {
-    constructor(callback) { visibilityCallback = callback; }
+    constructor(callback, options) { if (options.threshold === .1) visibilityCallback = callback; }
     observe() {}
+    unobserve() {}
+    disconnect() {}
   };
   vm.runInContext(headScript, context);
   vm.runInContext(script, context);
   vm.runInContext(labScript, context);
   const flush = () => { const pending = [...timers.values()]; timers.clear(); pending.forEach(callback => callback()); };
   const setPanelVisible = visible => visibilityCallback([{ isIntersecting: visible, intersectionRatio: visible ? 1 : 0 }]);
-  return { elements, document, values, timers, flush, motionPreference, setPanelVisible };
+  return { elements, document, values, timers, flush, motionPreference, setPanelVisible, opened };
 }
 
 test("all local assets and anchor destinations exist", () => {
@@ -152,6 +169,77 @@ test("all local assets and anchor destinations exist", () => {
   for (const [, reference] of html.matchAll(/aria-(?:controls|labelledby)="([^"]+)"/g)) {
     for (const id of reference.split(" ")) assert.ok(ids.includes(id), id);
   }
+  for (const [, sources] of html.matchAll(/srcset="([^"]+)"/g)) {
+    for (const source of sources.split(",")) {
+      assert.ok(fs.existsSync(path.join(root, source.trim().split(/\s+/)[0])), source);
+    }
+  }
+});
+
+test("portrait variants match the current original and deployment uses optimized assets", () => {
+  const manifest = JSON.parse(fs.readFileSync(path.join(root, "images/portrait/manifest.json"), "utf8"));
+  const hash = data => createHash("sha256").update(data).digest("hex");
+  const original = fs.readFileSync(path.join(root, "images/pfp3.jpg"));
+  assert.equal(manifest.source_sha256, hash(original), "Rebuild variants after replacing the portrait");
+  assert.equal(manifest.source_bytes, original.length);
+  assert.equal(Object.keys(manifest.variants).length, 7);
+  for (const [name, info] of Object.entries(manifest.variants)) {
+    const data = fs.readFileSync(path.join(root, "images/portrait", name));
+    assert.equal(data.length, info.bytes, name);
+    assert.equal(hash(data), info.sha256, name);
+  }
+  assert.doesNotMatch(html, /pfp3\.jpg/);
+  const workflow = fs.readFileSync(path.join(root, ".github/workflows/azure-static-web-apps-zealous-tree-00eae9110.yml"), "utf8");
+  assert.match(workflow, /python tools\/optimize_portrait\.py/);
+  assert.match(workflow, /rm _site\/images\/pfp3\.jpg/);
+});
+
+test("RPM illustration assets resolve and clearly identify their example data", () => {
+  const previewHtml = fs.readFileSync(path.join(root, "public/rpm-preview.html"), "utf8");
+  const ids = [...previewHtml.matchAll(/id="([^"]+)"/g)].map(match => match[1]);
+  assert.equal(ids.length, new Set(ids).size);
+  assert.match(previewHtml, /Windows interface illustration · Fictional entries/);
+  assert.match(previewHtml, /Password hidden/);
+  assert.match(previewHtml, /name="robots" content="noindex"/);
+  assert.doesNotMatch(previewHtml, /\son[a-z]+\s*=|\sstyle\s*=|<style\b|<input\b/i);
+  for (const [, url] of previewHtml.matchAll(/(?:href|src)="([^"]+)"/g)) {
+    if (!/^[a-z]+:/i.test(url)) assert.ok(fs.existsSync(path.resolve(root, "public", url.split("#")[0])), url);
+  }
+  for (const [, reference] of previewHtml.matchAll(/aria-(?:controls|labelledby)="([^"]+)"/g)) {
+    assert.ok(ids.includes(reference), reference);
+  }
+});
+
+test("RPM view selection updates the accessible state and keyboard focus", () => {
+  const elements = Object.fromEntries(["healthTab", "credentialTab", "healthPanel", "credentialPanel", "rpmViews"].map(id => [id, new Element()]));
+  const media = new Element();
+  media.matches = false;
+  vm.runInNewContext(fs.readFileSync(path.join(root, "public/rpm-preview.js"), "utf8"), {
+    document: { getElementById: id => elements[id] }, window: { matchMedia: () => media }
+  });
+  const { healthTab, credentialTab, healthPanel, credentialPanel, rpmViews } = elements;
+  assert.equal(rpmViews.attributes["aria-orientation"], "vertical");
+  credentialTab.click();
+  assert.equal(healthPanel.hidden, true);
+  assert.equal(credentialPanel.hidden, false);
+  assert.equal(credentialTab.attributes["aria-selected"], "true");
+  assert.equal(healthTab.tabIndex, -1);
+  assert.equal(credentialTab.tabIndex, 0);
+  assert.equal(credentialTab.focused, true);
+  let prevented = false;
+  credentialTab.dispatch("keydown", { key: "ArrowLeft", preventDefault() { prevented = true; } });
+  assert.equal(prevented, true);
+  assert.equal(healthPanel.hidden, false);
+  assert.equal(credentialPanel.hidden, true);
+  assert.equal(healthTab.attributes["aria-selected"], "true");
+  assert.equal(healthTab.focused, true);
+  healthTab.dispatch("keydown", { key: "End", preventDefault() {} });
+  assert.equal(credentialPanel.hidden, false);
+  credentialTab.dispatch("keydown", { key: "Home", preventDefault() {} });
+  assert.equal(healthPanel.hidden, false);
+  media.matches = true;
+  media.dispatch("change");
+  assert.equal(rpmViews.attributes["aria-orientation"], "horizontal");
 });
 
 test("initial page stays calm and the demo is explicitly fictional", () => {
@@ -426,6 +514,99 @@ test("social preview has a real image and a trusted production origin", () => {
   assert.ok(fs.statSync(path.join(root, "public/og.png")).size > 1000);
   for (const field of ["og:image", "twitter:image"]) {
     assert.ok(html.includes(field + '" content="https://samuel.regelbrugge.net/public/og.png"'));
+  }
+});
+
+test("quick jump filters actions, handles the keyboard, and restores focus", () => {
+  const { elements: el, document } = fixture();
+  const commands = el.commandResults.children;
+  let prevented = false;
+  document.dispatch("keydown", { key: "/", target: document.body, preventDefault() { prevented = true; } });
+  assert.equal(prevented, true);
+  assert.equal(el.commandPalette.open, true);
+  assert.equal(el.commandSearch.focused, true);
+  assert.equal(document.body.classList.contains("command-open"), true);
+  el.commandSearch.value = "automation";
+  el.commandSearch.dispatch("input");
+  assert.equal(commands.filter(command => !command.parentElement.hidden).length, 1);
+  el.commandSearch.dispatch("keydown", { key: "ArrowDown", preventDefault() {} });
+  assert.equal(commands[0].focused, true);
+  el.commandSearch.dispatch("keydown", { key: "Enter", preventDefault() {} });
+  assert.equal(el.commandPalette.open, false);
+  assert.equal(el.impact.focused, true);
+  assert.equal(el.impact.scrolled, true);
+  assert.equal(document.body.classList.contains("command-open"), false);
+  el.commandToggle.click();
+  assert.equal(commands.every(command => !command.parentElement.hidden), true);
+  el.commandSearch.value = "no matching destination";
+  el.commandSearch.dispatch("input");
+  assert.equal(el.commandEmpty.hidden, false);
+  el.commandSearch.dispatch("keydown", { key: "Enter", preventDefault() {} });
+  assert.equal(el.commandPalette.open, true);
+  el.commandClose.click();
+  assert.equal(el.commandToggle.focused, true);
+  el.burger.click();
+  el.commandToggle.click();
+  assert.equal(el.navLinks.classList.contains("open"), false);
+  el.commandClose.click();
+  assert.equal(el.burger.focused, true);
+});
+
+test("quick jump respects editing and modal boundaries and dispatches actions", () => {
+  const { elements: el, document, opened } = fixture();
+  const editable = new Element();
+  editable.editable = true;
+  const shortcut = target => document.dispatch("keydown", { key: "/", target, preventDefault() {} });
+  shortcut(editable);
+  assert.ok(!el.commandPalette.open);
+  el.incidentAction.click();
+  shortcut(document.body);
+  assert.ok(!el.commandPalette.open);
+  el.labClose.click();
+  const choose = query => {
+    el.commandToggle.click();
+    el.commandSearch.value = query;
+    el.commandSearch.dispatch("input");
+    el.commandSearch.dispatch("keydown", { key: "Enter", preventDefault() {} });
+  };
+  choose("theme");
+  assert.equal(document.documentElement.dataset.theme, "light");
+  el.commandToggle.click();
+  assert.equal(el.commandThemeLabel.textContent, "Switch to dark theme");
+  el.commandClose.click();
+  choose("pdf");
+  assert.deepEqual(opened[0], ["content/SRegelbruggeResume.pdf", "_blank", "noopener"]);
+  choose("lab");
+  assert.equal(el.responseLab.open, true);
+  assert.equal(el.commandPalette.open, false);
+  assert.equal(document.body.classList.contains("lab-open"), true);
+  assert.equal(document.body.classList.contains("command-open"), false);
+});
+
+test("case debriefs stay hidden until resolution and reset with the case", () => {
+  const { elements: el, flush } = fixture();
+  el.incidentAction.click();
+  for (const key of ["endpoint", "identity"]) {
+    if (key === "identity") el.caseIdentity.click();
+    el.labCollect.click();
+    flush();
+    el.labTab1.click(); el.labTab2.click();
+    assert.equal(el.labDebrief.children.length, 0);
+    assert.equal(el.labOutcome.hidden, true);
+    if (key === "endpoint") {
+      el.labContain.click();
+      assert.equal(el.labOutcome.hidden, true);
+      el.labRecover.click();
+    } else el.labBenign.click();
+    assert.equal(el.labOutcome.hidden, false);
+    assert.equal(el.labOutcome.focused, true);
+    assert.equal(el.labDebrief.children.length, 3);
+    assert.equal(el.labRationale.textContent, cases[key].rationale);
+    assert.equal(el.labClosedLabel.textContent, key === "endpoint" ? "Incident closed" : "Alert closed / benign");
+    assert.deepEqual(el.labDebrief.children.map(item => item.children[0].textContent), cases[key].evidence.map(item => item.label));
+    el.labReset.click();
+    assert.equal(el.labOutcome.hidden, true);
+    assert.equal(el.labDebrief.children.length, 0);
   }
 });
 

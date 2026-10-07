@@ -19,6 +19,12 @@
       wrong: "A benign closure is not supported here. The unexpected Office-to-PowerShell chain, correlated outbound connection, and verified user report warrant containment. Revisit the evidence and try again.",
       contained: "The simulated endpoint is isolated, the suspicious session is revoked, and evidence is preserved. Containment limits impact; it does not by itself prove recovery.",
       outcomeTitle: "Contain the incident. Then close the loop.",
+      debrief: [
+        { label: "Process", finding: "An unexpected Office-to-PowerShell chain had no matching change record." },
+        { label: "Network", finding: "The same process contacted a lookalike domain with no approved service or baseline match." },
+        { label: "Identity", finding: "The user confirmed an unexpected document and did not initiate a script." }
+      ],
+      rationale: "Three correlated sources supported containment. Preserving evidence, confirming remediation, and validating recovery completed the response.",
       outcome: "In this scenario, remediation is confirmed with the system owner, recovery is validated, and monitoring shows no related activity. You connected three sources of evidence instead of acting on a red badge alone."
     },
     identity: {
@@ -34,6 +40,12 @@
       ],
       wrong: "Containment would interrupt a validated session in this case. The matching device-bound session, verified user activity, and known VPN transition explain the signal. A VPN match alone would not be enough.",
       outcomeTitle: "Not every high-severity alert is an incident.",
+      debrief: [
+        { label: "Sign-ins", finding: "The Chicago event was a token refresh after the original Paris sign-in." },
+        { label: "Device", finding: "Both events shared one managed device and the same established device-bound session." },
+        { label: "Context", finding: "The verified corporate VPN transition matched the timing, with confirmed user activity and no suspicious follow-on activity." }
+      ],
+      rationale: "The combined session, device, and verified network context explained the alert. Documenting a benign closure avoided interrupting a validated user session.",
       outcome: "You documented the verified VPN transition and closed this alert as benign without disrupting the user. The lesson is correlation—not automatically trusting a VPN or an MFA result."
     }
   };

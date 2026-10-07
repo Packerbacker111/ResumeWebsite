@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>RPM — Windows interface preview</title>
+    <link rel="icon" href="../favicon.ico" />
+    <link rel="stylesheet" href="rpm-preview.css" />
+    <script src="rpm-preview.js" defer></script>
+  </head>
+  <body>
+    <header class="preview-heading"><a href="../index.html#tinkering">← Back to the portfolio</a><p>Windows interface illustration · Fictional entries</p></header>
+    <main class="rpm-window" aria-label="Real Password Manager interface preview">
+      <div class="rpm-titlebar"><img src="../images/rpm/rpm-mark.svg" alt="" width="36" height="36" /><div><strong>Real Password Manager</strong><span>Your passwords, under your control.</span></div><span class="example-badge">Example vault</span></div>
+      <div class="rpm-layout">
+        <nav class="rpm-sidebar" aria-label="Preview views">
+          <p class="nav-caption">YOUR RPM VAULT</p>
+          <div id="rpmViews" role="tablist" aria-label="RPM views" aria-orientation="vertical">
+            <button id="healthTab" type="button" role="tab" aria-selected="true" aria-controls="healthPanel"><span aria-hidden="true">♡</span> Password health</button>
+            <button id="credentialTab" type="button" role="tab" aria-selected="false" aria-controls="credentialPanel" tabindex="-1"><span aria-hidden="true">▤</span> Credential details</button>
+          </div>
+          <div class="sidebar-foot"><span class="local-dot" aria-hidden="true"></span><span>Illustrative preview</span><p>Explore two views from RPM’s Windows interface.</p></div>
+        </nav>
+        <section id="healthPanel" class="rpm-panel" role="tabpanel" aria-labelledby="healthTab" tabindex="0">
+          <div class="view-header"><div><p class="eyebrow">RPM SECURITY REVIEW</p><h1>Password health</h1><p>5 credentials checked just now · all checks performed locally</p></div><div class="local-badge"><span aria-hidden="true">✓</span><div><strong>LOCAL-ONLY CHECK</strong><span>Passwords stay in RPM</span></div></div></div>
+          <div class="health-grid">
+            <article class="health-card"><h2 class="warning">REUSED</h2><strong>2 affected</strong><p>Across 1 matching group</p></article>
+            <article class="health-card"><h2 class="danger">WEAK</h2><strong>1 password</strong><p>Under 16 characters or fewer than 3 character types</p></article>
+            <article class="health-card"><h2 class="warning">ONE YEAR OR OLDER</h2><strong>1 password</strong><p>Based on each credential’s saved change date</p></article>
+            <article class="health-card"><h2>AGE UNKNOWN</h2><strong>0 passwords</strong><p>Save the credential to begin age tracking</p></article>
+          </div>
+          <div class="findings-heading"><h2>Credentials to review · 2</h2><p>Opening a result never reveals or copies its password.</p></div>
+          <ul class="findings">
+            <li><span class="finding-icon" aria-hidden="true">!</span><div><div class="finding-top"><h3>Example Mail</h3><span>HIGH · 2 findings</span></div><p class="danger">Reused password · Weak password</p><p>Replace it with a unique RPM-generated password, then save the credential.</p></div></li>
+            <li><span class="finding-icon" aria-hidden="true">!</span><div><div class="finding-top"><h3>Example Notes</h3><span>HIGH · 2 findings</span></div><p class="danger">Reused password · At least one year old</p><p>Replace it with a unique RPM-generated password, then save the credential.</p></div></li>
+          </ul>
+        </section>
+        <section id="credentialPanel" class="rpm-panel" role="tabpanel" aria-labelledby="credentialTab" tabindex="0" hidden>
+          <div class="view-header"><div><p class="eyebrow">CREDENTIAL DETAILS</p><h1 class="view-title">Example Mail</h1></div></div>
+          <div class="detail-card">
+            <dl class="detail-summary"><div><dt>Service</dt><dd>Example Mail</dd></div><div><dt>Username or email</dt><dd>demo@example.test</dd></div></dl>
+            <div class="password-field"><p>Password</p><div><span class="masked-password" aria-label="Password hidden">••••••••••••</span><span>12 characters</span></div></div>
+            <dl class="detail-fields"><div><dt>Tags</dt><dd><span class="tag">Personal</span><span class="tag">Example</span></dd></div><div><dt>Websites</dt><dd>https://mail.example.test</dd></div><div><dt>Notes</dt><dd>Fictional entry for this interface preview.</dd></div><div><dt>Record history</dt><dd>Created and updated locally · Example data</dd></div></dl>
+          </div>
+          <div class="detail-explanation"><h3>A little look inside the vault.</h3><p>The Windows app brings credentials, password health, and recovery into one place. This illustration shows the layout with example entries; it does not store or access passwords.</p></div>
+        </section>
+      </div>
+    </main>
+    <footer class="preview-footer">Based on RPM’s current Windows views. This page is an interface illustration, not the password manager.</footer>
+  </body>
+</html>

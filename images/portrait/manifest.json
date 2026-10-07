@@ -1,0 +1,39 @@
+{
+  "source_sha256": "09dafc525e0e43dabb93c129c32b69c9207c931339fe3711ef8bd4ed0e33411e",
+  "source_bytes": 2405933,
+  "source_dimensions": [
+    4101,
+    4106
+  ],
+  "crop": "Centered square, after applying EXIF orientation",
+  "variants": {
+    "portrait-96.webp": {
+      "bytes": 1538,
+      "sha256": "0f4fa1124df5d245017879f55fb22c2170ad9af3fdd7b291558d2b44cfd359cf"
+    },
+    "portrait-192.webp": {
+      "bytes": 3666,
+      "sha256": "f93068d9eab1315a4d2392dc268d702f522c89b146aadf5835b14db5a0002ba3"
+    },
+    "portrait-192.jpg": {
+      "bytes": 6401,
+      "sha256": "5a1de6879d855eb4e9889e5ba83e26fcf145f8f1bd2785d259dbcc12b273a560"
+    },
+    "portrait-360.webp": {
+      "bytes": 8776,
+      "sha256": "11e130078c06aa62f50b40a1e13f13c7c4bcc2ed10244a54fd608b50dcc8196a"
+    },
+    "portrait-720.webp": {
+      "bytes": 23256,
+      "sha256": "1a679399da55eb2ec564e0fc58d0df5fa7f6f775da4a7cea523541c16ac5d6f6"
+    },
+    "portrait-720.jpg": {
+      "bytes": 47283,
+      "sha256": "e640b669323b2d4692ed71eb7d264148d904a4509b524244734b2f9182208543"
+    },
+    "portrait-1080.webp": {
+      "bytes": 42706,
+      "sha256": "29950d0a888e856c9a5aa0ae54c61046e7cca2b865283ad01541c49d5fcccbf6"
+    }
+  }
+}
