@@ -26,6 +26,14 @@ test("Azure protects the editor page and admin API by role", () => {
   assert.deepEqual(config.routes.find(route => route.route === "/api/blog/admin/*").allowedRoles, ["blog_editor"]);
 });
 
+test("the short /blog URL resolves its loader and post links", () => {
+  const page = fs.readFileSync(path.join(__dirname, "../blog/index.html"), "utf8");
+  const client = fs.readFileSync(path.join(__dirname, "../blog/remote.js"), "utf8");
+  assert.match(page, /src="\/blog\/remote\.js"/);
+  assert.match(client, /\/blog\/post\.html\?slug=/);
+  assert.match(client, /fetch\("\/api\/blog\/posts"/);
+});
+
 test("only the invited editor can read or change drafts", async () => {
   memory.clear();
   assert.equal((await handleBlog(request("admin/posts", "POST", post, null), store)).status, 403);
