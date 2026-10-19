@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Selected security operations case studies from Samuel Regelbrugge: faster endpoint telemetry and Microsoft Entra workflow automation." />
+    <title>Selected Work | Samuel Regelbrugge</title>
+    <link rel="canonical" href="https://samuel.regelbrugge.net/work.html" />
+    <link rel="icon" href="favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css?v=20261019-r1" />
+    <script src="theme.js?v=20260902-r1"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header"><nav class="site-nav" aria-label="Primary navigation"><a class="brand" href="index.html#top"><span class="brand-monogram" aria-hidden="true">sr<span>.</span></span><span class="brand-name">Samuel Regelbrugge<span class="brand-subtitle">Security, with perspective.</span></span></a><a class="text-link" href="index.html#impact">← Back to selected work</a></nav></header>
+    <main id="main" class="story-page">
+      <div class="story-intro"><p class="eyebrow">Selected work / Security operations</p><h1>Make the next decision clearer.</h1><p>Two examples of reducing the time between an alert and useful context. These summaries describe outcomes and workflows without exposing internal systems or data.</p></div>
+      <nav class="story-index" aria-label="Case studies"><a href="#endpoint-telemetry">01 / Endpoint telemetry <span aria-hidden="true">↓</span></a><a href="#entra-workflow">02 / Entra workflow <span aria-hidden="true">↓</span></a></nav>
+
+      <article id="endpoint-telemetry" class="story-case" aria-labelledby="endpoint-title">
+        <div class="story-case-heading"><p class="eyebrow">01 / Internal AI tool</p><h2 id="endpoint-title">From hours of gathering to minutes of context.</h2><p>Querying separate endpoint telemetry sources was a bottleneck in investigations. I connected an enterprise AI assistant to a written playbook for querying those sources and gave it API access to retrieve the data.</p></div>
+        <div class="story-facts"><div><span>Problem</span><strong>Slow access to endpoint context</strong></div><div><span>Contribution</span><strong>Playbook + API connections</strong></div><div><span>Observed outcome</span><strong>Hours → minutes</strong></div></div>
+        <div class="story-columns"><section><h3>The work</h3><p>The playbook guides queries across three endpoint telemetry sources, with more being added. An analyst can ask a question, get relevant telemetry, and spend more of the investigation assessing the evidence. The response decision stays with the analyst.</p></section><section><h3>What I observed</h3><p>I have seen hour-long investigations move to minutes for me and teammates on many occasions. That is a practical observation from use, not a controlled performance benchmark.</p></section></div>
+        <figure class="story-flow"><figcaption>Illustrative workflow</figcaption><ol><li><span>01</span><strong>Ask</strong><small>Analyst question</small></li><li><span>02</span><strong>Gather</strong><small>Endpoint context</small></li><li><span>03</span><strong>Investigate</strong><small>Human judgment</small></li></ol></figure>
+        <!-- Draft: add an approved, sanitized example of one query and response if available. Do not disclose internal source names or playbook contents. -->
+      </article>
+
+      <article id="entra-workflow" class="story-case" aria-labelledby="entra-title">
+        <div class="story-case-heading"><p class="eyebrow">02 / Workflow automation</p><h2 id="entra-title">Give analysts their time back.</h2><p>I built Tines stories that connect Microsoft Entra data sources for the Risky Users process and route outcomes based on an internal playbook.</p></div>
+        <div class="story-facts"><div><span>Problem</span><strong>Recurring manual work</strong></div><div><span>Contribution</span><strong>Tines stories across Entra data</strong></div><div><span>Estimated outcome</span><strong>15–20 minutes / day</strong></div></div>
+        <div class="story-columns"><section><h3>The work</h3><p>The stories bring relevant identity-risk context together and apply playbook-defined outcomes to repeatable steps. Analysts can focus on the cases that require their judgment.</p></section><section><h3>Why it matters</h3><p>The existing estimate is about 15–20 minutes of analyst effort saved per day. This is an estimate for routine work, not a timed performance study.</p></section></div>
+        <figure class="story-flow"><figcaption>Illustrative workflow</figcaption><ol><li><span>01</span><strong>Signal</strong><small>Identity risk</small></li><li><span>02</span><strong>Automate</strong><small>Repeatable steps</small></li><li><span>03</span><strong>Review</strong><small>Analyst action</small></li></ol></figure>
+        <!-- Draft: add approved examples of inputs and outcomes, plus the basis for the existing daily time estimate. Do not disclose internal playbook rules. -->
+      </article>
+      <div class="story-footer"><a class="button primary" href="index.html#contact">Let’s talk security <span aria-hidden="true">↗</span></a><a class="text-link" href="index.html#impact">Back to selected work ↑</a></div>
+    </main>
+    <footer class="site-footer"><p>© 2026 Samuel Regelbrugge</p><a href="index.html#top">Back to the portfolio ↑</a></footer>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <meta name="description" content="A small, real HTTP cookie challenge by Samuel Regelbrugge." />
+    <title>Cookie Challenge | Samuel Regelbrugge</title>
+    <link rel="icon" href="favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css?v=20261019-r2" />
+    <script src="theme.js?v=20260902-r1"></script>
+    <script src="cookie-challenge.js?v=20261019-r2" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header"><nav class="site-nav" aria-label="Primary navigation"><a class="brand" href="index.html#top"><span class="brand-monogram" aria-hidden="true">sr<span>.</span></span><span class="brand-name">Samuel Regelbrugge<span class="brand-subtitle">Security, with perspective.</span></span></a><a class="text-link" href="index.html#competitions">← Back to competitions</a></nav></header>
+    <main id="main" class="challenge-page">
+      <p class="eyebrow">A hands-on web challenge</p>
+      <h1>Who gets to decide?</h1>
+      <p class="challenge-lead">This page asks a real server endpoint whether you may see the flag. The first answer is no. Your mission is to change the request the browser sends.</p>
+      <div class="challenge-grid">
+        <section class="challenge-panel" aria-labelledby="mission-title">
+          <p class="card-label">01 / Mission</p><h2 id="mission-title">Turn access denied into access granted.</h2>
+          <p>Open your browser’s developer tools and inspect the cookies for this site. Find <code>show-flag</code>, change its value, then check again. The server reads that cookie on each request.</p>
+          <p class="challenge-hint">Tip: look under Application or Storage. The cookie belongs to the <code>/api/cookie-challenge</code> path.</p>
+        </section>
+        <section class="challenge-panel challenge-result" aria-labelledby="result-title">
+          <p class="card-label">02 / Server response</p><h2 id="result-title">The gate</h2>
+          <p id="challengeStatus" role="status" aria-live="polite">Checking the server…</p>
+          <p id="challengeFlag" class="challenge-flag" hidden></p>
+          <button type="button" id="challengeRetry" class="button primary">Check again <span aria-hidden="true">↗</span></button>
+          <p class="challenge-hint">This uses an actual HTTP request. Refreshing or pressing the button sends your current cookie to the server.</p>
+          <noscript><p>JavaScript is needed for the response panel. You can still inspect the endpoint at <code>/api/cookie-challenge</code>.</p></noscript>
+        </section>
+      </div>
+      <p class="challenge-note">This isolated puzzle is inspired by an earlier cookie CTF I designed. It does not grant access to anything else on the site.</p>
+    </main>
+    <footer class="site-footer"><p>© 2026 Samuel Regelbrugge</p><a href="index.html#top">Back to the portfolio ↑</a></footer>
+  </body>
+</html>

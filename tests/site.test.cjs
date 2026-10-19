@@ -102,7 +102,7 @@ class Element {
   close() { this.open = false; this.dispatch("close"); }
 }
 
-function fixture(saved = {}, blocked = false, reducedMotion = false, observeVisibility = false) {
+function fixture(saved = {}, blocked = false, reducedMotion = false, observeVisibility = false, initialHash = "") {
   const elements = Object.fromEntries([...html.matchAll(/id="([^"]+)"/g)].map(match => [match[1], new Element()]));
   elements.themeToggle.firstElementChild = new Element();
   elements.incidentDemo.dataset.stage = "detected";
@@ -137,9 +137,14 @@ function fixture(saved = {}, blocked = false, reducedMotion = false, observeVisi
   motionPreference.matches = reducedMotion;
   let visibilityCallback;
   const opened = [];
+  const window = new Element();
+  window.matchMedia = () => motionPreference;
+  window.open = (...args) => opened.push(args);
+  window.location = { href: "https://samuel.regelbrugge.net/" + initialHash, hash: initialHash, pathname: "/", search: "" };
+  window.history = { replaceState: () => { window.location.hash = ""; } };
   const context = vm.createContext({ document, localStorage, Date,
     ResponseLabModel: { Investigation, cases },
-    window: { matchMedia: () => motionPreference, open: (...args) => opened.push(args) },
+    window, URL,
     setTimeout: callback => { timers.set(++timerId, callback); return timerId; },
     clearTimeout: id => timers.delete(id)
   });
@@ -154,7 +159,7 @@ function fixture(saved = {}, blocked = false, reducedMotion = false, observeVisi
   vm.runInContext(labScript, context);
   const flush = () => { const pending = [...timers.values()]; timers.clear(); pending.forEach(callback => callback()); };
   const setPanelVisible = visible => visibilityCallback([{ isIntersecting: visible, intersectionRatio: visible ? 1 : 0 }]);
-  return { elements, document, values, timers, flush, motionPreference, setPanelVisible, opened };
+  return { elements, document, window, values, timers, flush, motionPreference, setPanelVisible, opened };
 }
 
 test("all local assets and anchor destinations exist", () => {
@@ -163,7 +168,7 @@ test("all local assets and anchor destinations exist", () => {
   for (const [, url] of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
     if (url.startsWith("#")) assert.ok(ids.includes(url.slice(1)), url);
     else if (!/^[a-z]+:/i.test(url)) {
-      assert.ok(fs.existsSync(path.join(root, url.split("?")[0])), url);
+      assert.ok(fs.existsSync(path.join(root, url.split(/[?#]/)[0])), url);
     }
   }
   for (const [, reference] of html.matchAll(/aria-(?:controls|labelledby)="([^"]+)"/g)) {
@@ -174,6 +179,28 @@ test("all local assets and anchor destinations exist", () => {
       assert.ok(fs.existsSync(path.join(root, source.trim().split(/\s+/)[0])), source);
     }
   }
+});
+
+test("project pages and their case study destinations exist", () => {
+  const work = fs.readFileSync(path.join(root, "work.html"), "utf8");
+  const rpm = fs.readFileSync(path.join(root, "rpm.html"), "utf8");
+  assert.match(work, /id="endpoint-telemetry"/);
+  assert.match(work, /id="entra-workflow"/);
+  assert.match(rpm, /public\/rpm-preview\.html/);
+  for (const page of [work, rpm]) assert.match(page, /href="index\.html#/);
+  const workflow = fs.readFileSync(path.join(root, ".github/workflows/azure-static-web-apps-zealous-tree-00eae9110.yml"), "utf8");
+  assert.match(workflow, /cp index\.html work\.html rpm\.html/);
+});
+
+test("direct case links open the selected response lab case", () => {
+  const { elements: el, window } = fixture({}, false, false, false, "#lab-identity");
+  assert.equal(el.responseLab.open, true);
+  assert.equal(el.caseIdentity.attributes["aria-pressed"], "true");
+  window.location.hash = "#lab-endpoint";
+  window.dispatch("hashchange");
+  assert.equal(el.caseEndpoint.attributes["aria-pressed"], "true");
+  el.labClose.dispatch("click");
+  assert.equal(window.location.hash, "");
 });
 
 test("portrait variants match the current original and deployment uses optimized assets", () => {
@@ -491,9 +518,9 @@ test("public content contains the current role without old metrics or phone link
   assert.doesNotMatch(currentRole, /Microsoft Entra|AI-assisted|15–20|hours to minutes/);
   const selectedWork = html.match(/<section id="impact"[^>]*>([\s\S]*?)<\/section>/)[1];
   assert.match(selectedWork, /AI-assisted endpoint telemetry/);
-  assert.match(selectedWork, /Microsoft Entra Risky Users workflow/);
+  assert.match(selectedWork, /Tines stories that connect Entra risk data sources/);
   assert.match(currentRole, /HackerOne submissions, assess risk/);
-  assert.match(html, /hours to minutes/);
+  assert.match(html, /hours move to minutes/);
   assert.match(html, /AI-assisted endpoint telemetry/);
   assert.match(html, /Equity Residential<\/dt><dd>Jul 2025–Aug 2026/);
   assert.match(html, /Vivmark Residential<\/dt><dd>Aug 2026–present/);

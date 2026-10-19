@@ -1,0 +1,5 @@
+blog/drafts.json
+blog/draft-review.html
+tools/__pycache__/
+api/local.settings.json
+api/node_modules/

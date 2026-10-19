@@ -9,10 +9,14 @@ My personal portfolio, bringing together security operations, offensive testing,
 ## What’s inside
 
 - **Selected work:** AI-assisted endpoint telemetry, Microsoft Entra workflow automation, vulnerability validation, and offensive security experience.
+- **Project stories:** dedicated pages for the telemetry and Entra workflows, plus RPM’s development and interface preview.
 - **Professional background:** work history, education, certifications, cybersecurity competitions, and a downloadable résumé.
 - **Interactive design:** dark and light themes, a SOC-inspired alert panel, and an investigation workbench built for desktop and mobile.
+- **Shareable lab cases:** open the endpoint and identity investigations directly with `#lab-endpoint` and `#lab-identity` links.
 - **Small details:** a textured hero, visual project workflows, subtle section entrances, and a searchable quick-jump palette (press `/` or use the navigation button).
 - **Currently tinkering:** RPM — Real Password Manager, the Trump countdown site, CTF challenges, and CCDC red teaming.
+- **Cookie challenge:** a separate, real HTTP challenge backed by a managed Azure Function. The flag is generated on the server.
+- **Blog:** static notes, with a LinkedIn archive importer that creates drafts for review.
 - **Accessibility-minded interactions:** keyboard navigation, reduced-motion support, pausable alert effects, and core portfolio content that remains available without JavaScript.
 
 ## Response Lab
@@ -43,7 +47,8 @@ Open [localhost:4173](http://127.0.0.1:4173/) in your browser. The preview serve
 To run the automated checks with Node.js:
 
 ```sh
-node --test tests/site.test.cjs
+python tools/blog.py build
+node --test tests/*.test.cjs
 ```
 
 ## Replacing the portrait
@@ -71,13 +76,50 @@ Deployment regenerates the variants and excludes the full-size original from the
 
 The portfolio thumbnail is an optimized capture of the health overview from that page. When RPM’s design changes, update the preview HTML/CSS, capture the health overview again, and replace the 480/960-pixel WebP images and 960-pixel JPEG in `images/rpm`. Keep its example data and illustration caption visible. The preview supports click and keyboard tab selection, including arrow keys, Home, and End.
 
+## Blog publishing
+
+Write a post in `blog/posts.json` with `slug`, `title`, `date` (`YYYY-MM-DD`),
+`body`, and `published: true`, then run `python tools/blog.py build`. A published
+post gets its own page at `/blog/<slug>.html`. Treat `blog/posts.json` as public
+source code and keep private drafts outside it.
+
+To backfill from LinkedIn, request your account archive and locate `Shares.csv`.
+Run `python tools/blog.py import-linkedin path/to/Shares.csv`. The importer saves
+new entries in git-ignored `blog/drafts.json`. Review them, then copy only the
+selected entries into `blog/posts.json` and set `published: true`. Re-importing
+the same archive skips existing links. Keep the original archive outside this
+repository; it may contain private data.
+If you only have copied LinkedIn activity text, run
+`python tools/blog.py import-paste path/to/activity.txt`. This extracts your own
+post excerpts and skips reposts, but the pasted view provides approximate ages
+instead of exact dates or post links. Open the generated, git-ignored
+`blog/draft-review.html` to review them. Check those details before publishing.
+LinkedIn currently restricts the API permission for reading member posts, so
+future posts require another export/import or manual entry. The importer does
+not scrape LinkedIn or publish anything automatically.
+
+## Cookie challenge deployment
+
+The challenge endpoint is `/api/cookie-challenge`. Its flag is generated with
+cryptographic randomness when a Function instance starts, so no Azure setting
+is required. It may change after a cold start; that is fine for a standalone
+puzzle without scoring. For a scored event that needs one stable flag, set the
+optional Azure application setting `COOKIE_CTF_FLAG` to a private value. Never
+commit that value or put it in `api/local.settings.json`.
+The API is intentionally a small vulnerable exercise: it trusts the editable
+`show-flag` cookie only for this one endpoint. The page needs the live Azure API;
+the local static preview cannot run it. `api/` is deployed as a managed Function,
+while only the staged public files in `_site/` are served as site assets.
+
 ## Security maintenance
 
-The site has no backend, authentication, or visitor-submitted content. Lab data is
+The site has no authentication or visitor-submitted content. The cookie challenge
+has one isolated backend endpoint; it is not an access-control mechanism. Lab data is
 fictional and rendered as text. `staticwebapp.config.json` sets browser security
 headers, including a Content Security Policy that allows local scripts and the
 Google Fonts stylesheet/font origins, and blocks inline scripts, network APIs,
-embedding, and form submission. The local preview uses the same headers.
+embedding, and form submission. Only the cookie challenge page allows same-origin
+API requests. The local preview uses the global headers.
 
 Deployment runs the tests and stages only the listed public files and images in
 `_site`; repository metadata, tests, and development tools are excluded. Add new

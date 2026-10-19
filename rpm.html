@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="The story behind RPM, Samuel Regelbrugge’s Windows and Android password manager project." />
+    <title>RPM — Real Password Manager | Samuel Regelbrugge</title>
+    <link rel="canonical" href="https://samuel.regelbrugge.net/rpm.html" />
+    <link rel="icon" href="favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css?v=20261019-r1" />
+    <script src="theme.js?v=20260902-r1"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header"><nav class="site-nav" aria-label="Primary navigation"><a class="brand" href="index.html#top"><span class="brand-monogram" aria-hidden="true">sr<span>.</span></span><span class="brand-name">Samuel Regelbrugge<span class="brand-subtitle">Security, with perspective.</span></span></a><a class="text-link" href="index.html#tinkering">← Back to projects</a></nav></header>
+    <main id="main" class="story-page">
+      <div class="story-intro"><p class="eyebrow">Independent project / In progress</p><h1>RPM — Real Password Manager.</h1><p>What began as a Python script with “encryption” has grown into a private security and usability project spanning Windows and Android. I plan to make it free and open source at 1.0, after working through the issues I still see.</p><a class="button primary" href="public/rpm-preview.html">Explore the interface preview <span aria-hidden="true">↗</span></a></div>
+      <figure class="rpm-story-image"><picture><source type="image/webp" srcset="images/rpm/health-overview-480.webp 480w, images/rpm/health-overview-960.webp 960w" sizes="(max-width: 760px) calc(100vw - 40px), 960px" /><img src="images/rpm/health-overview-960.jpg" alt="Illustration of RPM’s password health overview with fictional credentials" width="960" height="464" decoding="async" /></picture><figcaption>Windows interface illustration · Fictional entries</figcaption></figure>
+      <div class="story-columns rpm-story-columns"><section><p class="eyebrow">Security design</p><h2>Protect the vault.</h2><p>RPM uses AES-256-GCM for credential encryption. Security guides feature decisions as I work through the remaining issues before public release. The complete cryptographic design will be documented when the code is ready for review.</p></section><section><p class="eyebrow">Everyday use</p><h2>Make strong habits easier.</h2><p>Biometric unlock works on Android, and YubiKey support works on Windows. Those options are meant to make routine access easier while encouraging a long master password. The Windows preview also shows password health checks for reused, weak, and older credentials.</p></section></div>
+      <div class="rpm-story-status"><h2>Where it stands</h2><p>RPM remains private while I work toward a free, open-source 1.0 release. The interface preview is an illustration with fictional credentials, not a working vault.</p><a class="text-link" href="public/rpm-preview.html">Open the two-view preview <span aria-hidden="true">↗</span></a></div>
+      <!-- Draft: add the public repository and full cryptographic design when the 1.0 release is ready. -->
+      <div class="story-footer"><a class="text-link" href="index.html#tinkering">Back to projects ↑</a></div>
+    </main>
+    <footer class="site-footer"><p>© 2026 Samuel Regelbrugge</p><a href="index.html#top">Back to the portfolio ↑</a></footer>
+  </body>
+</html>

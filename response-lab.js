@@ -103,6 +103,19 @@
     render();
     if (focus) byId("labCollect").focus();
   }
+  function caseFromHash() {
+    return window.location?.hash === "#lab-endpoint" ? "endpoint" : window.location?.hash === "#lab-identity" ? "identity" : null;
+  }
+  function openLinkedCase() {
+    const key = caseFromHash();
+    if (!key) return;
+    if (model.key !== key) selectCase(key);
+    else render();
+    if (!dialog.open) {
+      dialog.showModal();
+      document.body.classList.add("lab-open");
+    }
+  }
   function collect() {
     if (!model.collect()) return;
     stopPlayback();
@@ -138,12 +151,29 @@
     dialog.showModal();
     document.body.classList.add("lab-open");
   });
+  window.addEventListener?.("hashchange", openLinkedCase);
+  openLinkedCase();
+  const share = byId("labShare");
+  if (window.navigator?.clipboard?.writeText) {
+    share.hidden = false;
+    share.addEventListener("click", async () => {
+      const url = new URL(window.location.href);
+      url.hash = "lab-" + model.key;
+      try {
+        await window.navigator.clipboard.writeText(url.href);
+        byId("labShareStatus").textContent = "Link to this case copied.";
+      } catch (_) {
+        byId("labShareStatus").textContent = "Could not copy the link. Use the case links on the page instead.";
+      }
+    });
+  }
   byId("labClose").addEventListener("click", () => dialog.close());
   dialog.addEventListener("close", () => {
     stopPlayback();
     model.cancelCollection();
     document.body.classList.remove("lab-open");
     render();
+    if (caseFromHash()) window.history?.replaceState(null, "", window.location.pathname + window.location.search);
     opener.focus();
   });
   byId("caseEndpoint").addEventListener("click", () => selectCase("endpoint"));

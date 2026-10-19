@@ -1,6 +1,8 @@
 /* Full response workbench. Shared portfolio tokens cover both themes. */
 .lab-teaser-meta { margin-top: 12px; font: var(--type-label)/1.7 var(--mono); text-align: center; }
 .lab-teaser-meta span { padding-inline: 8px; color: var(--line); }
+.lab-direct-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin-top: 12px; font: var(--type-label)/1.7 var(--mono); }
+.lab-direct-links a { color: var(--accent); text-underline-offset: 4px; }
 body.lab-open { overflow: hidden; }
 .lab-dialog { width: min(1100px, calc(100vw - 48px)); max-width: none; max-height: calc(100dvh - 48px); padding: 0; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 12px; overflow: auto; overscroll-behavior: contain; scrollbar-gutter: stable; box-shadow: 0 25px 100px #0008; }
 .lab-dialog::backdrop { background: #071211bf; backdrop-filter: blur(5px); }
@@ -33,6 +35,7 @@ body.lab-open { overflow: hidden; }
 #labActivity li > span { position: absolute; left: 0; top: 0; color: var(--accent); font: var(--type-label)/1.8 var(--mono); }
 .lab-reset { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 0; border: 0; background: transparent; color: var(--muted); font: var(--type-label) var(--mono); }
 .lab-reset:hover { color: var(--text); }
+.lab-share { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 0; border: 0; background: transparent; color: var(--accent); font: var(--type-label) var(--mono); text-align: left; }
 .lab-main { min-width: 0; padding: 25px 28px 30px; }
 .lab-case-heading { display: flex; align-items: start; justify-content: space-between; gap: 22px; }
 .lab-case-heading h3 { margin-top: 10px; font-size: 26px; line-height: 1.25; letter-spacing: -.04em; }
