@@ -82,3 +82,13 @@ test("write requests reject foreign origins and unsafe post fields", async () =>
   assert.equal((await handleBlog(request("admin/posts", "POST", { ...post, slug: "../draft" }), store)).status, 400);
   assert.equal((await handleBlog(request("admin/posts", "POST", { ...post, source_url: "https://evil.example" }), store)).status, 400);
 });
+
+test("the production custom domain can save through Azure's default API host", async () => {
+  memory.clear();
+  const customDomainRequest = request("admin/posts", "POST", post);
+  customDomainRequest.url = "https://zealous-tree-00eae9110.4.azurestaticapps.net/api/blog/admin/posts";
+  customDomainRequest.headers.set("origin", "https://samuel.regelbrugge.net");
+  assert.equal((await handleBlog(customDomainRequest, store)).status, 201);
+  customDomainRequest.headers.set("origin", "https://samuel.regelbrugge.net.evil.example");
+  assert.equal((await handleBlog(customDomainRequest, store)).status, 403);
+});

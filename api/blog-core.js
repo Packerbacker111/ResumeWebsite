@@ -54,7 +54,8 @@ async function handleBlog(request, store) {
   if (admin && !isEditor(request.headers.get("x-ms-client-principal"))) return json(403, { error: "Editor access required" });
   if (admin && request.method !== "GET") {
     const origin = request.headers.get("origin");
-    if (!origin || origin !== new URL(request.url).origin) return json(403, { error: "Invalid origin" });
+    const allowedOrigins = [new URL(request.url).origin, "https://samuel.regelbrugge.net"];
+    if (!origin || !allowedOrigins.includes(origin)) return json(403, { error: "Invalid origin" });
   }
   try {
     if (path === "posts" && request.method === "GET") {
