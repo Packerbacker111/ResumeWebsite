@@ -5,6 +5,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const { handleBlog } = require("../api/blog-core.js");
+const { renderBlogMarkdown } = require("../blog/markdown.js");
 
 const principal = Buffer.from(JSON.stringify({ userId: "owner", userRoles: ["authenticated", "blog_editor"] })).toString("base64");
 const post = { slug: "a-note", title: "A note", date: "2026-10-19", body: "A private thought", published: false };
@@ -34,6 +35,17 @@ test("the short /blog URL resolves its loader and post links", () => {
   assert.match(client, /fetch\("\/api\/blog\/posts"/);
 });
 
+test("editor Markdown renders readable blocks without treating author text as HTML", () => {
+  const html = renderBlogMarkdown("## A heading\n\nHello **friend** and *reader*.\n\n- First\n- Second\n\n> A thought\n\n```js\n<script>alert(1)</script>\n```\n\n[Reference](https://example.com/?a=1&b=2) [bad](javascript:alert(1))");
+  assert.match(html, /<h2>A heading<\/h2>/);
+  assert.match(html, /<strong>friend<\/strong> and <em>reader<\/em>/);
+  assert.match(html, /<ul><li>First<\/li><li>Second<\/li><\/ul>/);
+  assert.match(html, /<blockquote><p>A thought<\/p><\/blockquote>/);
+  assert.match(html, /&lt;script&gt;alert\(1\)&lt;\/script&gt;/);
+  assert.match(html, /href="https:\/\/example.com\/\?a=1&amp;b=2"/);
+  assert.doesNotMatch(html, /<script|href="javascript:/);
+});
+
 test("only the invited editor can read or change drafts", async () => {
   memory.clear();
   assert.equal((await handleBlog(request("admin/posts", "POST", post, null), store)).status, 403);
@@ -52,6 +64,14 @@ test("publishing exposes the post, and unpublishing hides it", async () => {
   assert.equal((await handleBlog(request("posts"), store)).jsonBody.length, 1);
   await handleBlog(request("admin/posts/a-note", "PUT", post), store);
   assert.equal((await handleBlog(request("posts/a-note"), store)).status, 404);
+});
+
+test("public listing uses a plain-text excerpt from Markdown", async () => {
+  memory.clear();
+  const markdownPost = { ...post, body: "## Details\n\nA **clear** [link](https://example.com) and `code`.", published: true };
+  await handleBlog(request("admin/posts", "POST", markdownPost), store);
+  const listing = (await handleBlog(request("posts"), store)).jsonBody;
+  assert.equal(listing[0].excerpt, "Details A clear link and code.");
 });
 
 test("write requests reject foreign origins and unsafe post fields", async () => {

@@ -9,7 +9,7 @@ app.http("blog", {
   authLevel: "anonymous",
   route: "blog/{*path}",
   handler: request => {
-    try { return handleBlog(request, createBlogStore(process.env.BLOG_STORAGE_CONNECTION_STRING)); }
+    try { return handleBlog(request, createBlogStore(process.env.BLOG_STORAGE_CONNECTION_STRING, process.env.BLOG_CONTAINER_NAME || "blog-posts")); }
     catch { return { status: 503, jsonBody: { error: "Blog storage is not configured" } }; }
   }
 });

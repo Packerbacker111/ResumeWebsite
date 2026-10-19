@@ -63,12 +63,10 @@ document.getElementById("previewPost").addEventListener("click", () => {
   const heading = document.createElement("h2");
   heading.textContent = formValue("title") || "Untitled";
   preview.append(heading);
-  for (const paragraph of formValue("body").split(/\n\s*\n/)) {
-    const p = document.createElement("p");
-    p.textContent = paragraph;
-    p.style.whiteSpace = "pre-line";
-    preview.append(p);
-  }
+  const body = document.createElement("div");
+  body.className = "blog-body";
+  body.innerHTML = window.renderBlogMarkdown(formValue("body"));
+  preview.append(body);
   preview.hidden = false;
   preview.scrollIntoView({ behavior: "smooth" });
 });

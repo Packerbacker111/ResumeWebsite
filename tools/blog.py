@@ -46,7 +46,83 @@ def validate(post):
 
 
 def paragraphs(body):
-    return "\n".join(f"<p>{esc(part).replace(chr(10), '<br />')}</p>" for part in re.split(r"\n\s*\n", body.strip()))
+    """Render the same small, escaped Markdown subset as blog/markdown.js."""
+    inline_pattern = re.compile(r"\[([^\]\n]+)\]\((https?://[^\s)]+)\)|\*\*([^*\n]+)\*\*|\*([^*\n]+)\*|`([^`\n]+)`")
+
+    def inline(value):
+        output, offset = [], 0
+        for match in inline_pattern.finditer(value):
+            output.append(esc(value[offset:match.start()]))
+            label, link, bold, italic, code = match.groups()
+            if label is not None:
+                parsed = urlparse(link)
+                output.append(f'<a href="{esc(link)}" target="_blank" rel="noopener noreferrer">{esc(label)}</a>'
+                              if parsed.scheme in ("http", "https") and parsed.netloc else esc(match.group()))
+            elif bold is not None:
+                output.append(f"<strong>{esc(bold)}</strong>")
+            elif italic is not None:
+                output.append(f"<em>{esc(italic)}</em>")
+            else:
+                output.append(f"<code>{esc(code)}</code>")
+            offset = match.end()
+        return "".join(output) + esc(value[offset:])
+
+    output, paragraph, quote, items, list_type, code = [], [], [], [], None, None
+
+    def flush():
+        nonlocal paragraph, quote, items, list_type
+        if paragraph:
+            output.append(f'<p>{"<br>".join(map(inline, paragraph))}</p>')
+            paragraph = []
+        if items:
+            output.append(f'<{list_type}>{"".join(f"<li>{inline(item)}</li>" for item in items)}</{list_type}>')
+            items, list_type = [], None
+        if quote:
+            output.append(f'<blockquote><p>{"<br>".join(map(inline, quote))}</p></blockquote>')
+            quote = []
+
+    for line in body.replace("\r\n", "\n").replace("\r", "\n").strip().split("\n"):
+        if code is not None:
+            if re.fullmatch(r"\s*```\s*", line):
+                output.append(f'<pre><code>{esc(chr(10).join(code))}</code></pre>')
+                code = None
+            else:
+                code.append(line)
+            continue
+        if re.fullmatch(r"\s*```(?:[a-z0-9+-]+)?\s*", line, re.I):
+            flush()
+            code = []
+        elif not line.strip():
+            flush()
+        elif match := re.fullmatch(r"(#{2,3})\s+(.+)", line):
+            flush()
+            level = len(match.group(1))
+            output.append(f'<h{level}>{inline(match.group(2))}</h{level}>')
+        elif match := re.fullmatch(r"(?:[-*]\s+|\d+\.\s+)(.+)", line):
+            kind = "ol" if re.match(r"\d+\.", line) else "ul"
+            if paragraph or quote or (items and list_type != kind):
+                flush()
+            list_type = kind
+            items.append(match.group(1))
+        elif match := re.fullmatch(r">\s?(.*)", line):
+            if paragraph or items:
+                flush()
+            quote.append(match.group(1))
+        else:
+            if quote or items:
+                flush()
+            paragraph.append(line)
+    flush()
+    if code is not None:
+        output.append(f'<pre><code>{esc(chr(10).join(code))}</code></pre>')
+    return "\n".join(output)
+
+
+def excerpt(body):
+    text = re.sub(r"```[\s\S]*?```", " ", body)
+    text = re.sub(r"(?m)^\s*(?:#{2,3}\s+|[-*]\s+|\d+\.\s+|>\s*)", "", text)
+    text = re.sub(r"\[([^\]]+)\]\(https?://[^)]+\)", r"\1", text)
+    return re.sub(r"\s+", " ", text.replace("*", "").replace("`", "")).strip()[:190]
 
 
 def shell(title, description, content, relative="../", extra_script=""):
@@ -87,7 +163,7 @@ def build():
         source = f'<a href="{esc(post["source_url"])}" target="_blank" rel="noopener">Original on LinkedIn ↗</a>' if post.get("source_url") else ""
         content = f'<p class="eyebrow">Blog / {esc(post["date"])}</p><h1>{esc(post["title"])}</h1><article class="blog-body">{paragraphs(post["body"])}</article><div class="blog-source">{source}</div><a class="text-link" href="index.html">← All notes</a>'
         (BLOG / f'{post["slug"]}.html').write_text(shell(post["title"], post["body"][:155], content), encoding="utf-8")
-        cards.append(f'<article class="blog-card"><time datetime="{esc(post["date"])}">{esc(post["date"])}</time><h2><a href="/blog/{esc(post["slug"])}.html">{esc(post["title"])}</a></h2><p>{esc(post["body"][:190])}</p>{source}</article>')
+        cards.append(f'<article class="blog-card"><time datetime="{esc(post["date"])}">{esc(post["date"])}</time><h2><a href="/blog/{esc(post["slug"])}.html">{esc(post["title"])}</a></h2><p>{esc(excerpt(post["body"]))}</p>{source}</article>')
     listing = "\n".join(cards) if cards else '<p class="blog-empty">No notes published yet. This is where I’ll share the ideas, experiments, and lessons that don’t fit in a résumé.</p>'
     content = f'<p class="eyebrow">Notes / In progress</p><h1>Thinking out loud.</h1><p class="blog-intro">Occasional thoughts on security, building things, competitions, and whatever else catches my attention.</p><div class="blog-list" id="blogList">{listing}</div><p class="blog-editor-link"><a href="/.auth/login/aad?post_login_redirect_uri=/blog/editor.html">Editor sign in</a></p>'
     (BLOG / "index.html").write_text(shell("Blog", "Occasional notes from Samuel Regelbrugge on security, building things, and other interests.", content, extra_script='<script src="/blog/remote.js" defer></script>'), encoding="utf-8")

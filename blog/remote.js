@@ -9,14 +9,6 @@ function textNode(tag, value) {
   return node;
 }
 
-function showBody(container, body) {
-  for (const paragraph of body.trim().split(/\n\s*\n/)) {
-    const p = textNode("p", paragraph);
-    p.style.whiteSpace = "pre-line";
-    container.append(p);
-  }
-}
-
 async function loadBlog() {
   if (list) {
     const response = await fetch("/api/blog/posts", { credentials: "same-origin" });
@@ -46,7 +38,7 @@ async function loadBlog() {
     post.replaceChildren(textNode("p", `Blog / ${item.date}`), textNode("h1", item.title));
     const body = document.createElement("article");
     body.className = "blog-body";
-    showBody(body, item.body);
+    body.innerHTML = window.renderBlogMarkdown(item.body);
     post.append(body);
     document.title = `${item.title} | Samuel Regelbrugge`;
   }

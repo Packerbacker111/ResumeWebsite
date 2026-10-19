@@ -41,6 +41,12 @@ function validatePost(input) {
 
 const responseHeaders = { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store, private", "X-Content-Type-Options": "nosniff", "X-Robots-Tag": "noindex" };
 function json(status, body) { return { status, headers: responseHeaders, jsonBody: body }; }
+function excerpt(body) {
+  return body.replace(/```[\s\S]*?```/g, " ")
+    .replace(/^\s*(?:#{2,3}\s+|[-*]\s+|\d+\.\s+|>\s*)/gm, "")
+    .replace(/\[([^\]]+)\]\(https?:\/\/[^)]+\)/g, "$1")
+    .replace(/[*`]/g, "").replace(/\s+/g, " ").trim().slice(0, 190);
+}
 
 async function handleBlog(request, store) {
   const path = new URL(request.url).pathname.replace(/^\/api\/blog\/?/, "");
@@ -53,7 +59,7 @@ async function handleBlog(request, store) {
   try {
     if (path === "posts" && request.method === "GET") {
       const posts = await store.list();
-      return json(200, posts.filter(p => p.published).sort((a, b) => b.date.localeCompare(a.date)).map(({ body, ...summary }) => ({ ...summary, excerpt: body.slice(0, 190) })));
+      return json(200, posts.filter(p => p.published).sort((a, b) => b.date.localeCompare(a.date)).map(({ body, ...summary }) => ({ ...summary, excerpt: excerpt(body) })));
     }
     if (path === "admin/posts" && request.method === "GET") return json(200, await store.list());
     if (path === "admin/posts" && request.method === "POST") {

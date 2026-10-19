@@ -2,9 +2,10 @@
 
 const { BlobServiceClient } = require("@azure/storage-blob");
 
-function createBlogStore(connectionString) {
+function createBlogStore(connectionString, containerName = "blog-posts") {
   if (!connectionString) throw new Error("BLOG_STORAGE_CONNECTION_STRING is not configured");
-  const container = BlobServiceClient.fromConnectionString(connectionString).getContainerClient("blog-posts");
+  if (!/^[a-z0-9](?:[a-z0-9-]{1,61}[a-z0-9])$/.test(containerName)) throw new Error("Invalid blog storage container");
+  const container = BlobServiceClient.fromConnectionString(connectionString).getContainerClient(containerName);
   const blob = slug => container.getBlockBlobClient(`posts/${slug}.json`);
   return {
     async list() {

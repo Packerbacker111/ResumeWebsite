@@ -428,6 +428,17 @@ body.command-open { overflow: hidden; }
 .blog-empty { max-width: 650px; padding: 42px 0; }
 .blog-body { max-width: 720px; margin: 55px 0; }
 .blog-body p { margin-bottom: 24px; color: var(--text); line-height: 1.85; }
+.blog-body h2, .blog-body h3 { margin: 38px 0 14px; line-height: 1.25; letter-spacing: -.025em; }
+.blog-body h2 { font-size: clamp(26px, 3vw, 36px); }
+.blog-body h3 { font-size: clamp(21px, 2.3vw, 27px); }
+.blog-body ul, .blog-body ol { padding-left: 1.5em; margin: 0 0 28px; }
+.blog-body li { padding-left: .2em; margin: 8px 0; line-height: 1.8; }
+.blog-body blockquote { margin: 30px 0; padding: 2px 0 2px 22px; border-left: 3px solid var(--accent); color: var(--muted); }
+.blog-body blockquote p { margin: 0; color: inherit; }
+.blog-body a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.blog-body code, .editor-help code { font: .9em var(--mono); background: var(--surface-soft); padding: .12em .35em; border-radius: 3px; }
+.blog-body pre { max-width: 100%; overflow-x: auto; margin: 28px 0; padding: 18px 20px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface-soft); }
+.blog-body pre code { padding: 0; background: none; white-space: pre; }
 .blog-source { margin-bottom: 35px; }
 .blog-editor-link { margin-top: 50px; font-size: var(--type-small); color: var(--muted); }
 .blog-editor-link a { text-decoration: underline; }
@@ -441,11 +452,13 @@ body.command-open { overflow: hidden; }
 .editor-layout label { display: block; margin-bottom: 18px; font-weight: 600; }
 .editor-layout input, .editor-layout textarea { display: block; width: 100%; margin-top: 8px; padding: 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--text); font: inherit; }
 .editor-layout textarea { resize: vertical; line-height: 1.6; }
+.editor-help { margin: -7px 0 20px; color: var(--muted); font-size: var(--type-small); line-height: 1.75; }
 .editor-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .editor-actions #publishPost { border-color: var(--accent); color: var(--accent); }
 .editor-preview { margin-top: 30px; padding-top: 25px; border-top: 1px solid var(--line); }
 .editor-preview h2 { font-size: clamp(28px, 4vw, 44px); }
 .editor-preview p { margin-top: 18px; white-space: pre-line; line-height: 1.8; }
+.editor-preview .blog-body { margin: 20px 0 0; }
 @media (max-width: 760px) { .challenge-page, .blog-page { width: calc(100% - 40px); padding: 55px 0 75px; } .challenge-grid, .editor-layout { grid-template-columns: 1fr; } .challenge-panel { min-height: 0; } .challenge-result .button { margin-top: 30px; } }
 @media print {
   :root { --bg: #fff; --surface: #fff; --surface-soft: #f5f5f5; --text: #111; --muted: #333; --line: #ccc; --accent: #234f37; --accent-ink: #fff; color-scheme: light; }
