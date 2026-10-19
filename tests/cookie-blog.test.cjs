@@ -60,7 +60,7 @@ test("deployment keeps drafts and the flag out of public files", () => {
   const client = fs.readFileSync(path.join(root, "cookie-challenge.js"), "utf8");
   const blog = fs.readFileSync(path.join(root, "blog/index.html"), "utf8");
   assert.match(workflow, /api_location: "api"/);
-  assert.match(workflow, /cp blog\/\*\.html _site\/blog\//);
+  assert.match(workflow, /cp blog\/\*\.html blog\/\*\.js _site\/blog\//);
   assert.doesNotMatch(workflow, /cp -R blog/);
   assert.equal(config.platform.apiRuntime, "node:22");
   assert.ok(config.routes.some(route => route.route === "/cookie-challenge.html" && route.headers["Content-Security-Policy"].includes("connect-src 'self'")));

@@ -2,6 +2,25 @@
   "platform": { "apiRuntime": "node:22" },
   "routes": [
     {
+      "route": "/blog/editor.html",
+      "allowedRoles": ["blog-editor"],
+      "headers": {
+        "Cache-Control": "no-store, private",
+        "X-Robots-Tag": "noindex",
+        "Content-Security-Policy": "default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+      }
+    },
+    {
+      "route": "/api/blog/admin/*",
+      "allowedRoles": ["blog-editor"]
+    },
+    {
+      "route": "/blog/*",
+      "headers": {
+        "Content-Security-Policy": "default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+      }
+    },
+    {
       "route": "/cookie-challenge.html",
       "headers": {
         "Content-Security-Policy": "default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"

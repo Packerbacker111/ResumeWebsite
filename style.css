@@ -429,7 +429,24 @@ body.command-open { overflow: hidden; }
 .blog-body { max-width: 720px; margin: 55px 0; }
 .blog-body p { margin-bottom: 24px; color: var(--text); line-height: 1.85; }
 .blog-source { margin-bottom: 35px; }
-@media (max-width: 760px) { .challenge-page, .blog-page { width: calc(100% - 40px); padding: 55px 0 75px; } .challenge-grid { grid-template-columns: 1fr; } .challenge-panel { min-height: 0; } .challenge-result .button { margin-top: 30px; } }
+.blog-editor-link { margin-top: 50px; font-size: var(--type-small); color: var(--muted); }
+.blog-editor-link a { text-decoration: underline; }
+.editor-layout { display: grid; grid-template-columns: minmax(180px, 250px) minmax(0, 1fr); gap: 32px; margin-top: 48px; }
+.editor-layout aside, .editor-layout form { border: 1px solid var(--line); background: var(--surface); padding: 24px; }
+.editor-layout aside h2 { margin: 0 0 20px; }
+.editor-layout ul { list-style: none; margin: 20px 0 0; padding: 0; }
+.editor-layout li + li { margin-top: 10px; }
+.editor-layout button { cursor: pointer; border: 1px solid var(--line); background: var(--surface-soft); color: var(--text); padding: 10px 14px; text-align: left; border-radius: 4px; }
+.editor-layout button:hover, .editor-layout button:focus-visible { border-color: var(--accent); }
+.editor-layout label { display: block; margin-bottom: 18px; font-weight: 600; }
+.editor-layout input, .editor-layout textarea { display: block; width: 100%; margin-top: 8px; padding: 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--text); font: inherit; }
+.editor-layout textarea { resize: vertical; line-height: 1.6; }
+.editor-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.editor-actions #publishPost { border-color: var(--accent); color: var(--accent); }
+.editor-preview { margin-top: 30px; padding-top: 25px; border-top: 1px solid var(--line); }
+.editor-preview h2 { font-size: clamp(28px, 4vw, 44px); }
+.editor-preview p { margin-top: 18px; white-space: pre-line; line-height: 1.8; }
+@media (max-width: 760px) { .challenge-page, .blog-page { width: calc(100% - 40px); padding: 55px 0 75px; } .challenge-grid, .editor-layout { grid-template-columns: 1fr; } .challenge-panel { min-height: 0; } .challenge-result .button { margin-top: 30px; } }
 @media print {
   :root { --bg: #fff; --surface: #fff; --surface-soft: #f5f5f5; --text: #111; --muted: #333; --line: #ccc; --accent: #234f37; --accent-ink: #fff; color-scheme: light; }
   .site-header, .hero-console, .hero-actions, .focus-strip, .work-details, .contact-actions, .site-footer a { display: none; }

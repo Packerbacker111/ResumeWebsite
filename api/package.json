@@ -4,5 +4,8 @@
   "private": true,
   "main": "src/functions/*.js",
   "engines": { "node": ">=22" },
-  "dependencies": { "@azure/functions": "^4.0.0" }
+  "dependencies": {
+    "@azure/functions": "^4.0.0",
+    "@azure/storage-blob": "^12.26.0"
+  }
 }

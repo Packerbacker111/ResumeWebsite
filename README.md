@@ -78,6 +78,19 @@ The portfolio thumbnail is an optimized capture of the health overview from that
 
 ## Blog publishing
 
+The browser editor is staged at `/blog/editor.html`. Azure Static Web Apps must
+assign your Microsoft Entra account the `blog-editor` role through Role Management
+before it can be opened. Both that page and `/api/blog/admin/*` require the role;
+the API checks the principal again before reading drafts or accepting changes.
+Create a Standard GPv2 Azure Storage account with a private blob container and
+set `BLOG_STORAGE_CONNECTION_STRING` as a Static Web Apps API application setting.
+The API creates a private `blog-posts` container on first use. Do not put the
+connection string in the repository or browser. The editor can create and update
+posts, save drafts, publish, and unpublish. Publishing makes a post available
+immediately through the public blog API. Existing repository posts continue to
+render as static pages. The browser editor is not active until storage and the
+role invitation are configured.
+
 Write a post in `blog/posts.json` with `slug`, `title`, `date` (`YYYY-MM-DD`),
 `body`, and `published: true`, then run `python tools/blog.py build`. A published
 post gets its own page at `/blog/<slug>.html`. Treat `blog/posts.json` as public

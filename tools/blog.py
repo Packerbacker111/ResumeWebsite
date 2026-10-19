@@ -49,12 +49,12 @@ def paragraphs(body):
     return "\n".join(f"<p>{esc(part).replace(chr(10), '<br />')}</p>" for part in re.split(r"\n\s*\n", body.strip()))
 
 
-def shell(title, description, content, relative="../"):
+def shell(title, description, content, relative="../", extra_script=""):
     return f'''<!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="description" content="{esc(description)}" /><title>{esc(title)} | Samuel Regelbrugge</title>
 <link rel="icon" href="{relative}favicon.ico" /><link rel="stylesheet" href="{relative}style.css" />
-<script src="{relative}theme.js" defer></script></head>
+<script src="{relative}theme.js" defer></script>{extra_script}</head>
 <body><a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header"><nav class="site-nav" aria-label="Primary navigation"><a class="brand" href="{relative}index.html"><span class="brand-monogram" aria-hidden="true">sr<span>.</span></span><span class="brand-name">Samuel Regelbrugge<span class="brand-subtitle">Security, with perspective.</span></span></a><a class="text-link" href="{relative}index.html">← Portfolio</a></nav></header>
 <main id="main" class="blog-page">{content}</main>
@@ -89,8 +89,8 @@ def build():
         (BLOG / f'{post["slug"]}.html').write_text(shell(post["title"], post["body"][:155], content), encoding="utf-8")
         cards.append(f'<article class="blog-card"><time datetime="{esc(post["date"])}">{esc(post["date"])}</time><h2><a href="{esc(post["slug"])}.html">{esc(post["title"])}</a></h2><p>{esc(post["body"][:190])}</p>{source}</article>')
     listing = "\n".join(cards) if cards else '<p class="blog-empty">No notes published yet. This is where I’ll share the ideas, experiments, and lessons that don’t fit in a résumé.</p>'
-    content = f'<p class="eyebrow">Notes / In progress</p><h1>Thinking out loud.</h1><p class="blog-intro">Occasional thoughts on security, building things, competitions, and whatever else catches my attention.</p><div class="blog-list">{listing}</div>'
-    (BLOG / "index.html").write_text(shell("Blog", "Occasional notes from Samuel Regelbrugge on security, building things, and other interests.", content), encoding="utf-8")
+    content = f'<p class="eyebrow">Notes / In progress</p><h1>Thinking out loud.</h1><p class="blog-intro">Occasional thoughts on security, building things, competitions, and whatever else catches my attention.</p><div class="blog-list" id="blogList">{listing}</div><p class="blog-editor-link"><a href="../.auth/login/aad?post_login_redirect_uri=/blog/editor.html">Editor sign in</a></p>'
+    (BLOG / "index.html").write_text(shell("Blog", "Occasional notes from Samuel Regelbrugge on security, building things, and other interests.", content, extra_script='<script src="remote.js" defer></script>'), encoding="utf-8")
     print(f"Built blog with {len(published)} published posts and {len(posts) - len(published)} drafts")
 
 

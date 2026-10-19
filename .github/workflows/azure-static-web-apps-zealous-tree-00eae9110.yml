@@ -40,7 +40,7 @@ jobs:
         run: |
           mkdir -p _site/content _site/public _site/.well-known _site/blog
           cp index.html work.html rpm.html cookie-challenge.html favicon.ico robots.txt sitemap.xml style.css response-lab.css theme.js script.js lab-model.js response-lab.js cookie-challenge.js staticwebapp.config.json _site/
-          cp blog/*.html _site/blog/
+          cp blog/*.html blog/*.js _site/blog/
           cp -R images _site/images
           rm _site/images/pfp3.jpg
           cp content/SRegelbruggeResume.pdf _site/content/

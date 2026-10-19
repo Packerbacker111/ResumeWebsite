@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" /><title>Blog editor | Samuel Regelbrugge</title>
+<link rel="icon" href="../favicon.ico" /><link rel="stylesheet" href="../style.css" />
+<script src="../theme.js" defer></script><script src="editor.js" defer></script></head>
+<body><a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header"><nav class="site-nav" aria-label="Primary navigation"><a class="brand" href="../index.html"><span class="brand-monogram" aria-hidden="true">sr<span>.</span></span><span class="brand-name">Samuel Regelbrugge<span class="brand-subtitle">Security, with perspective.</span></span></a><a class="text-link" href="index.html">← Blog</a></nav></header>
+<main id="main" class="blog-page"><p class="eyebrow">Private workspace</p><h1>Blog editor.</h1><p class="blog-intro">Write freely, save a private draft, then publish when it is ready.</p>
+<p id="editorStatus" role="status">Loading your posts…</p>
+<div class="editor-layout"><aside><h2>Your posts</h2><button type="button" id="newPost">New post</button><ul id="postList"></ul></aside>
+<form id="postForm"><label>Title<input name="title" maxlength="160" required /></label><label>Slug<input name="slug" maxlength="72" pattern="[a-z0-9]+(-[a-z0-9]+)*" required /></label><label>Date<input name="date" type="date" required /></label><label>Post<textarea name="body" rows="18" maxlength="100000" required></textarea></label><label>LinkedIn source URL (optional)<input name="source_url" type="url" /></label><div class="editor-actions"><button type="button" id="saveDraft">Save draft</button><button type="button" id="previewPost">Preview</button><button type="button" id="publishPost">Publish</button><button type="button" id="unpublishPost">Unpublish</button></div><section id="postPreview" class="editor-preview" hidden aria-label="Post preview"></section></form></div>
+</main><footer class="site-footer"><p>© 2026 Samuel Regelbrugge</p><a href="../index.html">Back to the portfolio ↑</a></footer></body></html>
