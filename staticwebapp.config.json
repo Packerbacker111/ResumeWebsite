@@ -3,7 +3,7 @@
   "routes": [
     {
       "route": "/blog/editor.html",
-      "allowedRoles": ["blog-editor"],
+      "allowedRoles": ["blog_editor"],
       "headers": {
         "Cache-Control": "no-store, private",
         "X-Robots-Tag": "noindex",
@@ -12,7 +12,7 @@
     },
     {
       "route": "/api/blog/admin/*",
-      "allowedRoles": ["blog-editor"]
+      "allowedRoles": ["blog_editor"]
     },
     {
       "route": "/blog/*",

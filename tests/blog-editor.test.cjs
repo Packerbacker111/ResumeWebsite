@@ -6,7 +6,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { handleBlog } = require("../api/blog-core.js");
 
-const principal = Buffer.from(JSON.stringify({ userId: "owner", userRoles: ["authenticated", "blog-editor"] })).toString("base64");
+const principal = Buffer.from(JSON.stringify({ userId: "owner", userRoles: ["authenticated", "blog_editor"] })).toString("base64");
 const post = { slug: "a-note", title: "A note", date: "2026-10-19", body: "A private thought", published: false };
 const memory = new Map();
 const store = {
@@ -22,8 +22,8 @@ function request(path, method = "GET", body, role = principal) {
 
 test("Azure protects the editor page and admin API by role", () => {
   const config = JSON.parse(fs.readFileSync(path.join(__dirname, "../staticwebapp.config.json"), "utf8"));
-  assert.deepEqual(config.routes.find(route => route.route === "/blog/editor.html").allowedRoles, ["blog-editor"]);
-  assert.deepEqual(config.routes.find(route => route.route === "/api/blog/admin/*").allowedRoles, ["blog-editor"]);
+  assert.deepEqual(config.routes.find(route => route.route === "/blog/editor.html").allowedRoles, ["blog_editor"]);
+  assert.deepEqual(config.routes.find(route => route.route === "/api/blog/admin/*").allowedRoles, ["blog_editor"]);
 });
 
 test("only the invited editor can read or change drafts", async () => {

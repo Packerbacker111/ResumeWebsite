@@ -79,7 +79,7 @@ The portfolio thumbnail is an optimized capture of the health overview from that
 ## Blog publishing
 
 The browser editor is staged at `/blog/editor.html`. Azure Static Web Apps must
-assign your Microsoft Entra account the `blog-editor` role through Role Management
+assign your Microsoft Entra account the `blog_editor` role through Role Management
 before it can be opened. Both that page and `/api/blog/admin/*` require the role;
 the API checks the principal again before reading drafts or accepting changes.
 Create a Standard GPv2 Azure Storage account with a private blob container and

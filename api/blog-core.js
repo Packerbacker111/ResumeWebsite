@@ -13,7 +13,7 @@ function principalFromHeader(header) {
 }
 
 function isEditor(header) {
-  return principalFromHeader(header)?.userRoles.includes("blog-editor") === true;
+  return principalFromHeader(header)?.userRoles.includes("blog_editor") === true;
 }
 
 function validatePost(input) {
