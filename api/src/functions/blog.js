@@ -5,7 +5,7 @@ const { createBlogStore } = require("../../blog-store.js");
 const { handleBlog } = require("../../blog-core.js");
 
 app.http("blog", {
-  methods: ["GET", "POST", "PUT"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
   authLevel: "anonymous",
   route: "blog/{*path}",
   handler: request => {

@@ -9,23 +9,25 @@ function escapeBlogHtml(value) {
 }
 
 function renderBlogInline(value) {
-  const pattern = /\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)|\*\*([^*\n]+)\*\*|\*([^*\n]+)\*|`([^`\n]+)`/g;
+  const pattern = /!\[([^\]\n]*)\]\((\/api\/blog\/images\/[a-z0-9]+(?:-[a-z0-9]+)*\/[a-f0-9-]{36}\.(?:png|jpg|gif|webp))\)|\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)|\*\*([^*\n]+)\*\*|\*([^*\n]+)\*|`([^`\n]+)`/g;
   let html = "";
   let offset = 0;
   for (const match of value.matchAll(pattern)) {
     html += escapeBlogHtml(value.slice(offset, match.index));
     if (match[1] !== undefined) {
+      html += `<img src="${escapeBlogHtml(match[2])}" alt="${escapeBlogHtml(match[1])}" loading="lazy">`;
+    } else if (match[3] !== undefined) {
       let safeUrl = "";
       try {
-        const url = new URL(match[2]);
+        const url = new URL(match[4]);
         if (["http:", "https:"].includes(url.protocol)) safeUrl = url.href;
       } catch { /* Keep an invalid link as text. */ }
       html += safeUrl
-        ? `<a href="${escapeBlogHtml(safeUrl)}" target="_blank" rel="noopener noreferrer">${escapeBlogHtml(match[1])}</a>`
+        ? `<a href="${escapeBlogHtml(safeUrl)}" target="_blank" rel="noopener noreferrer">${escapeBlogHtml(match[3])}</a>`
         : escapeBlogHtml(match[0]);
-    } else if (match[3] !== undefined) html += `<strong>${escapeBlogHtml(match[3])}</strong>`;
-    else if (match[4] !== undefined) html += `<em>${escapeBlogHtml(match[4])}</em>`;
-    else html += `<code>${escapeBlogHtml(match[5])}</code>`;
+    } else if (match[5] !== undefined) html += `<strong>${escapeBlogHtml(match[5])}</strong>`;
+    else if (match[6] !== undefined) html += `<em>${escapeBlogHtml(match[6])}</em>`;
+    else html += `<code>${escapeBlogHtml(match[7])}</code>`;
     offset = match.index + match[0].length;
   }
   return html + escapeBlogHtml(value.slice(offset));

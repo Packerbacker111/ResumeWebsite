@@ -455,6 +455,10 @@ body.command-open { overflow: hidden; }
 .editor-help { margin: -7px 0 20px; color: var(--muted); font-size: var(--type-small); line-height: 1.75; }
 .editor-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .editor-actions #publishPost { border-color: var(--accent); color: var(--accent); }
+.editor-actions #deleteDraft { margin-left: auto; border-color: #b34a4a; color: #b34a4a; }
+.editor-image { margin: 22px 0; padding: 18px; border: 1px solid var(--line); border-radius: 4px; }
+.editor-image label { font-size: var(--type-small); }
+.blog-body img { display: block; max-width: 100%; height: auto; margin: 24px auto; border-radius: 4px; }
 .editor-preview { margin-top: 30px; padding-top: 25px; border-top: 1px solid var(--line); }
 .editor-preview h2 { font-size: clamp(28px, 4vw, 44px); }
 .editor-preview p { margin-top: 18px; white-space: pre-line; line-height: 1.8; }

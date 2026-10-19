@@ -7,6 +7,7 @@ function createBlogStore(connectionString, containerName = "blog-posts") {
   if (!/^[a-z0-9](?:[a-z0-9-]{1,61}[a-z0-9])$/.test(containerName)) throw new Error("Invalid blog storage container");
   const container = BlobServiceClient.fromConnectionString(connectionString).getContainerClient(containerName);
   const blob = slug => container.getBlockBlobClient(`posts/${slug}.json`);
+  const imageBlob = (slug, id) => container.getBlockBlobClient(`images/${slug}/${id}`);
   return {
     async list() {
       await container.createIfNotExists();
@@ -40,6 +41,31 @@ function createBlogStore(connectionString, containerName = "blog-posts") {
         blobHTTPHeaders: { blobContentType: "application/json" },
         conditions: etag ? { ifMatch: etag } : { ifNoneMatch: "*" }
       });
+    },
+    async delete(slug, etag) {
+      await blob(slug).delete({ conditions: { ifMatch: etag } });
+    },
+    async saveImage(slug, id, bytes, contentType) {
+      await imageBlob(slug, id).upload(bytes, bytes.length, {
+        blobHTTPHeaders: { blobContentType: contentType, blobCacheControl: "public, max-age=3600" },
+        conditions: { ifNoneMatch: "*" }
+      });
+    },
+    async getImage(slug, id) {
+      try {
+        const download = await imageBlob(slug, id).download();
+        const chunks = [];
+        for await (const chunk of download.readableStreamBody) chunks.push(chunk);
+        return { bytes: Buffer.concat(chunks), contentType: download.contentType };
+      } catch (error) {
+        if (error.statusCode === 404) return null;
+        throw error;
+      }
+    },
+    async deleteImages(slug) {
+      for await (const item of container.listBlobsFlat({ prefix: `images/${slug}/` })) {
+        await container.getBlobClient(item.name).deleteIfExists();
+      }
     }
   };
 }

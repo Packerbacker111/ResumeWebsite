@@ -10,10 +10,17 @@ const { renderBlogMarkdown } = require("../blog/markdown.js");
 const principal = Buffer.from(JSON.stringify({ userId: "owner", userRoles: ["authenticated", "blog_editor"] })).toString("base64");
 const post = { slug: "a-note", title: "A note", date: "2026-10-19", body: "A private thought", published: false };
 const memory = new Map();
+const images = new Map();
 const store = {
   list: async () => [...memory.values()],
   get: async slug => memory.get(slug) || null,
-  save: async value => memory.set(value.slug, value)
+  save: async value => memory.set(value.slug, value),
+  delete: async slug => memory.delete(slug),
+  saveImage: async (slug, id, bytes, contentType) => images.set(`${slug}/${id}`, { bytes, contentType }),
+  getImage: async (slug, id) => images.get(`${slug}/${id}`) || null,
+  deleteImages: async slug => {
+    for (const key of images.keys()) if (key.startsWith(`${slug}/`)) images.delete(key);
+  }
 };
 function request(path, method = "GET", body, role = principal) {
   const headers = new Headers({ origin: "https://example.com" });
@@ -46,6 +53,13 @@ test("editor Markdown renders readable blocks without treating author text as HT
   assert.doesNotMatch(html, /<script|href="javascript:/);
 });
 
+test("uploaded image Markdown renders a safe, responsive image", () => {
+  const id = "123e4567-e89b-42d3-a456-426614174000.png";
+  const html = renderBlogMarkdown(`![A <test> image](/api/blog/images/a-note/${id})`);
+  assert.match(html, new RegExp(`<img src="/api/blog/images/a-note/${id.replaceAll(".", "\\.")}" alt="A &lt;test&gt; image" loading="lazy">`));
+  assert.doesNotMatch(renderBlogMarkdown("![bad](javascript:alert(1))"), /<img/);
+});
+
 test("only the invited editor can read or change drafts", async () => {
   memory.clear();
   assert.equal((await handleBlog(request("admin/posts", "POST", post, null), store)).status, 403);
@@ -64,6 +78,53 @@ test("publishing exposes the post, and unpublishing hides it", async () => {
   assert.equal((await handleBlog(request("posts"), store)).jsonBody.length, 1);
   await handleBlog(request("admin/posts/a-note", "PUT", post), store);
   assert.equal((await handleBlog(request("posts/a-note"), store)).status, 404);
+});
+
+test("only an authorized editor can delete an unpublished draft", async () => {
+  memory.clear();
+  await handleBlog(request("admin/posts", "POST", post), store);
+  assert.equal((await handleBlog(request("admin/posts/a-note", "DELETE", null, null), store)).status, 403);
+  const foreign = request("admin/posts/a-note", "DELETE");
+  foreign.headers.set("origin", "https://other.example");
+  assert.equal((await handleBlog(foreign, store)).status, 403);
+  assert.equal(memory.has(post.slug), true);
+
+  await handleBlog(request("admin/posts/a-note", "PUT", { ...post, published: true }), store);
+  assert.equal((await handleBlog(request("admin/posts/a-note", "DELETE"), store)).status, 409);
+  assert.equal(memory.has(post.slug), true);
+
+  await handleBlog(request("admin/posts/a-note", "PUT", post), store);
+  assert.equal((await handleBlog(request("admin/posts/a-note", "DELETE"), store)).status, 200);
+  assert.equal(memory.has(post.slug), false);
+  assert.equal((await handleBlog(request("admin/posts/a-note", "DELETE"), store)).status, 404);
+});
+
+test("image uploads stay private until referenced by a published post", async () => {
+  memory.clear();
+  images.clear();
+  await handleBlog(request("admin/posts", "POST", post), store);
+  const png = Buffer.from("iVBORw0KGgo=", "base64");
+  const upload = request("admin/posts/a-note/images", "POST");
+  upload.headers.set("content-type", "image/png");
+  upload.arrayBuffer = async () => png;
+  const uploaded = await handleBlog(upload, store);
+  assert.equal(uploaded.status, 201);
+  const imagePath = uploaded.jsonBody.url.replace("/api/blog/", "");
+  assert.equal((await handleBlog(request(imagePath, "GET", null, null), store)).status, 404);
+  assert.equal((await handleBlog(request(imagePath), store)).status, 200);
+
+  await handleBlog(request("admin/posts/a-note", "PUT", { ...post, published: true }), store);
+  assert.equal((await handleBlog(request(imagePath, "GET", null, null), store)).status, 404);
+  await handleBlog(request("admin/posts/a-note", "PUT", { ...post, published: true, body: `![Test](${uploaded.jsonBody.url})` }), store);
+  const image = await handleBlog(request(imagePath, "GET", null, null), store);
+  assert.equal(image.status, 200);
+  assert.equal(image.headers["Content-Type"], "image/png");
+  assert.deepEqual(image.body, png);
+
+  await handleBlog(request("admin/posts/a-note", "PUT", post), store);
+  assert.equal((await handleBlog(request(imagePath, "GET", null, null), store)).status, 404);
+  await handleBlog(request("admin/posts/a-note", "DELETE"), store);
+  assert.equal(images.size, 0);
 });
 
 test("public listing uses a plain-text excerpt from Markdown", async () => {
