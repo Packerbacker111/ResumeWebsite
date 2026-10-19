@@ -445,8 +445,8 @@ body.command-open { overflow: hidden; }
 .editor-layout { display: grid; grid-template-columns: minmax(180px, 250px) minmax(0, 1fr); gap: 32px; margin-top: 48px; }
 .editor-layout aside, .editor-layout form { border: 1px solid var(--line); background: var(--surface); padding: 24px; }
 .editor-layout aside h2 { margin: 0 0 20px; }
-.editor-layout ul { list-style: none; margin: 20px 0 0; padding: 0; }
-.editor-layout li + li { margin-top: 10px; }
+.editor-layout aside ul { list-style: none; margin: 20px 0 0; padding: 0; }
+.editor-layout aside li + li { margin-top: 10px; }
 .editor-layout button { cursor: pointer; border: 1px solid var(--line); background: var(--surface-soft); color: var(--text); padding: 10px 14px; text-align: left; border-radius: 4px; }
 .editor-layout button:hover, .editor-layout button:focus-visible { border-color: var(--accent); }
 .editor-layout label { display: block; margin-bottom: 18px; font-weight: 600; }
