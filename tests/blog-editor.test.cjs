@@ -4,6 +4,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const vm = require("node:vm");
 const { handleBlog } = require("../api/blog-core.js");
 const { renderBlogMarkdown } = require("../blog/markdown.js");
 
@@ -153,4 +154,38 @@ test("the production custom domain can save through Azure's default API host", a
   assert.equal((await handleBlog(customDomainRequest, store)).status, 201);
   customDomainRequest.headers.set("origin", "https://samuel.regelbrugge.net.evil.example");
   assert.equal((await handleBlog(customDomainRequest, store)).status, 403);
+});
+
+test("editing while a draft save finishes does not erase newer text", async () => {
+  const handlers = new Map();
+  const fields = Object.fromEntries(["title", "slug", "date", "body", "source_url", "image", "image_alt"].map(name => [name, { value: "", focus() {} }]));
+  const form = { elements: { namedItem: name => fields[name] }, reportValidity: () => true, addEventListener() {} };
+  const status = { textContent: "" };
+  const controls = new Map([["postForm", form], ["editorStatus", status]]);
+  function element() {
+    return { disabled: false, hidden: false, addEventListener(name, handler) { this.handler = handler; }, replaceChildren() {}, append() {}, focus() {} };
+  }
+  const document = {
+    getElementById(id) {
+      if (!controls.has(id)) controls.set(id, element());
+      return controls.get(id);
+    },
+    createElement: element
+  };
+  let finishSave;
+  const stored = { slug: "a-note", title: "A note", date: "2026-10-19", body: "Earlier text", published: false };
+  const fetch = async (_url, options) => options?.method
+    ? new Promise(resolve => { finishSave = () => resolve({ ok: true, json: async () => stored }); })
+    : { ok: true, json: async () => [stored] };
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../blog/editor.js"), "utf8"), { document, fetch, window: {} });
+  fields.title.value = stored.title;
+  fields.slug.value = stored.slug;
+  fields.date.value = stored.date;
+  fields.body.value = stored.body;
+  const pending = controls.get("saveDraft").handler();
+  fields.body.value = "Earlier text plus a new paragraph";
+  finishSave();
+  await pending;
+  assert.equal(fields.body.value, "Earlier text plus a new paragraph");
+  assert.match(status.textContent, /Edits made while saving are still unsaved/);
 });

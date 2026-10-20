@@ -6,6 +6,7 @@ const postList = document.getElementById("postList");
 const deleteButton = document.getElementById("deleteDraft");
 let posts = [];
 let currentSlug = null;
+let saving = false;
 
 function say(message) { status.textContent = message; }
 function formValue(name) { return form.elements.namedItem(name).value.trim(); }
@@ -41,22 +42,34 @@ async function refresh() {
   say(`${posts.length} posts loaded.`);
 }
 async function save(published) {
+  if (saving) return;
   if (!form.reportValidity()) return;
   const post = { slug: formValue("slug"), title: formValue("title"), date: formValue("date"), body: formValue("body"), published };
   if (formValue("source_url")) post.source_url = formValue("source_url");
+  const selectedSlug = currentSlug;
+  saving = true;
+  for (const id of ["saveDraft", "publishPost", "unpublishPost"]) document.getElementById(id).disabled = true;
   say(published ? "Publishing…" : "Saving draft…");
   try {
-    const response = await fetch(`../api/blog/admin/posts${currentSlug ? `/${currentSlug}` : ""}`, {
-      method: currentSlug ? "PUT" : "POST", headers: { "Content-Type": "application/json" },
+    const response = await fetch(`../api/blog/admin/posts${selectedSlug ? `/${selectedSlug}` : ""}`, {
+      method: selectedSlug ? "PUT" : "POST", headers: { "Content-Type": "application/json" },
       credentials: "same-origin", body: JSON.stringify(post)
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "Save failed");
-    currentSlug = post.slug;
     await refresh();
-    choose(posts.find(item => item.slug === currentSlug));
-    say(published ? "Published. The post is on /blog now." : "Draft saved privately.");
+    if (currentSlug === selectedSlug && formValue("slug") === post.slug) {
+      currentSlug = post.slug;
+      form.elements.namedItem("slug").readOnly = true;
+      deleteButton.hidden = published;
+      const editedDuringSave = ["title", "date", "body", "source_url"].some(name => formValue(name) !== (post[name] || ""));
+      say(editedDuringSave ? "Saved. Edits made while saving are still unsaved." : published ? "Published. The post is on /blog now." : "Draft saved privately.");
+    }
   } catch (error) { say(error.message); }
+  finally {
+    saving = false;
+    for (const id of ["saveDraft", "publishPost", "unpublishPost"]) document.getElementById(id).disabled = false;
+  }
 }
 async function deleteDraft() {
   const post = posts.find(item => item.slug === currentSlug);
