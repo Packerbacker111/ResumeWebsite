@@ -112,10 +112,28 @@ document.getElementById("previewPost").addEventListener("click", () => {
   const heading = document.createElement("h2");
   heading.textContent = formValue("title") || "Untitled";
   preview.append(heading);
+  const meta = document.createElement("div");
+  meta.className = "blog-post-meta";
   const byline = document.createElement("p");
   byline.className = "blog-byline";
   byline.textContent = "By: Samuel Regelbrugge";
-  preview.append(byline);
+  meta.append(byline);
+  if (formValue("source_url")) {
+    let url;
+    try { url = new URL(formValue("source_url")); } catch { /* Invalid URLs are handled when saving. */ }
+    if (url?.protocol === "https:" && ["linkedin.com", "www.linkedin.com"].includes(url.hostname)) {
+      const source = document.createElement("p");
+      source.className = "blog-source";
+      const link = document.createElement("a");
+      link.href = url.href;
+      link.textContent = "View original post on LinkedIn ↗";
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      source.append(link);
+      meta.append(source);
+    }
+  }
+  preview.append(meta);
   const body = document.createElement("div");
   body.className = "blog-body";
   body.innerHTML = window.renderBlogMarkdown(formValue("body"));

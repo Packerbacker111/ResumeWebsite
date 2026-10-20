@@ -72,9 +72,10 @@ test("only the invited editor can read or change drafts", async () => {
 test("publishing exposes the post, and unpublishing hides it", async () => {
   memory.clear();
   await handleBlog(request("admin/posts", "POST", post), store);
-  const published = { ...post, published: true };
+  const published = { ...post, published: true, source_url: "https://www.linkedin.com/posts/example" };
   assert.equal((await handleBlog(request("admin/posts/a-note", "PUT", published), store)).status, 200);
   assert.equal((await handleBlog(request("posts/a-note"), store)).jsonBody.body, post.body);
+  assert.equal((await handleBlog(request("posts/a-note"), store)).jsonBody.source_url, published.source_url);
   assert.equal((await handleBlog(request("posts"), store)).jsonBody.length, 1);
   await handleBlog(request("admin/posts/a-note", "PUT", post), store);
   assert.equal((await handleBlog(request("posts/a-note"), store)).status, 404);

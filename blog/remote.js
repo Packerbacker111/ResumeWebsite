@@ -35,9 +35,22 @@ async function loadBlog() {
     const response = await fetch(`/api/blog/posts/${slug}`, { credentials: "same-origin" });
     if (!response.ok) return;
     const item = await response.json();
+    const meta = document.createElement("div");
+    meta.className = "blog-post-meta";
     const byline = textNode("p", "By: Samuel Regelbrugge");
     byline.className = "blog-byline";
-    post.replaceChildren(textNode("p", `Blog / ${item.date}`), textNode("h1", item.title), byline);
+    meta.append(byline);
+    if (item.source_url) {
+      const source = document.createElement("p");
+      source.className = "blog-source";
+      const link = textNode("a", "View original post on LinkedIn ↗");
+      link.href = item.source_url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      source.append(link);
+      meta.append(source);
+    }
+    post.replaceChildren(textNode("p", `Blog / ${item.date}`), textNode("h1", item.title), meta);
     const body = document.createElement("article");
     body.className = "blog-body";
     body.innerHTML = window.renderBlogMarkdown(item.body);

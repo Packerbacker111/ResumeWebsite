@@ -426,7 +426,8 @@ body.command-open { overflow: hidden; }
 .blog-card a:hover, .blog-source a:hover { text-decoration: underline; }
 .blog-card > a { display: inline-block; margin-top: 12px; color: var(--accent); font-size: var(--type-small); }
 .blog-empty { max-width: 650px; padding: 42px 0; }
-.blog-byline { margin: 18px 0 28px; color: var(--muted); font-size: var(--type-small); text-align: center; }
+.blog-post-meta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 24px; max-width: 720px; margin: 18px 0 28px; }
+.blog-byline { margin: 0; color: var(--muted); font-size: var(--type-small); }
 .blog-body { max-width: 720px; margin: 55px 0; }
 #remotePost .blog-body { margin-top: 28px; }
 .blog-body p { margin-bottom: 24px; color: var(--text); line-height: 1.85; }
@@ -441,7 +442,8 @@ body.command-open { overflow: hidden; }
 .blog-body code, .editor-help code { font: .9em var(--mono); background: var(--surface-soft); padding: .12em .35em; border-radius: 3px; }
 .blog-body pre { max-width: 100%; overflow-x: auto; margin: 28px 0; padding: 18px 20px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface-soft); }
 .blog-body pre code { padding: 0; background: none; white-space: pre; }
-.blog-source { margin-bottom: 35px; }
+.blog-source { margin: 0; }
+.blog-source a { text-decoration: underline; text-underline-offset: 3px; }
 .blog-editor-link { margin-top: 50px; font-size: var(--type-small); color: var(--muted); }
 .blog-editor-link a { text-decoration: underline; }
 .editor-layout { display: grid; grid-template-columns: minmax(180px, 250px) minmax(0, 1fr); gap: 32px; margin-top: 48px; }
@@ -464,7 +466,7 @@ body.command-open { overflow: hidden; }
 .editor-preview { margin-top: 30px; padding-top: 25px; border-top: 1px solid var(--line); }
 .editor-preview h2 { font-size: clamp(28px, 4vw, 44px); }
 .editor-preview p { margin-top: 18px; white-space: pre-line; line-height: 1.8; }
-.editor-preview .blog-byline { margin: 18px 0 28px; text-align: center; }
+.editor-preview .blog-post-meta p { margin: 0; }
 .editor-preview .blog-body { margin: 20px 0 0; }
 @media (max-width: 760px) { .challenge-page, .blog-page { width: calc(100% - 40px); padding: 55px 0 75px; } .challenge-grid, .editor-layout { grid-template-columns: 1fr; } .challenge-panel { min-height: 0; } .challenge-result .button { margin-top: 30px; } }
 @media print {
