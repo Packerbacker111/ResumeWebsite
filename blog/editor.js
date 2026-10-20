@@ -112,6 +112,10 @@ document.getElementById("previewPost").addEventListener("click", () => {
   const heading = document.createElement("h2");
   heading.textContent = formValue("title") || "Untitled";
   preview.append(heading);
+  const byline = document.createElement("p");
+  byline.className = "blog-byline";
+  byline.textContent = "By: Samuel Regelbrugge";
+  preview.append(byline);
   const body = document.createElement("div");
   body.className = "blog-body";
   body.innerHTML = window.renderBlogMarkdown(formValue("body"));

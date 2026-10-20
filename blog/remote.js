@@ -35,7 +35,9 @@ async function loadBlog() {
     const response = await fetch(`/api/blog/posts/${slug}`, { credentials: "same-origin" });
     if (!response.ok) return;
     const item = await response.json();
-    post.replaceChildren(textNode("p", `Blog / ${item.date}`), textNode("h1", item.title));
+    const byline = textNode("p", "By: Samuel Regelbrugge");
+    byline.className = "blog-byline";
+    post.replaceChildren(textNode("p", `Blog / ${item.date}`), textNode("h1", item.title), byline);
     const body = document.createElement("article");
     body.className = "blog-body";
     body.innerHTML = window.renderBlogMarkdown(item.body);

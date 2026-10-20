@@ -426,7 +426,9 @@ body.command-open { overflow: hidden; }
 .blog-card a:hover, .blog-source a:hover { text-decoration: underline; }
 .blog-card > a { display: inline-block; margin-top: 12px; color: var(--accent); font-size: var(--type-small); }
 .blog-empty { max-width: 650px; padding: 42px 0; }
+.blog-byline { margin: 18px 0 28px; color: var(--muted); font-size: var(--type-small); text-align: center; }
 .blog-body { max-width: 720px; margin: 55px 0; }
+#remotePost .blog-body { margin-top: 28px; }
 .blog-body p { margin-bottom: 24px; color: var(--text); line-height: 1.85; }
 .blog-body h2, .blog-body h3 { margin: 38px 0 14px; line-height: 1.25; letter-spacing: -.025em; }
 .blog-body h2 { font-size: clamp(26px, 3vw, 36px); }
@@ -462,6 +464,7 @@ body.command-open { overflow: hidden; }
 .editor-preview { margin-top: 30px; padding-top: 25px; border-top: 1px solid var(--line); }
 .editor-preview h2 { font-size: clamp(28px, 4vw, 44px); }
 .editor-preview p { margin-top: 18px; white-space: pre-line; line-height: 1.8; }
+.editor-preview .blog-byline { margin: 18px 0 28px; text-align: center; }
 .editor-preview .blog-body { margin: 20px 0 0; }
 @media (max-width: 760px) { .challenge-page, .blog-page { width: calc(100% - 40px); padding: 55px 0 75px; } .challenge-grid, .editor-layout { grid-template-columns: 1fr; } .challenge-panel { min-height: 0; } .challenge-result .button { margin-top: 30px; } }
 @media print {
