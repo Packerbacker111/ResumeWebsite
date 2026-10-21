@@ -105,7 +105,7 @@ test("image uploads stay private until referenced by a published post", async ()
   memory.clear();
   images.clear();
   await handleBlog(request("admin/posts", "POST", post), store);
-  const png = Buffer.from("iVBORw0KGgo=", "base64");
+  const png = await require("../api/node_modules/sharp")({ create: { width: 2, height: 2, channels: 3, background: "red" } }).png().toBuffer();
   const upload = request("admin/posts/a-note/images", "POST");
   upload.headers.set("content-type", "image/png");
   upload.arrayBuffer = async () => png;
@@ -121,7 +121,7 @@ test("image uploads stay private until referenced by a published post", async ()
   const image = await handleBlog(request(imagePath, "GET", null, null), store);
   assert.equal(image.status, 200);
   assert.equal(image.headers["Content-Type"], "image/png");
-  assert.deepEqual(image.body, png);
+  assert.equal((await require("../api/node_modules/sharp")(image.body).metadata()).width, 2);
 
   await handleBlog(request("admin/posts/a-note", "PUT", post), store);
   assert.equal((await handleBlog(request(imagePath, "GET", null, null), store)).status, 404);

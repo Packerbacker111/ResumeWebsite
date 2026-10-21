@@ -6,7 +6,7 @@ import html
 import json
 import re
 from hashlib import sha256
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -39,6 +39,12 @@ def validate(post):
     if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", post["slug"]):
         raise ValueError(f"Invalid slug: {post['slug']}")
     datetime.strptime(post["date"], "%Y-%m-%d")
+    if post.get("publish_at"):
+        release = datetime.fromisoformat(post["publish_at"].replace("Z", "+00:00"))
+        if release.tzinfo is None:
+            raise ValueError("publish_at requires a timezone")
+    if post["slug"] in ("index", "editor", "post", "draft-review"):
+        raise ValueError("Reserved blog slug")
     if "source_url" in post:
         url = urlparse(post["source_url"])
         if url.scheme != "https" or url.hostname not in ("linkedin.com", "www.linkedin.com"):
@@ -150,23 +156,36 @@ def draft_review(drafts):
     REVIEW.write_text(shell("Draft review", "Local LinkedIn draft review", content), encoding="utf-8")
 
 
-def build():
+def build(output=None):
+    output = Path(output) if output else BLOG
     posts = read_posts()
     for post in posts:
         validate(post)
     slugs = [post["slug"] for post in posts]
     if len(slugs) != len(set(slugs)):
         raise ValueError("Duplicate blog slug")
-    published = sorted((post for post in posts if post.get("published") is True), key=lambda post: post["date"], reverse=True)
+    now = datetime.now(timezone.utc)
+    published = sorted((post for post in posts if post.get("published") is True and
+                        (not post.get("publish_at") or datetime.fromisoformat(post["publish_at"].replace("Z", "+00:00")) <= now)),
+                       key=lambda post: post["date"], reverse=True)
+    output.mkdir(parents=True, exist_ok=True)
+    # Only current published pages belong in the generated output. Keep the
+    # handwritten UI and local review when building alongside source assets.
+    keep = {f'{post["slug"]}.html' for post in published} | {"index.html"}
+    if output.resolve() == BLOG.resolve():
+        keep |= {"editor.html", "post.html", "draft-review.html"}
+    for old in output.glob("*.html"):
+        if old.name not in keep:
+            old.unlink()
     cards = []
     for post in published:
         source = f'<a href="{esc(post["source_url"])}" target="_blank" rel="noopener">Original on LinkedIn ↗</a>' if post.get("source_url") else ""
         content = f'<p class="eyebrow">Blog / {esc(post["date"])}</p><h1>{esc(post["title"])}</h1><article class="blog-body">{paragraphs(post["body"])}</article><div class="blog-source">{source}</div><a class="text-link" href="index.html">← All notes</a>'
-        (BLOG / f'{post["slug"]}.html').write_text(shell(post["title"], post["body"][:155], content), encoding="utf-8")
+        (output / f'{post["slug"]}.html').write_text(shell(post["title"], post["body"][:155], content), encoding="utf-8")
         cards.append(f'<article class="blog-card"><time datetime="{esc(post["date"])}">{esc(post["date"])}</time><h2><a href="/blog/{esc(post["slug"])}.html">{esc(post["title"])}</a></h2><p>{esc(excerpt(post["body"]))}</p>{source}</article>')
     listing = "\n".join(cards) if cards else '<p class="blog-empty">No notes published yet. This is where I’ll share the ideas, experiments, and lessons that don’t fit in a résumé.</p>'
     content = f'<p class="eyebrow">Notes / In progress</p><h1>Thinking out loud.</h1><p class="blog-intro">Occasional thoughts on security, building things, competitions, and whatever else catches my attention.</p><div class="blog-list" id="blogList">{listing}</div><p class="blog-editor-link"><a href="/.auth/login/aad?post_login_redirect_uri=/blog/editor.html">Editor sign in</a></p>'
-    (BLOG / "index.html").write_text(shell("Blog", "Occasional notes from Samuel Regelbrugge on security, building things, and other interests.", content, extra_script='<script src="/blog/remote.js" defer></script>'), encoding="utf-8")
+    (output / "index.html").write_text(shell("Blog", "Occasional notes from Samuel Regelbrugge on security, building things, and other interests.", content, extra_script='<script src="/blog/remote.js" defer></script>'), encoding="utf-8")
     print(f"Built blog with {len(published)} published posts and {len(posts) - len(published)} drafts")
 
 
@@ -260,9 +279,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("build", "import-linkedin", "import-paste"))
     parser.add_argument("path", nargs="?")
+    parser.add_argument("--output", help="Dedicated generated HTML directory for deployment")
     args = parser.parse_args()
     if args.command == "build":
-        build()
+        build(args.output)
     elif args.command == "import-linkedin" and args.path:
         import_linkedin(args.path)
     elif args.command == "import-paste" and args.path:

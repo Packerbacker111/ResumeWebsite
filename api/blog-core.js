@@ -1,6 +1,7 @@
 "use strict";
 
 const { randomUUID } = require("node:crypto");
+const sharp = require("sharp");
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const imagePattern = /^[a-f0-9-]{36}\.(?:png|jpg|gif|webp)$/;
 const imageTypes = { "image/png": "png", "image/jpeg": "jpg", "image/gif": "gif", "image/webp": "webp" };
@@ -87,8 +88,8 @@ async function handleBlog(request, store, clock = Date.now) {
   }
   try {
     if (path === "posts" && request.method === "GET") {
-      const posts = await store.list();
-      return json(200, posts.filter(p => isPublic(p, now)).sort((a, b) => b.date.localeCompare(a.date)).map(({ body, ...summary }) => ({ ...summary, excerpt: excerpt(body) })));
+      const posts = await (store.listPublic ? store.listPublic() : store.list());
+      return json(200, posts.filter(p => isPublic(p, now)).sort((a, b) => b.date.localeCompare(a.date)).map(({ body, etag, ...summary }) => ({ ...summary, excerpt: body === undefined ? summary.excerpt : excerpt(body) })));
     }
     if (path === "admin/posts" && request.method === "GET") return json(200, await store.list());
     if (path === "admin/posts" && request.method === "POST") {
@@ -121,8 +122,16 @@ async function handleBlog(request, store, clock = Date.now) {
       const bytes = Buffer.from(await request.arrayBuffer());
       if (bytes.length > maxImageBytes) return json(413, { error: "Images must be 5 MB or smaller" });
       if (!validImage(bytes, contentType)) return json(400, { error: "The image file is invalid" });
+      let sanitized;
+      try {
+        // Sharp strips metadata by default. Apply EXIF orientation first, and
+        // retain animation while bounding total decoded pixels across frames.
+        sanitized = await sharp(bytes, { animated: true, limitInputPixels: 40000000, failOn: "warning" })
+          .autoOrient().toFormat(imageTypes[contentType] === "jpg" ? "jpeg" : imageTypes[contentType]).toBuffer();
+      } catch { return json(400, { error: "The image file is invalid or exceeds the 40 megapixel limit" }); }
+      if (sanitized.length > maxImageBytes) return json(413, { error: "Processed images must be 5 MB or smaller" });
       const id = `${randomUUID()}.${imageTypes[contentType]}`;
-      await store.saveImage(slug, id, bytes, contentType);
+      await store.saveImage(slug, id, sanitized, contentType);
       return json(201, { url: `/api/blog/images/${slug}/${id}` });
     }
     const slug = path.replace(/^admin\/posts\//, "").replace(/^posts\//, "");
@@ -157,4 +166,4 @@ async function handleBlog(request, store, clock = Date.now) {
   }
 }
 
-module.exports = { handleBlog, isEditor, validatePost };
+module.exports = { handleBlog, isEditor, validatePost, excerpt };

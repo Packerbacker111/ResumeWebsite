@@ -47,8 +47,10 @@ Open [localhost:4173](http://127.0.0.1:4173/) in your browser. The preview serve
 To run the automated checks with Node.js:
 
 ```sh
+npm ci --prefix api
 python tools/blog.py build
 node --test tests/*.test.cjs
+python -m unittest discover -s tests -p 'test_*.py'
 ```
 
 ## Replacing the portrait
@@ -99,10 +101,40 @@ LinkedIn URL blank until the LinkedIn post is live, then add it with Save change
 render as static pages. The browser editor is not active until storage and the
 role invitation are configured.
 
+Public API listing requests share a 30-second, 2 MB summary cache per Functions
+worker. Concurrent cache misses share one storage scan; failed scans back off for
+one second. Drafts and full bodies are not retained in the cache. Successful
+editor saves and deletions invalidate that worker's cache. Other workers can
+retain an older listing summary for up to 30 seconds. Individual post and image
+authorization always read fresh post data, and scheduled release times are
+checked on every response, including cached listings.
+
+Public listing, post, and image GET requests share a worker-wide token bucket:
+120 requests in a burst, replenishing at two requests per second. Excess requests
+receive HTTP 429 with `Retry-After: 1` before accessing storage. Admin routes are
+exempt. This bounds work without trusting forwarded IP headers; it is not a
+distributed or per-visitor limit. For a strict site-wide quota across scaled
+workers, configure rate limiting at the gateway. The first listing scan after a
+cold start or expiry still reads all stored posts. A public summary index larger
+than 2 MB returns 503 and needs pagination or a persistent index.
+
+New photo uploads are decoded and re-encoded with Sharp before storage, applying
+orientation and stripping EXIF, GPS, XMP, IPTC, and color-profile metadata.
+PNG, JPEG, GIF, and WebP remain supported, including GIF/WebP animation. Images
+are limited to 5 MB before and after processing and 40 million decoded pixels
+across frames. Existing stored images must be downloaded and re-uploaded to strip
+their metadata.
+
 Write a post in `blog/posts.json` with `slug`, `title`, `date` (`YYYY-MM-DD`),
 `body`, and `published: true`, then run `python tools/blog.py build`. A published
 post gets its own page at `/blog/<slug>.html`. Treat `blog/posts.json` as public
 source code and keep private drafts outside it.
+Builds remove obsolete generated HTML after a post is unpublished, deleted, or
+scheduled for the future. Deployment uses `python tools/blog.py build --output
+.blog-build` and stages only that generated HTML plus the explicit editor and
+post UI files. Old committed HTML and local draft reviews are excluded. Static
+scheduled posts require a new deployment after their release time; use the API
+editor for automatic scheduled publication.
 
 To backfill from LinkedIn, request your account archive and locate `Shares.csv`.
 Run `python tools/blog.py import-linkedin path/to/Shares.csv`. The importer saves

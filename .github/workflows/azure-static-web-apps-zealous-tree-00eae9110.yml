@@ -28,19 +28,25 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install API dependencies
+        run: npm ci --prefix api
       - name: Optimize portrait
         run: |
           python -m pip install -r tools/requirements.txt
           python tools/optimize_portrait.py
       - name: Test site
         run: |
-          python tools/blog.py build
+          python tools/blog.py build --output .blog-build
+          python -m unittest discover -s tests -p 'test_*.py'
           node --test tests/*.test.cjs
       - name: Stage public files only
         run: |
           mkdir -p _site/content _site/public _site/.well-known _site/blog
           cp index.html work.html rpm.html cookie-challenge.html favicon.ico robots.txt sitemap.xml style.css response-lab.css theme.js script.js lab-model.js response-lab.js cookie-challenge.js staticwebapp.config.json _site/
-          cp blog/*.html blog/*.js _site/blog/
+          cp .blog-build/*.html blog/editor.html blog/post.html blog/*.js _site/blog/
           cp -R images _site/images
           rm _site/images/pfp3.jpg
           cp content/SRegelbruggeResume.pdf _site/content/
