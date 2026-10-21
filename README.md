@@ -9,15 +9,15 @@ My personal portfolio, bringing together security operations, offensive testing,
 ## What’s inside
 
 - **Selected work:** AI-assisted endpoint telemetry, Microsoft Entra workflow automation, vulnerability validation, and offensive security experience.
-- **Project stories:** dedicated pages for the telemetry and Entra workflows, plus RPM’s development and interface preview.
+- **Project stories:** dedicated pages for telemetry and Entra workflows with before/after comparisons, HackerOne responsibilities with a clearly labeled fictional validation walkthrough, plus RPM’s development and interface preview.
 - **Professional background:** work history, education, certifications, cybersecurity competitions, and a downloadable résumé.
 - **Interactive design:** dark and light themes, a SOC-inspired alert panel, and an investigation workbench built for desktop and mobile.
 - **Shareable lab cases:** open the endpoint and identity investigations directly with `#lab-endpoint` and `#lab-identity` links.
-- **Small details:** a textured hero, visual project workflows, subtle section entrances, and a searchable quick-jump palette (press `/` or use the navigation button).
+- **Small details:** a textured hero, visual project workflows, a telemetry routing diagram, and a searchable quick-jump palette (press `/` or use the navigation button).
 - **Currently tinkering:** RPM — Real Password Manager, the Trump countdown site, CTF challenges, and CCDC red teaming.
 - **Cookie challenge:** a separate, real HTTP challenge backed by a managed Azure Function. The flag is generated on the server.
 - **Blog:** static notes, with a LinkedIn archive importer that creates drafts for review.
-- **Accessibility-minded interactions:** keyboard navigation, reduced-motion support, pausable alert effects, and core portfolio content that remains available without JavaScript.
+- **Accessibility-minded interactions:** keyboard navigation, reduced-motion support, optional alert effects that start paused, and core portfolio content that remains available without JavaScript.
 
 ## Response Lab
 
@@ -87,7 +87,15 @@ set `BLOG_STORAGE_CONNECTION_STRING` as a Static Web Apps API application settin
 The API creates a private `blog-posts` container on first use. Do not put the
 connection string in the repository or browser. The editor can create and update
 posts, save drafts, publish, and unpublish. Publishing makes a post available
-immediately through the public blog API. Existing repository posts continue to
+immediately through the public blog API. To publish later, choose **Publish at**
+in your device’s timezone and click **Schedule / reschedule**. Scheduled posts
+and their images stay private until that instant; the API checks the UTC release
+time on every request, so no timer service or open editor is required. The Date
+field controls the displayed post date, not publication. **Save changes** preserves
+the current status and schedule (use Schedule to apply a changed time).
+**Save draft** or **Unpublish / cancel schedule** cancels publication;
+**Publish now** removes the schedule and publishes immediately. Leave the optional
+LinkedIn URL blank until the LinkedIn post is live, then add it with Save changes. Existing repository posts continue to
 render as static pages. The browser editor is not active until storage and the
 role invitation are configured.
 

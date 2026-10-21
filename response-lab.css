@@ -68,7 +68,7 @@ body.lab-open { overflow: hidden; }
 .lab-collection progress::-webkit-progress-value { background: var(--accent); }
 .lab-collection p { font-size: var(--type-label); }
 .lab-tabs { display: flex; gap: 6px; padding: 10px 14px 0; border-bottom: 1px solid var(--line); }
-.lab-tabs button { min-height: 42px; padding: 10px 12px; font: var(--type-label) var(--mono); color: var(--muted); background: transparent; border: 0; border-bottom: 2px solid transparent; }
+.lab-tabs button { min-height: 42px; padding: 10px 12px; font: var(--type-label) var(--mono); color: var(--muted); background: transparent; border: 0; border-bottom: 2px solid transparent; transition: color .15s ease, border-color .15s ease, background-color .15s ease; }
 .lab-tabs [aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
 .lab-evidence-panel { padding: 18px; }
 .lab-evidence-panel h4 { margin-top: 6px; font-size: 17px; letter-spacing: -.02em; }

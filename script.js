@@ -51,8 +51,8 @@ const alertPanel = document.getElementById("incidentDemo");
 const alertEffectsToggle = document.getElementById("alertEffectsToggle");
 if (alertPanel && alertEffectsToggle && typeof window.matchMedia === "function") {
   const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let paused = false;
-  try { paused = localStorage.getItem("samuel-alert-effects") === "paused"; } catch (_) {}
+  let paused = true;
+  try { paused = localStorage.getItem("samuel-alert-effects") !== "running"; } catch (_) {}
   let visible = typeof IntersectionObserver !== "function";
   const updateAlertEffects = () => {
     const reduced = motionPreference.matches;
@@ -80,24 +80,7 @@ if (alertPanel && alertEffectsToggle && typeof window.matchMedia === "function")
 const year = document.getElementById("year");
 if (year) year.textContent = new Date().getFullYear();
 
-// Enter each element once. Content remains visible if observers or JS are unavailable.
-if (typeof IntersectionObserver === "function") {
-  const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const targets = document.querySelectorAll(".section-heading, .work-card, .timeline-item, .about-photo, .about-copy, .credential-card, .competition-card, .tinkering-card, .contact-band");
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      if (!preference.matches) entry.target.classList.add("reveal-enter");
-      observer.unobserve(entry.target);
-    });
-  }, { threshold: .08 });
-  if (!preference.matches) targets.forEach(target => observer.observe(target));
-  preference.addEventListener?.("change", () => {
-    if (!preference.matches) return;
-    observer.disconnect();
-    targets.forEach(target => target.classList.remove("reveal-enter"));
-  });
-}
+// Portfolio content stays still; motion is reserved for direct interactions.
 
 // A native modal keeps keyboard focus inside quick jump and restores it on close.
 (function () {

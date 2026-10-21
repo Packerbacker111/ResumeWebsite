@@ -10,17 +10,30 @@ let saving = false;
 
 function say(message) { status.textContent = message; }
 function formValue(name) { return form.elements.namedItem(name).value.trim(); }
+function localDateTime(value) {
+  const date = new Date(value);
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+}
+function postStatus(post) {
+  return !post.published ? "Draft" : post.publish_at && Date.parse(post.publish_at) > Date.now() ? "Scheduled" : "Published";
+}
+function scheduleLabel(value) {
+  return new Date(value).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
+}
+document.getElementById("scheduleHelp").textContent = `Choose a time in ${Intl.DateTimeFormat().resolvedOptions().timeZone}. Posts and images stay private until then. The Date above is the date displayed on the post.`;
 function choose(post) {
   currentSlug = post?.slug || null;
   document.getElementById("postPreview").hidden = true;
   for (const name of ["title", "slug", "date", "body", "source_url"]) form.elements.namedItem(name).value = post?.[name] || "";
+  form.elements.namedItem("publish_at").value = post?.publish_at ? localDateTime(post.publish_at) : "";
+  document.getElementById("saveChanges").hidden = !post;
   form.elements.namedItem("image").value = "";
   form.elements.namedItem("image_alt").value = "";
   if (!post) form.elements.namedItem("date").value = new Date().toISOString().slice(0, 10);
   form.elements.namedItem("slug").readOnly = !!post;
   deleteButton.hidden = !post || post.published;
   form.elements.namedItem("title").focus();
-  say(post ? `Editing ${post.published ? "published post" : "draft"}: ${post.title}` : "New private draft");
+  say(post ? `Editing ${postStatus(post).toLowerCase()}: ${post.title}${postStatus(post) === "Scheduled" ? ` · Publishes ${scheduleLabel(post.publish_at)}` : ""}` : "New private draft");
 }
 function render() {
   postList.replaceChildren();
@@ -28,7 +41,7 @@ function render() {
     const li = document.createElement("li");
     const button = document.createElement("button");
     button.type = "button";
-    button.textContent = `${post.published ? "Published" : "Draft"} · ${post.title}`;
+    button.textContent = `${postStatus(post)} · ${post.title}${postStatus(post) === "Scheduled" ? ` · ${scheduleLabel(post.publish_at)}` : ""}`;
     button.addEventListener("click", () => choose(post));
     li.append(button);
     postList.append(li);
@@ -41,15 +54,26 @@ async function refresh() {
   render();
   say(`${posts.length} posts loaded.`);
 }
-async function save(published) {
+async function save(mode) {
   if (saving) return;
   if (!form.reportValidity()) return;
+  const existing = posts.find(item => item.slug === currentSlug);
+  const published = mode === "keep" ? existing?.published === true : mode !== "draft";
   const post = { slug: formValue("slug"), title: formValue("title"), date: formValue("date"), body: formValue("body"), published };
+  const scheduleValue = formValue("publish_at");
+  if (mode === "schedule") {
+    const date = new Date(scheduleValue);
+    if (!scheduleValue || !Number.isFinite(date.getTime()) || date.getTime() <= Date.now() || localDateTime(date) !== scheduleValue) {
+      say("Choose a valid future publication time. Times skipped by daylight saving changes cannot be used.");
+      return;
+    }
+    post.publish_at = date.toISOString();
+  } else if (mode === "keep" && existing?.publish_at) post.publish_at = existing.publish_at;
   if (formValue("source_url")) post.source_url = formValue("source_url");
   const selectedSlug = currentSlug;
   saving = true;
-  for (const id of ["saveDraft", "publishPost", "unpublishPost"]) document.getElementById(id).disabled = true;
-  say(published ? "Publishing…" : "Saving draft…");
+  for (const id of ["saveDraft", "saveChanges", "schedulePost", "publishPost", "unpublishPost"]) document.getElementById(id).disabled = true;
+  say(mode === "schedule" ? "Scheduling…" : "Saving…");
   try {
     const response = await fetch(`../api/blog/admin/posts${selectedSlug ? `/${selectedSlug}` : ""}`, {
       method: selectedSlug ? "PUT" : "POST", headers: { "Content-Type": "application/json" },
@@ -61,14 +85,17 @@ async function save(published) {
     if (currentSlug === selectedSlug && formValue("slug") === post.slug) {
       currentSlug = post.slug;
       form.elements.namedItem("slug").readOnly = true;
+      document.getElementById("saveChanges").hidden = false;
       deleteButton.hidden = published;
+      const scheduleEdited = formValue("publish_at") !== scheduleValue;
       const editedDuringSave = ["title", "date", "body", "source_url"].some(name => formValue(name) !== (post[name] || ""));
-      say(editedDuringSave ? "Saved. Edits made while saving are still unsaved." : published ? "Published. The post is on /blog now." : "Draft saved privately.");
+      if (!scheduleEdited && mode !== "keep") form.elements.namedItem("publish_at").value = post.publish_at ? localDateTime(post.publish_at) : "";
+      say(editedDuringSave ? "Saved. Edits made while saving are still unsaved." : `${postStatus(post) === "Scheduled" ? `Scheduled for ${scheduleLabel(post.publish_at)}.` : published ? "Published. The post is on /blog now." : "Draft saved privately. Schedule canceled."}${scheduleEdited || (mode === "keep" && scheduleValue !== (post.publish_at ? localDateTime(post.publish_at) : "")) ? " Publication time edits have not been applied; use Schedule to change the time." : ""}`);
     }
   } catch (error) { say(error.message); }
   finally {
     saving = false;
-    for (const id of ["saveDraft", "publishPost", "unpublishPost"]) document.getElementById(id).disabled = false;
+    for (const id of ["saveDraft", "saveChanges", "schedulePost", "publishPost", "unpublishPost"]) document.getElementById(id).disabled = false;
   }
 }
 async function deleteDraft() {
@@ -118,7 +145,9 @@ async function insertImage() {
 }
 
 document.getElementById("newPost").addEventListener("click", () => choose(null));
-document.getElementById("saveDraft").addEventListener("click", () => save(false));
+document.getElementById("saveDraft").addEventListener("click", () => save("draft"));
+document.getElementById("saveChanges").addEventListener("click", () => save("keep"));
+document.getElementById("schedulePost").addEventListener("click", () => save("schedule"));
 document.getElementById("previewPost").addEventListener("click", () => {
   const preview = document.getElementById("postPreview");
   preview.replaceChildren();
@@ -154,8 +183,8 @@ document.getElementById("previewPost").addEventListener("click", () => {
   preview.hidden = false;
   preview.scrollIntoView({ behavior: "smooth" });
 });
-document.getElementById("publishPost").addEventListener("click", () => save(true));
-document.getElementById("unpublishPost").addEventListener("click", () => save(false));
+document.getElementById("publishPost").addEventListener("click", () => save("publish"));
+document.getElementById("unpublishPost").addEventListener("click", () => save("draft"));
 deleteButton.addEventListener("click", deleteDraft);
 document.getElementById("insertImage").addEventListener("click", insertImage);
 form.addEventListener("submit", event => event.preventDefault());

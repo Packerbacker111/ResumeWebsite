@@ -158,7 +158,7 @@ test("the production custom domain can save through Azure's default API host", a
 
 test("editing while a draft save finishes does not erase newer text", async () => {
   const handlers = new Map();
-  const fields = Object.fromEntries(["title", "slug", "date", "body", "source_url", "image", "image_alt"].map(name => [name, { value: "", focus() {} }]));
+  const fields = Object.fromEntries(["title", "slug", "date", "body", "source_url", "publish_at", "image", "image_alt"].map(name => [name, { value: "", focus() {} }]));
   const form = { elements: { namedItem: name => fields[name] }, reportValidity: () => true, addEventListener() {} };
   const status = { textContent: "" };
   const controls = new Map([["postForm", form], ["editorStatus", status]]);
@@ -188,4 +188,95 @@ test("editing while a draft save finishes does not erase newer text", async () =
   await pending;
   assert.equal(fields.body.value, "Earlier text plus a new paragraph");
   assert.match(status.textContent, /Edits made while saving are still unsaved/);
+});
+
+// A fixed clock checks every public route at the exact release boundary.
+test("scheduled posts and referenced images become public only when due", async () => {
+  memory.clear();
+  images.clear();
+  const release = Date.parse("2026-10-22T13:00:00.000Z");
+  const id = "123e4567-e89b-42d3-a456-426614174000.png";
+  const imagePath = `images/a-note/${id}`;
+  const scheduled = { ...post, published: true, publish_at: new Date(release).toISOString(), body: `![Test](/api/blog/${imagePath})` };
+  assert.equal((await handleBlog(request("admin/posts", "POST", scheduled), store)).status, 201);
+  images.set(`a-note/${id}`, { bytes: Buffer.from("image"), contentType: "image/png" });
+  const at = (path, time, role = null) => handleBlog(request(path, "GET", null, role), store, () => time);
+  assert.deepEqual((await at("posts", release - 1)).jsonBody, []);
+  assert.equal((await at("posts/a-note", release - 1)).status, 404);
+  assert.equal((await at(imagePath, release - 1)).status, 404);
+  assert.equal((await at(imagePath, release - 1, principal)).status, 200);
+  assert.equal((await at("admin/posts", release - 1, principal)).jsonBody[0].publish_at, scheduled.publish_at);
+  for (const time of [release, release + 1]) {
+    assert.equal((await at("posts", time)).jsonBody.length, 1);
+    assert.equal((await at("posts/a-note", time)).status, 200);
+    assert.equal((await at(imagePath, time)).status, 200);
+  }
+  // Rescheduling immediately restores privacy, and saving a draft cancels release.
+  const later = { ...scheduled, publish_at: new Date(release + 3600000).toISOString() };
+  await handleBlog(request("admin/posts/a-note", "PUT", later), store);
+  assert.equal((await at("posts/a-note", release)).status, 404);
+  await handleBlog(request("admin/posts/a-note", "PUT", { ...later, published: false }), store);
+  assert.equal(memory.get(post.slug).publish_at, undefined);
+  assert.equal((await at("posts/a-note", release + 7200000)).status, 404);
+});
+
+test("invalid publication timestamps are rejected rather than publishing early", async () => {
+  for (const publish_at of ["tomorrow", "2026-10-22T08:00", "2026-02-30T13:00:00Z", "2026-13-01T00:00:00Z", 123, {}, "2026-10-22T25:00:00Z"]) {
+    assert.equal((await handleBlog(request("admin/posts", "POST", { ...post, published: true, publish_at }), store)).status, 400);
+  }
+});
+
+function editorHarness() {
+  const fields = Object.fromEntries(["title", "slug", "date", "body", "source_url", "publish_at", "image", "image_alt"].map(name => [name, { value: "", focus() {} }]));
+  const form = { elements: { namedItem: name => fields[name] }, reportValidity: () => true, addEventListener() {} };
+  const controls = new Map([["postForm", form], ["editorStatus", { textContent: "" }]]);
+  const element = () => ({ children: [], hidden: false, addEventListener(_name, handler) { this.handler = handler; }, replaceChildren() { this.children = []; }, append(child) { this.children.push(child); }, focus() {} });
+  const document = { getElementById(id) { if (!controls.has(id)) controls.set(id, element()); return controls.get(id); }, createElement: element };
+  let stored = [];
+  const fetch = async (_url, options) => {
+    if (options?.method) { stored = [JSON.parse(options.body)]; return { ok: true, json: async () => stored[0] }; }
+    return { ok: true, json: async () => stored };
+  };
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../blog/editor.js"), "utf8"), { document, fetch, window: {} });
+  for (const name of ["title", "slug", "date", "body"]) fields[name].value = post[name];
+  return { fields, controls, stored: () => stored[0] };
+}
+
+test("editor schedules in local time, preserves a schedule when saving links, and can cancel or publish now", async () => {
+  const { fields, controls, stored } = editorHarness();
+  fields.publish_at.value = "2099-10-22T08:00";
+  await controls.get("schedulePost").handler();
+  assert.equal(stored().publish_at, new Date("2099-10-22T08:00").toISOString());
+  assert.equal(stored().published, true);
+  assert.match(controls.get("editorStatus").textContent, /Scheduled for/);
+  fields.source_url.value = "https://www.linkedin.com/posts/example";
+  await controls.get("saveChanges").handler();
+  assert.equal(stored().source_url, fields.source_url.value);
+  assert.equal(stored().publish_at, new Date("2099-10-22T08:00").toISOString());
+  fields.publish_at.value = "2099-10-23T09:00";
+  await controls.get("saveChanges").handler();
+  assert.equal(stored().publish_at, new Date("2099-10-22T08:00").toISOString());
+  assert.equal(fields.publish_at.value, "2099-10-23T09:00");
+  assert.match(controls.get("editorStatus").textContent, /use Schedule/);
+  await controls.get("schedulePost").handler();
+  assert.equal(stored().publish_at, new Date("2099-10-23T09:00").toISOString());
+  await controls.get("unpublishPost").handler();
+  assert.equal(stored().published, false);
+  assert.equal(stored().publish_at, undefined);
+  fields.publish_at.value = "2099-10-23T09:00";
+  await controls.get("schedulePost").handler();
+  await controls.get("publishPost").handler();
+  assert.equal(stored().published, true);
+  assert.equal(stored().publish_at, undefined);
+});
+
+test("editor rejects missing and past schedule times", async () => {
+  const { fields, controls, stored } = editorHarness();
+  await new Promise(resolve => setImmediate(resolve));
+  for (const time of ["", "invalid", "2000-01-01T08:00"]) {
+    fields.publish_at.value = time;
+    await controls.get("schedulePost").handler();
+    assert.equal(stored(), undefined);
+    assert.match(controls.get("editorStatus").textContent, /valid future/);
+  }
 });

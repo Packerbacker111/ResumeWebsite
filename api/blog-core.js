@@ -43,6 +43,15 @@ function validatePost(input) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== date) throw new Error("date must be YYYY-MM-DD");
   post.date = input.date;
   post.published = input.published === true;
+  if (input.publish_at != null && input.publish_at !== "") {
+    const value = input.publish_at;
+    const timestamp = typeof value === "string" ? new Date(value) : new Date(NaN);
+    if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(value) ||
+        !Number.isFinite(timestamp.getTime()) || timestamp.toISOString().replace(".000Z", "Z") !== value.replace(".000Z", "Z")) {
+      throw new Error("publish_at must be a valid UTC date and time");
+    }
+    if (post.published) post.publish_at = timestamp.toISOString();
+  }
   if (input.source_url) {
     let url;
     try { url = new URL(input.source_url); } catch { throw new Error("source_url must be a LinkedIn HTTPS URL"); }
@@ -62,7 +71,12 @@ function excerpt(body) {
     .replace(/[*`]/g, "").replace(/\s+/g, " ").trim().slice(0, 190);
 }
 
-async function handleBlog(request, store) {
+function isPublic(post, now) {
+  return post?.published === true && (!post.publish_at || Date.parse(post.publish_at) <= now);
+}
+
+async function handleBlog(request, store, clock = Date.now) {
+  const now = clock();
   const path = new URL(request.url).pathname.replace(/^\/api\/blog\/?/, "");
   const admin = path.startsWith("admin/");
   if (admin && !isEditor(request.headers.get("x-ms-client-principal"))) return json(403, { error: "Editor access required" });
@@ -74,7 +88,7 @@ async function handleBlog(request, store) {
   try {
     if (path === "posts" && request.method === "GET") {
       const posts = await store.list();
-      return json(200, posts.filter(p => p.published).sort((a, b) => b.date.localeCompare(a.date)).map(({ body, ...summary }) => ({ ...summary, excerpt: excerpt(body) })));
+      return json(200, posts.filter(p => isPublic(p, now)).sort((a, b) => b.date.localeCompare(a.date)).map(({ body, ...summary }) => ({ ...summary, excerpt: excerpt(body) })));
     }
     if (path === "admin/posts" && request.method === "GET") return json(200, await store.list());
     if (path === "admin/posts" && request.method === "POST") {
@@ -92,7 +106,7 @@ async function handleBlog(request, store) {
       const post = await store.get(slug);
       const url = `/api/blog/images/${slug}/${id}`;
       const referenced = post?.body.includes(`](${url})`);
-      if (!post || (!isEditor(request.headers.get("x-ms-client-principal")) && (!post.published || !referenced))) return json(404, { error: "Not found" });
+      if (!post || (!isEditor(request.headers.get("x-ms-client-principal")) && (!isPublic(post, now) || !referenced))) return json(404, { error: "Not found" });
       const image = await store.getImage(slug, id);
       if (!image) return json(404, { error: "Not found" });
       return { status: 200, headers: { "Content-Type": image.contentType, "Cache-Control": "no-store, private", "X-Content-Type-Options": "nosniff" }, body: image.bytes };
@@ -115,7 +129,7 @@ async function handleBlog(request, store) {
     if (!slugPattern.test(slug)) return json(404, { error: "Not found" });
     if (path === `posts/${slug}` && request.method === "GET") {
       const post = await store.get(slug);
-      if (!post?.published) return json(404, { error: "Not found" });
+      if (!isPublic(post, now)) return json(404, { error: "Not found" });
       const { etag, ...publicPost } = post;
       return json(200, publicPost);
     }

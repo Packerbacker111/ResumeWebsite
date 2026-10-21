@@ -449,7 +449,8 @@ test("navigation closes via Escape, destination selection, and outside interacti
 });
 
 test("critical effects repeat slowly and can be paused, resumed, and remembered", () => {
-  const { elements, values } = fixture();
+  assert.equal(fixture().elements.incidentDemo.dataset.effects, "paused", "Decorative effects start paused unless enabled by the visitor");
+  const { elements, values } = fixture({ "samuel-alert-effects": "running" });
   assert.equal(elements.incidentDemo.dataset.effects, "running");
   assert.equal(elements.alertEffectsToggle.hidden, false);
   elements.alertEffectsToggle.dispatch("click");
@@ -461,14 +462,15 @@ test("critical effects repeat slowly and can be paused, resumed, and remembered"
   assert.equal(values.get("samuel-alert-effects"), "running");
   assert.equal(fixture({ "samuel-alert-effects": "paused" }).elements.incidentDemo.dataset.effects, "paused");
   const blocked = fixture({}, true);
-  blocked.elements.alertEffectsToggle.dispatch("click");
   assert.equal(blocked.elements.incidentDemo.dataset.effects, "paused");
+  blocked.elements.alertEffectsToggle.dispatch("click");
+  assert.equal(blocked.elements.incidentDemo.dataset.effects, "running");
   assert.match(css, /alert-pulse 3\.2s ease-out infinite/);
   assert.match(css, /critical-glow 3\.2s ease-in-out infinite/);
 });
 
 test("alert effects stop off-screen, in hidden tabs, and for reduced-motion preferences", () => {
-  const { elements, document, motionPreference, setPanelVisible } = fixture({}, false, false, true);
+  const { elements, document, motionPreference, setPanelVisible } = fixture({ "samuel-alert-effects": "running" }, false, false, true);
   assert.equal(elements.incidentDemo.dataset.effects, "paused");
   setPanelVisible(true);
   assert.equal(elements.incidentDemo.dataset.effects, "running");
