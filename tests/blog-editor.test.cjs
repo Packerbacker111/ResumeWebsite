@@ -43,6 +43,41 @@ test("the short /blog URL resolves its loader and post links", () => {
   assert.match(client, /fetch\("\/api\/blog\/posts"/);
 });
 
+test("public blog combines static and API articles in reverse chronological order", async () => {
+  function node(tag) {
+    return {
+      tag, children: [], className: "",
+      append(...children) {
+        for (const child of children) {
+          this.children = this.children.filter(existing => existing !== child);
+          this.children.push(child);
+        }
+      },
+      querySelector(selector) { return this.children.find(child => child.tag === selector) || null; },
+      querySelectorAll(selector) { return this.children.filter(child => `.${child.className}` === selector); }
+    };
+  }
+  const list = node("div");
+  const staticArticle = node("article");
+  staticArticle.className = "blog-card";
+  const staticDate = node("time");
+  staticDate.dateTime = "2026-10-24";
+  staticArticle.append(staticDate);
+  list.append(staticArticle);
+  const document = { getElementById: id => id === "blogList" ? list : null, createElement: node };
+  const posts = [
+    { slug: "newest", title: "Newest", date: "2026-10-26", excerpt: "New" },
+    { slug: "oldest", title: "Oldest", date: "2026-10-20", excerpt: "Old" },
+    { slug: "middle", title: "Middle", date: "2026-10-25", excerpt: "Middle" }
+  ];
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../blog/remote.js"), "utf8"), {
+    document, fetch: async () => ({ ok: true, json: async () => posts })
+  });
+  await new Promise(resolve => setImmediate(resolve));
+  assert.deepEqual(list.children.map(article => article.querySelector("time").dateTime),
+    ["2026-10-26", "2026-10-25", "2026-10-24", "2026-10-20"]);
+});
+
 test("editor Markdown renders readable blocks without treating author text as HTML", () => {
   const html = renderBlogMarkdown("## A heading\n\nHello **friend** and *reader*.\n\n- First\n- Second\n\n> A thought\n\n```js\n<script>alert(1)</script>\n```\n\n[Reference](https://example.com/?a=1&b=2) [bad](javascript:alert(1))");
   assert.match(html, /<h2>A heading<\/h2>/);

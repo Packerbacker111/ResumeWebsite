@@ -26,8 +26,11 @@ async function loadBlog() {
       link.href = `/blog/post.html?slug=${encodeURIComponent(item.slug)}`;
       heading.append(link);
       article.append(date, heading, textNode("p", item.excerpt));
-      list.prepend(article);
+      list.append(article);
     }
+    const articles = [...list.querySelectorAll(".blog-card")];
+    articles.sort((a, b) => b.querySelector("time").dateTime.localeCompare(a.querySelector("time").dateTime));
+    list.append(...articles);
   }
   if (post) {
     const slug = new URLSearchParams(location.search).get("slug") || "";
