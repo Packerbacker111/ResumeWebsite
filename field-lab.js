@@ -1,61 +1,6 @@
 "use strict";
 (() => {
   const byId = id => document.getElementById(id);
-  const replay = byId("replay-position");
-  if (replay) {
-    const signals = [
-      { time: "09:14", stage: "Delivery", heading: "A document with a second job.", defender: "A billing-themed email delivers a document. Delivery alone does not establish compromise; correlate it with endpoint activity.", attacker: "The attacker sends a document disguised as an invoice, aiming to get the recipient to open it and enable active content.", judgment: "Next question: did anyone open it, and what process ran afterward?", source: "MAIL GATEWAY / MESSAGE RECORD", artifact: "09:14:02  recipient: analyst@example.test\nsubject: Updated invoice\nattachment: invoice-review.docm\ndelivery: inbox" },
-      { time: "09:16", stage: "Execution", heading: "The process tree tells a story.", defender: "WINWORD.EXE launches PowerShell, which writes a script and contacts an unfamiliar host. That sequence is stronger evidence than an email subject.", attacker: "The document starts a script interpreter to retrieve a second stage. Office spawning PowerShell leaves a useful trail for defenders.", judgment: "Correlate the parent process, script content, and outbound connection before deciding scope.", source: "ENDPOINT / PROCESS + NETWORK", artifact: "09:16:11  host: workstation-07\nparent: WINWORD.EXE\nchild: powershell.exe\nfile: C:\\Users\\analyst\\AppData\\Local\\Temp\\review.ps1\ndestination: update.example.test:443" },
-      { time: "09:18", stage: "Credential access", heading: "Access is a signal. Theft is a conclusion.", defender: "A new process requests access to LSASS memory. The timing is suspicious, but the event does not establish that usable credentials were extracted.", attacker: "The next objective is credential material that could enable access to another system. Memory access may be blocked or may fail to produce useful data.", judgment: "Check access results, process lineage, protection events, and subsequent authentication activity.", source: "ENDPOINT / MEMORY ACCESS", artifact: "09:18:43  host: workstation-07\nsource: review-helper.exe\ntarget: lsass.exe\nevent: process memory access\ncredential extraction: not established" },
-      { time: "09:22", stage: "Lateral movement", heading: "One host becomes two.", defender: "A remote logon from workstation-07 is followed by service creation on fileserver-02. Correlate the account and service with approved administration, then scope both hosts.", attacker: "The attacker attempts to use an account to execute on a second host. A successful remote logon and service creation expand the visible footprint.", judgment: "Investigate both hosts and the account. Choose containment based on the correlated evidence and operational context.", source: "IDENTITY + SERVER / CORRELATED EVENTS", artifact: "09:22:06  destination: fileserver-02\nsource: workstation-07\naccount: EXAMPLE\\svc-reports\nevent: remote logon succeeded\n09:22:19  new service: ReviewUpdater\nchange approval: not found in this scenario" }
-    ];
-    let position = 0;
-    let perspective = "defender";
-    let timer = null;
-    function stop() {
-      clearInterval(timer);
-      timer = null;
-      byId("replay-play").textContent = "Play replay";
-      byId("replay-play").setAttribute("aria-pressed", "false");
-    }
-    function render() {
-      const signal = signals[position];
-      replay.value = String(position);
-      replay.setAttribute("aria-valuetext", `${signal.time}, ${signal.stage}`);
-      byId("replay-time").textContent = `${signal.time} / ${signal.stage}`;
-      byId("replay-heading").textContent = signal.heading;
-      byId("replay-copy").textContent = signal[perspective];
-      byId("replay-judgment").textContent = signal.judgment;
-      byId("artifact-label").textContent = signal.source;
-      byId("replay-artifact").textContent = signal.artifact;
-      byId("replay-count").textContent = `${position + 1} / ${signals.length}`;
-      byId("replay-prev").disabled = position === 0;
-      byId("replay-next").disabled = position === signals.length - 1;
-      document.querySelectorAll("[data-node]").forEach((node, index) => {
-        node.toggleAttribute("data-seen", index <= position);
-        if (index === position) node.setAttribute("aria-current", "step");
-        else node.removeAttribute("aria-current");
-      });
-    }
-    replay.addEventListener("input", () => { stop(); position = Number(replay.value); render(); });
-    byId("replay-prev").addEventListener("click", () => { stop(); position = Math.max(0, position - 1); render(); });
-    byId("replay-next").addEventListener("click", () => { stop(); position = Math.min(3, position + 1); render(); });
-    byId("replay-play").addEventListener("click", () => {
-      if (timer) { stop(); return; }
-      if (position === signals.length - 1) position = 0;
-      render();
-      byId("replay-play").textContent = "Pause replay";
-      byId("replay-play").setAttribute("aria-pressed", "true");
-      timer = setInterval(() => { position++; render(); if (position === signals.length - 1) stop(); }, 5000);
-    });
-    document.querySelectorAll("[data-perspective]").forEach(button => button.addEventListener("click", () => {
-      perspective = button.dataset.perspective;
-      document.querySelectorAll("[data-perspective]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
-      render();
-    }));
-    document.addEventListener("visibilitychange", () => { if (document.hidden) stop(); });
-    render();
-  }
   if (byId("export-request")) {
     let fixed = false;
     let broken = false;

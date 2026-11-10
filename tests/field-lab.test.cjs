@@ -18,38 +18,15 @@ function fixture(page, script = "field-lab.js") {
   const html = fs.readFileSync(path.join(root, page), "utf8");
   const elements = Object.fromEntries([...html.matchAll(/id="([^"]+)"/g)].map(([, id]) => [id, new Element()]));
   const nodes = Array.from({ length: 4 }, () => new Element());
-  const perspectives = ["defender", "attacker"].map(value => { const el = new Element(); el.dataset.perspective = value; return el; });
   const tour = Array.from({ length: 4 }, () => new Element());
   const document = new Element();
   document.getElementById = id => elements[id] ?? null;
-  document.querySelectorAll = selector => selector === "[data-perspective]" ? perspectives : selector === "[data-tour]" ? tour : nodes;
+  document.querySelectorAll = selector => selector === "[data-tour]" ? tour : nodes;
   const timers = new Map(); let nextTimer = 0;
   const context = { document, setInterval: fn => { timers.set(++nextTimer, fn); return nextTimer; }, clearInterval: id => timers.delete(id), selectRpmView: index => { context.rpmView = index; } };
   vm.runInNewContext(fs.readFileSync(path.join(root, script), "utf8"), context);
-  return { el: elements, nodes, perspectives, document, timers, tour, context, tick: () => { for (const fn of [...timers.values()]) fn(); } };
+  return { el: elements, nodes, document, timers, tour, context, tick: () => { for (const fn of [...timers.values()]) fn(); } };
 }
-
-test("replay scrubbing, perspectives, boundary controls, and hidden-tab pause", () => {
-  const f = fixture("field-lab.html");
-  assert.equal(f.el["replay-prev"].disabled, true);
-  f.el["replay-next"].fire("click");
-  assert.match(f.el["replay-artifact"].textContent, /WINWORD/);
-  f.perspectives[1].fire("click");
-  assert.match(f.el["replay-copy"].textContent, /attacker|document starts/i);
-  assert.equal(f.perspectives[0].attributes["aria-pressed"], "false");
-  f.el["replay-position"].value = "3";
-  f.el["replay-position"].fire("input");
-  assert.equal(f.el["replay-next"].disabled, true);
-  assert.equal(f.nodes[3].attributes["aria-current"], "step");
-  f.el["replay-play"].fire("click");
-  assert.equal(f.el["replay-count"].textContent, "1 / 4");
-  f.tick(); f.tick(); f.tick();
-  assert.equal(f.timers.size, 0);
-  assert.equal(f.el["replay-count"].textContent, "4 / 4");
-  f.el["replay-play"].fire("click");
-  f.document.hidden = true; f.document.fire("visibilitychange");
-  assert.equal(f.timers.size, 0);
-});
 
 test("authorization exercise verifies both cross-account denial and legitimate access after fixing", () => {
   const { el } = fixture("field-lab.html");

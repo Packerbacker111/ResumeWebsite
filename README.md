@@ -21,11 +21,11 @@ My personal portfolio, bringing together security operations, offensive testing,
 
 ## Field Lab & product walkthrough
 
-`field-lab.html` adds a four-stage fictional intrusion replay with a timeline,
-attacker/defender perspectives, and correlated evidence. Playback starts only on
-request and pauses when the tab is hidden. Two browser-only exercises demonstrate
-object authorization and client-controlled roles, with reversible fixes and
-verification feedback. The original server-backed cookie puzzle remains linked.
+`field-lab.html` focuses on two browser-only break/fix exercises: object
+authorization and client-controlled roles, with reversible fixes and verification
+feedback. The original server-backed cookie puzzle remains linked. Incident
+investigation stays in the Response Lab, where visitors gather evidence and make
+response decisions.
 
 The Entra case study includes a fictional branching workflow demo: high risk,
 familiar context, or missing context. Its rules illustrate routing rather than
