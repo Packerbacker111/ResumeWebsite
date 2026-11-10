@@ -18,7 +18,7 @@ function challengeResponse(cookieHeader, flag) {
     "X-Robots-Tag": "noindex"
   };
   if (!String(cookieHeader || "").split(";").some(part => part.trim().startsWith(`${cookieName}=`))) {
-    headers["Set-Cookie"] = `${cookieName}=false; Path=/api/cookie-challenge; Secure; SameSite=Lax`;
+    headers["Set-Cookie"] = `${cookieName}=false; Path=/; Secure; SameSite=Lax`;
   }
   if (!flag) return { status: 503, headers, jsonBody: { state: "unavailable" } };
   if (hasAccess(cookieHeader)) return { status: 200, headers, jsonBody: { state: "solved", flag } };

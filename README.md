@@ -177,7 +177,11 @@ puzzle without scoring. For a scored event that needs one stable flag, set the
 optional Azure application setting `COOKIE_CTF_FLAG` to a private value. Never
 commit that value or put it in `api/local.settings.json`.
 The API is intentionally a small vulnerable exercise: it trusts the editable
-`show-flag` cookie only for this one endpoint. The page needs the live Azure API;
+`show-flag` cookie only for this one endpoint. The page initializes a site-wide
+`show-flag=false` cookie before its first request if none exists, preserving any
+visitor-edited value and retiring the former API-scoped cookie. The API also
+sets the same site-wide default on requests without the cookie.
+The page needs the live Azure API;
 the local static preview cannot run it. `api/` is deployed as a managed Function,
 while only the staged public files in `_site/` are served as site assets.
 
