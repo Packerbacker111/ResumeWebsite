@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css?v=20261019-r2" />
     <script src="theme.js?v=20260902-r1"></script>
-    <script src="cookie-challenge.js?v=20261019-r2" defer></script>
+    <script src="cookie-challenge.js?v=20261109-r4" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -20,19 +20,19 @@
     <main id="main" class="challenge-page">
       <p class="eyebrow">A hands-on web challenge</p>
       <h1>Who gets to decide?</h1>
-      <p class="challenge-lead">This page asks a real server endpoint whether you may see the flag. The first answer is no. Your mission is to change the request the browser sends.</p>
+      <p class="challenge-lead">There’s a flag behind this gate. The server says you can’t see it. Find the weakness in how it makes that decision.</p>
       <div class="challenge-grid">
         <section class="challenge-panel" aria-labelledby="mission-title">
           <p class="card-label">01 / Mission</p><h2 id="mission-title">Turn access denied into access granted.</h2>
-          <p>Open your browser’s developer tools and inspect the cookies for this site. Find <code>show-flag</code>, change its value, then check again. The server reads that cookie on each request.</p>
-          <p class="challenge-hint">Tip: look under Application or Storage. The cookie belongs to the <code>/api/cookie-challenge</code> path.</p>
+          <p>The gate trusts something it probably shouldn’t. Figure out what’s making the decision—and who really controls it.</p>
+          <details class="challenge-hint"><summary>Need a nudge?</summary><p>A request carries more than a URL. Look at what travels between your browser and the server when you check the gate.</p><details><summary>One more hint</summary><p>Inspect the site’s cookies in your browser’s Application or Storage tools. Can a value you control influence the server’s decision?</p></details></details>
         </section>
         <section class="challenge-panel challenge-result" aria-labelledby="result-title">
           <p class="card-label">02 / Server response</p><h2 id="result-title">The gate</h2>
           <p id="challengeStatus" role="status" aria-live="polite">Checking the server…</p>
           <p id="challengeFlag" class="challenge-flag" hidden></p>
           <button type="button" id="challengeRetry" class="button primary">Check again <span aria-hidden="true">↗</span></button>
-          <p class="challenge-hint">This uses an actual HTTP request. Refreshing or pressing the button sends your current cookie to the server.</p>
+          <p class="challenge-hint">Each check makes a fresh request to the server.</p>
           <noscript><p>JavaScript is needed for the response panel. You can still inspect the endpoint at <code>/api/cookie-challenge</code>.</p></noscript>
         </section>
       </div>

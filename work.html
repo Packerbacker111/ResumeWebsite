@@ -10,7 +10,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css?v=20261020-r2" />
+    <link rel="stylesheet" href="style.css?v=20261109-r2" />
+    <link rel="stylesheet" href="field-lab.css?v=20261109-r2" />
+    <script src="field-lab.js?v=20261109-r2" defer></script>
     <script src="theme.js?v=20260902-r1"></script>
   </head>
   <body>
@@ -35,6 +37,13 @@
         <figure class="story-flow"><figcaption>Illustrative workflow</figcaption><ol><li><span>01</span><strong>Signal</strong><small>Identity risk</small></li><li><span>02</span><strong>Automate</strong><small>Repeatable steps</small></li><li><span>03</span><strong>Review</strong><small>Analyst action</small></li></ol></figure>
         <div class="workflow-comparison" aria-label="Identity workflow comparison"><section><h3>Before / Repeat the routine</h3><p>Spend analyst time gathering identity-risk context and carrying out recurring workflow steps.</p></section><section><h3>After / Automate the repeatable steps</h3><p>Entra risk data → Tines stories → playbook-defined routing → analyst review of cases requiring judgment.</p></section></div>
       </article>
+      <section id="entra-demo" class="automation-demo" aria-labelledby="automation-title">
+        <p class="eyebrow">Interactive / Illustrative Entra workflow</p><h3 id="automation-title">Let the routine work flow.</h3><p>Run a fictional identity alert through context gathering and routing. These simplified branches demonstrate the concept; they do not reproduce an internal playbook or connect to Entra.</p>
+        <noscript><p>Enable JavaScript to run the demo. The workflow gathers identity context, evaluates the available evidence, and routes the case to human review. Missing context takes the manual-review path.</p></noscript>
+        <div class="automation-choice"><label for="automation-scenario">Choose the evidence<select id="automation-scenario"><option value="review">High risk / unfamiliar sign-in</option><option value="known">Low risk / familiar context</option><option value="missing">Missing device context</option></select></label><button id="automation-run" type="button" class="button primary">Run workflow →</button></div>
+        <ol class="automation-path" aria-label="Workflow progress"><li data-auto-step>01 / Receive signal</li><li data-auto-step>02 / Gather context</li><li data-auto-step>03 / Evaluate branch</li><li data-auto-step>04 / Route for review</li></ol>
+        <div class="automation-result" aria-live="polite" aria-atomic="true"><h4 id="automation-status">Context first. Action second.</h4><p id="automation-copy">Choose a scenario and run the workflow to follow its evidence trail.</p></div>
+      </section>
       <article id="vulnerability-validation" class="story-case" aria-labelledby="validation-title">
         <div class="story-case-heading"><p class="eyebrow">03 / Vulnerability validation</p><h2 id="validation-title">From researcher report to actionable finding.</h2><p>As the primary HackerOne bug bounty contact, I validate submissions, assess risk, and coordinate remediation with internal stakeholders. The work brings together technical evidence, researcher communication, and the context needed to prioritize a response.</p></div>
         <div class="story-facts"><div><span>Responsibility</span><strong>Primary HackerOne contact</strong></div><div><span>Contribution</span><strong>Validation + risk assessment</strong></div><div><span>Coordination</span><strong>Researchers + internal teams</strong></div></div>

@@ -1,0 +1,50 @@
+/* Evidence trails: one quiet accent, state changes with a purpose. */
+.field-section { padding: 56px 0; scroll-margin-top: 100px; }
+.field-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+.field-heading h2 { font-size: clamp(30px, 4vw, 48px); line-height: 1.12; letter-spacing: -.045em; margin-top: 12px; }
+.field-tag, .lab-disclosure { color: var(--muted); font: 12px/1.7 var(--mono); }
+.lab-disclosure { border-left: 2px solid var(--accent); padding-left: 14px; margin-top: 22px; }
+.field-page .story-intro .lab-disclosure { font: 12px/1.8 var(--mono); }
+.field-page input:focus-visible, .field-page select:focus-visible, .automation-demo select:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+.automation-demo { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); overflow: hidden; }
+.challenge-card p { font-size: 14px; line-height: 1.8; }
+.field-page pre, .automation-demo pre { white-space: pre-wrap; overflow-wrap: anywhere; font: 12px/1.9 var(--mono); color: var(--text); margin: 16px 0 0; }
+.field-page button, .automation-demo button { cursor: pointer; }
+.field-page button:disabled, .automation-demo button:disabled { opacity: .45; cursor: default; transform: none; }
+.field-notes { border-top: 1px solid var(--line); margin-top: 24px; padding-top: 18px; font-size: 14px; color: var(--muted); }
+.field-notes summary { cursor: pointer; color: var(--text); min-height: 32px; }
+.field-notes p { margin-top: 14px; }
+.field-notes a { text-decoration: underline; color: var(--accent); }
+.challenge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.challenge-card { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 28px; min-width: 0; }
+.challenge-card h3 { font-size: 25px; letter-spacing: -.035em; margin: 14px 0; }
+.challenge-card label { display: block; font: 12px var(--mono); color: var(--muted); margin-top: 24px; }
+.request-row { display: flex; gap: 10px; margin-top: 10px; }
+.request-row input, .request-row select, .automation-choice select { width: 100%; min-width: 0; padding: 12px; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); color: var(--text); font: 14px var(--mono); }
+.request-row button { flex-shrink: 0; padding-inline: 14px; gap: 8px; }
+.challenge-card .challenge-response { padding: 16px; background: var(--bg); border: 1px solid var(--line); min-height: 112px; }
+.challenge-feedback { color: var(--accent); min-height: 52px; margin-block: 12px; }
+.challenge-card button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+.cookie-lab-link { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 28px; margin-top: 24px; border: 1px solid var(--line); border-radius: 8px; }
+.cookie-lab-link > span:first-child { display: grid; gap: 8px; }
+.cookie-lab-link strong { font-size: 22px; }
+.cookie-lab-link span span:last-child { color: var(--muted); font-size: 14px; }
+.automation-demo { padding: 28px; margin-top: 32px; scroll-margin-top: 110px; }
+.automation-demo h3 { font-size: 26px; margin: 10px 0; }
+.automation-demo > p { max-width: 660px; font-size: 14px; }
+.automation-choice { display: flex; flex-wrap: wrap; align-items: end; gap: 16px; margin: 24px 0; }
+.automation-choice label { display: grid; gap: 8px; flex: 1; font: 12px var(--mono); min-width: 180px; }
+.automation-path { list-style: none; padding: 0; margin: 28px 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.automation-path li { border-top: 2px solid var(--line); padding-top: 14px; color: var(--muted); font: 12px/1.8 var(--mono); transition: border-color .3s; }
+.automation-path li[data-complete] { border-color: var(--accent); color: var(--accent); }
+.automation-result { border-left: 2px solid var(--accent); padding-left: 18px; min-height: 94px; }
+.automation-result h4 { margin-bottom: 8px; font-size: 18px; }
+.automation-result p { font-size: 14px; }
+@media(max-width: 760px) {
+  .field-heading { align-items: start; flex-direction: column; }
+  .challenge-grid { grid-template-columns: 1fr; }
+  .challenge-card, .automation-demo { padding: 20px; }
+  .automation-path { grid-template-columns: 1fr 1fr; }
+  .field-tag { font-size: 10px; }
+}
+@media(prefers-reduced-motion: reduce) { .automation-path li { transition: none; } }

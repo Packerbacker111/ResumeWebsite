@@ -5,12 +5,37 @@ const path = require("node:path");
 const Module = require("node:module");
 const root = path.resolve(__dirname, "..");
 const { challengeResponse, hasAccess } = require("../api/cookie-challenge-core.js");
+const vm = require("node:vm");
+
+test("first page load seeds a visible false cookie before checking, without overwriting visitor edits", async () => {
+  for (const initial of ["", "other=value", "show-flag=true", "show-flag=false"]) {
+    let visible = initial;
+    let sent;
+    const writes = [];
+    const document = {
+      get cookie() { return visible; },
+      set cookie(value) {
+        writes.push(value);
+        // The expired API-scoped cookie is separate from the page-visible cookie.
+        if (value.includes("Path=/;")) visible = value.split(";")[0];
+      },
+      getElementById: () => ({ addEventListener() {} })
+    };
+    await vm.runInNewContext(fs.readFileSync(path.join(root, "cookie-challenge.js"), "utf8"), {
+      document,
+      fetch: async () => { sent = visible; return { ok: true, json: async () => ({ state: "denied" }) }; }
+    });
+    assert.equal(sent, initial.includes("show-flag=") ? initial : "show-flag=false");
+    assert.ok(writes.some(value => value.includes("Max-Age=0; Path=/api/cookie-challenge;")));
+    assert.equal(writes.filter(value => value.includes("Path=/;")).length, initial.includes("show-flag=") ? 0 : 1);
+  }
+});
 
 test("the real HTTP challenge starts denied and sets an editable cookie", () => {
   const response = challengeResponse("", "CTF{test-only}");
   assert.equal(response.status, 200);
   assert.equal(response.jsonBody.state, "denied");
-  assert.match(response.headers["Set-Cookie"], /^show-flag=false; Path=\/api\/cookie-challenge; Secure; SameSite=Lax$/);
+  assert.match(response.headers["Set-Cookie"], /^show-flag=false; Path=\/; Secure; SameSite=Lax$/);
   assert.equal(response.headers["Cache-Control"], "no-store, private");
   assert.equal(response.headers.Vary, "Cookie");
   assert.equal(response.jsonBody.flag, undefined);

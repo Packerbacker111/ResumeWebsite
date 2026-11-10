@@ -45,13 +45,13 @@ jobs:
       - name: Stage public files only
         run: |
           mkdir -p _site/content _site/public _site/.well-known _site/blog
-          cp index.html work.html rpm.html cookie-challenge.html favicon.ico robots.txt sitemap.xml style.css response-lab.css theme.js script.js lab-model.js response-lab.js cookie-challenge.js staticwebapp.config.json _site/
+          cp index.html work.html rpm.html field-lab.html field-lab.css field-lab.js cookie-challenge.html favicon.ico robots.txt sitemap.xml style.css response-lab.css theme.js script.js lab-model.js response-lab.js cookie-challenge.js staticwebapp.config.json _site/
           cp .blog-build/*.html blog/editor.html blog/post.html blog/*.js _site/blog/
           cp -R images _site/images
           rm _site/images/pfp3.jpg
           cp content/SRegelbruggeResume.pdf _site/content/
           cp public/og.png _site/public/
-          cp public/rpm-preview.html public/rpm-preview.css public/rpm-preview.js _site/public/
+          cp public/rpm-preview.html public/rpm-preview.css public/rpm-preview.js public/rpm-tour.js _site/public/
           cp .well-known/discord _site/.well-known/
       - name: Build And Deploy
         id: builddeploy
