@@ -16,7 +16,7 @@ async function checkChallenge() {
       flag.textContent = result.flag;
       flag.hidden = false;
     } else if (response.ok && result.state === "denied") {
-      status.textContent = "Access denied. The server has not seen the right cookie yet.";
+      status.textContent = "Access denied. The gate is still closed.";
     } else {
       status.textContent = "The challenge is temporarily unavailable. Please try later.";
     }
