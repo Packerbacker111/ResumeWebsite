@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Replay a fictional intrusion and practice breaking and fixing access controls in Samuel Regelbrugge’s interactive Field Lab." />
+  <title>Field Lab | Samuel Regelbrugge</title>
+  <link rel="canonical" href="https://samuel.regelbrugge.net/field-lab.html" />
+  <link rel="icon" href="favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=20261109" />
+  <link rel="stylesheet" href="field-lab.css?v=20261109" />
+  <script src="theme.js?v=20260902-r1"></script>
+  <script src="field-lab.js?v=20261109" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header"><nav class="site-nav" aria-label="Primary navigation"><a class="brand" href="index.html"><span class="brand-monogram" aria-hidden="true">sr<span>.</span></span><span class="brand-name">Samuel Regelbrugge<span class="brand-subtitle">Security, with perspective.</span></span></a><a class="text-link" href="index.html#field-notes">← Back to the portfolio</a></nav></header>
+  <main id="main" class="story-page field-page">
+    <div class="story-intro"><p class="eyebrow">Interactive / Field Lab</p><h1>Follow the evidence.</h1><p>One intrusion. Two perspectives. Step through the signals, then get hands-on with the mistakes that make an attack possible.</p><p class="lab-disclosure">Fictional systems and evidence. Every exercise runs locally in your browser.</p></div>
+    <nav class="story-index" aria-label="Field Lab sections"><a href="#replay">01 / Attack replay ↓</a><a href="#challenges">02 / Break it. Fix it. ↓</a><a href="index.html#lab-endpoint">03 / Take the analyst seat ↗</a></nav>
+    <noscript><p class="lab-disclosure">Enable JavaScript to use the replay and exercises. The scenario overview and remediation notes remain readable below.</p></noscript>
+    <section id="replay" class="field-section" aria-labelledby="replay-title">
+      <div class="field-heading"><div><p class="eyebrow">01 / Incident reconstruction</p><h2 id="replay-title">An ordinary Tuesday.<br />Until it wasn’t.</h2></div><span class="field-tag">CASE / FL-001</span></div>
+      <div class="replay-shell">
+        <div class="replay-toolbar"><span class="mono">09:14 → 09:22 / Fictional timeline</span><div class="segmented" role="group" aria-label="Replay perspective"><button type="button" data-perspective="defender" aria-pressed="true">Defender</button><button type="button" data-perspective="attacker" aria-pressed="false">Attacker</button></div></div>
+        <ol class="attack-map" aria-label="Intrusion path">
+          <li data-node="0" aria-current="step"><span class="node-icon" aria-hidden="true">✉</span><strong>Delivery</strong><small>Phishing email</small></li>
+          <li data-node="1"><span class="node-icon" aria-hidden="true">&gt;_</span><strong>Execution</strong><small>workstation-07</small></li>
+          <li data-node="2"><span class="node-icon" aria-hidden="true">•••</span><strong>Credential access</strong><small>Memory access</small></li>
+          <li data-node="3"><span class="node-icon" aria-hidden="true">⇄</span><strong>Lateral movement</strong><small>fileserver-02</small></li>
+        </ol>
+        <div class="replay-evidence" aria-live="polite" aria-atomic="true"><div><p id="replay-time" class="eyebrow">09:14 / Delivery</p><h3 id="replay-heading">A document with a second job.</h3><p id="replay-copy">A billing-themed email delivers a document. Delivery alone does not establish compromise; correlate it with endpoint activity.</p><p id="replay-judgment" class="evidence-judgment">Next question: did anyone open it, and what process ran afterward?</p></div><div class="evidence-artifact"><span id="artifact-label" class="eyebrow">MAIL GATEWAY / MESSAGE RECORD</span><pre id="replay-artifact">09:14:02  recipient: analyst@example.test
+subject: Updated invoice
+attachment: invoice-review.docm
+delivery: inbox</pre></div></div>
+        <div class="replay-controls"><label for="replay-position">Timeline <output id="replay-count" for="replay-position">1 / 4</output></label><input id="replay-position" type="range" min="0" max="3" value="0" step="1" aria-valuetext="09:14, Delivery" /><div class="replay-buttons"><button id="replay-prev" type="button" class="button secondary" disabled>← Previous</button><button id="replay-play" type="button" class="button secondary" aria-pressed="false">Play replay</button><button id="replay-next" type="button" class="button primary">Next signal →</button></div></div>
+      </div>
+      <details class="field-notes"><summary>Read the whole scenario</summary><p>A phishing document starts PowerShell on workstation-07. A later process accesses credential-related memory, followed by a remote logon and service creation on fileserver-02. The correlation supports investigating an intrusion; the memory-access signal alone does not prove that usable credentials were stolen.</p><p>This is a reconstruction, not a containment simulator. For response decisions, open the <a href="index.html#lab-endpoint">Response Lab</a>.</p></details>
+    </section>
+    <section id="challenges" class="field-section" aria-labelledby="challenges-title">
+      <div class="field-heading"><div><p class="eyebrow">02 / Break it. Fix it.</p><h2 id="challenges-title">Find the gap.<br />Close the loop.</h2></div><span class="field-tag">BROWSER SANDBOX</span></div>
+      <div class="challenge-grid">
+        <article class="challenge-card" id="authorization-exercise"><p class="eyebrow">01 / Object authorization</p><h3>Whose export is it?</h3><p>You’re signed in as account B. Your export is 2002. Account A owns export 2001. Can you retrieve A’s fictional record?</p><label for="export-id">GET /exports/<span class="sr-only"> Export identifier</span></label><div class="request-row"><input id="export-id" type="number" value="2002" min="1" step="1" /><button id="export-request" type="button" class="button primary">Send request</button></div><pre id="export-response" class="challenge-response" aria-live="polite">Ready. Request a fictional export.</pre><p id="export-progress" class="challenge-feedback" aria-live="polite">Try changing the identifier.</p><button id="export-fix" type="button" class="button secondary" aria-pressed="false">Apply authorization fix</button><details class="field-notes"><summary>Inspect the code &amp; remediation</summary><pre>// Vulnerable: lookup without ownership check
+return exports.find(item =&gt; item.id === id);
+
+// Fixed: scope the lookup to the signed-in account
+return exports.find(item =&gt;
+  item.id === id &amp;&amp; item.owner === session.accountId
+);</pre><p>The identifier is not the authorization boundary. Derive the account from the authenticated session, enforce ownership on the server, and retest both authorized and unauthorized requests.</p></details></article>
+        <article class="challenge-card" id="role-exercise"><p class="eyebrow">02 / Trust boundaries</p><h3>A role is just a string?</h3><p>The fictional app trusts a role supplied by the browser. Change it and request the admin report. Then move the authority back to the server.</p><label for="client-role">Browser-supplied role</label><div class="request-row"><select id="client-role"><option value="member">member</option><option value="admin">admin</option></select><button id="role-request" type="button" class="button primary">Request report</button></div><pre id="role-response" class="challenge-response" aria-live="polite">Ready. Server-side account role: member.</pre><p id="role-progress" class="challenge-feedback" aria-live="polite">Can a browser claim more privilege?</p><button id="role-fix" type="button" class="button secondary" aria-pressed="false">Apply server-side role check</button><details class="field-notes"><summary>Inspect the code &amp; remediation</summary><pre>// Vulnerable: caller chooses authority
+allow = request.role === "admin";
+
+// Fixed: use the authenticated server-side session
+allow = session.role === "admin";</pre><p>Never grant privilege based on an editable client value. This exercise models a server decision locally; editing this page never grants real access.</p></details></article>
+      </div>
+      <a class="cookie-lab-link" href="cookie-challenge.html"><span><span class="eyebrow">03 / Take it to HTTP</span><strong>The original cookie challenge</strong><span>A real server-backed puzzle. Bring your browser’s developer tools.</span></span><span aria-hidden="true">↗</span></a>
+    </section>
+    <div class="story-footer"><a class="button primary" href="work.html#entra-demo">Run the automation demo ↗</a><a class="text-link" href="index.html">Back to the portfolio ↑</a></div>
+  </main>
+  <footer class="site-footer"><p>© 2026 Samuel Regelbrugge</p><a href="#main">Back to top ↑</a></footer>
+</body>
+</html>

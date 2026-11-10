@@ -19,6 +19,23 @@ My personal portfolio, bringing together security operations, offensive testing,
 - **Blog:** static notes, with a LinkedIn archive importer that creates drafts for review.
 - **Accessibility-minded interactions:** keyboard navigation, reduced-motion support, optional alert effects that start paused, and core portfolio content that remains available without JavaScript.
 
+## Field Lab & product walkthrough
+
+`field-lab.html` adds a four-stage fictional intrusion replay with a timeline,
+attacker/defender perspectives, and correlated evidence. Playback starts only on
+request and pauses when the tab is hidden. Two browser-only exercises demonstrate
+object authorization and client-controlled roles, with reversible fixes and
+verification feedback. The original server-backed cookie puzzle remains linked.
+
+The Entra case study includes a fictional branching workflow demo: high risk,
+familiar context, or missing context. Its rules illustrate routing rather than
+reproduce an employer playbook. RPM’s preview now includes a four-stop product
+walkthrough; Windows health/detail views use fictional entries, while YubiKey and
+Android biometric unlock are explicitly conceptual illustrations.
+
+All new interactions use local scripts with no external calls or added dependencies.
+The Azure staging list includes the new pages and assets.
+
 ## Response Lab
 
 Take the analyst seat in two scenarios: suspicious endpoint execution and an impossible-travel alert. Collect simulated telemetry, review process, network, and identity evidence, then decide whether to contain a threat or close an alert as benign.

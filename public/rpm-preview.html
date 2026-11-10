@@ -8,10 +8,17 @@
     <link rel="icon" href="../favicon.ico" />
     <link rel="stylesheet" href="rpm-preview.css" />
     <script src="rpm-preview.js" defer></script>
+    <script src="rpm-tour.js" defer></script>
   </head>
   <body>
     <header class="preview-heading"><a href="../index.html#tinkering">← Back to the portfolio</a><p>Windows interface illustration · Fictional entries</p></header>
-    <main class="rpm-window" aria-label="Real Password Manager interface preview">
+    <section id="rpm-tour" class="rpm-tour" aria-labelledby="tour-title">
+      <div class="tour-intro"><div><p class="eyebrow">A CLOSER LOOK / RPM</p><h1 id="tour-title">A vault built around everyday use.</h1><p>Explore the Windows views, then the unlock concepts for Windows and Android. All entries and interactions here are illustrative.</p></div><a href="../rpm.html">Read the project story ↗</a></div>
+      <div class="tour-stops" role="group" aria-label="Product walkthrough"><button type="button" data-tour="0" aria-pressed="true">01 / Health</button><button type="button" data-tour="1" aria-pressed="false">02 / Details</button><button type="button" data-tour="2" aria-pressed="false">03 / YubiKey</button><button type="button" data-tour="3" aria-pressed="false">04 / Android</button></div>
+      <div class="tour-narration" aria-live="polite" aria-atomic="true"><h2 id="tour-step-title">Know what needs attention.</h2><p id="tour-step-copy">The Windows health overview groups findings so you can choose what to review. Select Details to inspect a fictional entry without revealing its password.</p></div>
+      <noscript><p>Enable JavaScript to switch views and explore the unlock illustrations. YubiKey support on Windows and biometric unlock on Android are described in the project story.</p></noscript>
+    </section>
+    <main id="rpm-preview-window" class="rpm-window" aria-label="Real Password Manager interface preview">
       <div class="rpm-titlebar"><img src="../images/rpm/rpm-mark.svg" alt="" width="36" height="36" /><div><strong>Real Password Manager</strong><span>Your passwords, under your control.</span></div><span class="example-badge">Example vault</span></div>
       <div class="rpm-layout">
         <nav class="rpm-sidebar" aria-label="Preview views">
@@ -47,6 +54,11 @@
         </section>
       </div>
     </main>
+    <section id="unlock-concept" class="unlock-concept" aria-labelledby="unlock-title" hidden>
+      <div id="unlock-device" class="unlock-device"><div class="unlock-device-top"><span aria-hidden="true">[•••]</span><strong>RPM</strong></div><div class="unlock-device-body"><span id="unlock-symbol" class="unlock-symbol" aria-hidden="true">⌁</span><h2 id="unlock-title">YubiKey on Windows</h2><p id="unlock-description">A physical interaction as part of unlocking your vault.</p><span class="unlock-caption">Concept illustration / No device connection</span></div></div>
+      <div class="unlock-explanation"><p class="eyebrow">DESIGNED FOR THE DAILY ROUTINE</p><h3 id="unlock-benefit">A deliberate moment to unlock.</h3><p id="unlock-detail">RPM supports YubiKey on Windows. This illustration introduces that capability; it does not request a key, access USB, or perform authentication.</p><a href="../rpm.html">Explore RPM’s development →</a></div>
+    </section>
+    <div class="tour-navigation" hidden id="tour-navigation"><button id="tour-prev" type="button" disabled>← Previous</button><span id="tour-count">1 / 4</span><button id="tour-next" type="button">Next: Details →</button></div>
     <footer class="preview-footer">Based on RPM’s current Windows views. This page is an interface illustration, not the password manager.</footer>
   </body>
 </html>
