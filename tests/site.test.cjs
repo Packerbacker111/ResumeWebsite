@@ -498,7 +498,9 @@ test("quick jump filters actions, handles the keyboard, and restores focus", () 
   const commands = el.commandResults.children;
   let prevented = false;
   document.dispatch("keydown", { key: "/", target: document.body, preventDefault() { prevented = true; } });
-  assert.equal(prevented, true);
+  assert.equal(prevented, false);
+  assert.ok(!el.commandPalette.open);
+  el.commandToggle.click();
   assert.equal(el.commandPalette.open, true);
   assert.equal(el.commandSearch.focused, true);
   assert.equal(document.body.classList.contains("command-open"), true);
@@ -528,15 +530,10 @@ test("quick jump filters actions, handles the keyboard, and restores focus", () 
   assert.equal(el.burger.focused, true);
 });
 
-test("quick jump respects editing and modal boundaries and dispatches actions", () => {
+test("quick jump respects the Response Lab modal and dispatches actions", () => {
   const { elements: el, document, opened } = fixture();
-  const editable = new Element();
-  editable.editable = true;
-  const shortcut = target => document.dispatch("keydown", { key: "/", target, preventDefault() {} });
-  shortcut(editable);
-  assert.ok(!el.commandPalette.open);
   el.incidentAction.click();
-  shortcut(document.body);
+  el.commandToggle.click();
   assert.ok(!el.commandPalette.open);
   el.labClose.click();
   const choose = query => {

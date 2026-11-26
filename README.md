@@ -11,7 +11,7 @@ My personal portfolio, bringing together security operations, offensive testing,
 - **Selected work.** The homepage leads with the observed endpoint investigation result and links to case studies on endpoint telemetry, Microsoft Entra automation, and vulnerability validation.
 - **Project stories.** The endpoint case includes an illustrative evidence walkthrough. The other stories cover Entra routing, HackerOne validation, and RPM’s development and interface preview.
 - **Professional background:** work history, education, certifications, cybersecurity competitions, and a downloadable résumé.
-- **Interactive design.** Light and dark themes, a Response Lab built for desktop and mobile, and a searchable quick-jump palette. Press `/` or use the navigation button to open quick jump.
+- **Interactive design.** Light and dark themes, a Response Lab built for desktop and mobile, and a searchable quick-jump palette. Open Quick jump from the navigation with a click, tap, or Tab then Enter.
 - **Shareable lab cases.** Open the endpoint, sign-in, and mailbox investigations from the homepage with `#lab-endpoint`, `#lab-identity`, and `#lab-mailbox`.
 - **Independent projects.** RPM — Real Password Manager, the Trump countdown site, and CCDC red teaming.
 - **Experiments.** The Field Lab and the server-backed cookie challenge are linked under Independent projects.
