@@ -115,13 +115,6 @@ if (year) year.textContent = new Date().getFullYear();
     pendingAction = undefined;
     if (action) action();
   });
-  document.addEventListener("keydown", event => {
-    if (event.key !== "/" || event.altKey || event.ctrlKey || event.metaKey || event.repeat || event.isComposing) return;
-    if (event.target?.closest("input, textarea, select, [contenteditable]:not([contenteditable='false'])")) return;
-    if (palette.open || document.getElementById("responseLab")?.open) return;
-    event.preventDefault();
-    open();
-  });
   search.addEventListener("input", filter);
   search.addEventListener("keydown", event => {
     if (event.isComposing) return;
