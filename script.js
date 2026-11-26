@@ -46,37 +46,6 @@ if (burger && navLinks) {
     if (!navLinks.contains(event.target) && !burger.contains(event.target)) closeNavigation();
   });
 }
-// Decorative motion stays optional, quiet off-screen, and independent of the lab.
-const alertPanel = document.getElementById("incidentDemo");
-const alertEffectsToggle = document.getElementById("alertEffectsToggle");
-if (alertPanel && alertEffectsToggle && typeof window.matchMedia === "function") {
-  const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let paused = true;
-  try { paused = localStorage.getItem("samuel-alert-effects") !== "running"; } catch (_) {}
-  let visible = typeof IntersectionObserver !== "function";
-  const updateAlertEffects = () => {
-    const reduced = motionPreference.matches;
-    alertPanel.dataset.effects = !paused && !reduced && visible && !document.hidden ? "running" : "paused";
-    alertEffectsToggle.hidden = reduced;
-    alertEffectsToggle.textContent = paused ? "Resume effects" : "Pause effects";
-    alertEffectsToggle.setAttribute("aria-label", paused ? "Resume critical alert effects" : "Pause critical alert effects");
-  };
-  alertEffectsToggle.addEventListener("click", () => {
-    paused = !paused;
-    try { localStorage.setItem("samuel-alert-effects", paused ? "paused" : "running"); } catch (_) {}
-    updateAlertEffects();
-  });
-  motionPreference.addEventListener?.("change", updateAlertEffects);
-  document.addEventListener("visibilitychange", updateAlertEffects);
-  if (typeof IntersectionObserver === "function") {
-    const observer = new IntersectionObserver(entries => {
-      visible = entries.some(entry => entry.isIntersecting && entry.intersectionRatio >= .1);
-      updateAlertEffects();
-    }, { threshold: .1 });
-    observer.observe(alertPanel);
-  }
-  updateAlertEffects();
-}
 const year = document.getElementById("year");
 if (year) year.textContent = new Date().getFullYear();
 

@@ -8,16 +8,15 @@ My personal portfolio, bringing together security operations, offensive testing,
 
 ## What’s inside
 
-- **Selected work:** AI-assisted endpoint telemetry, Microsoft Entra workflow automation, vulnerability validation, and offensive security experience.
-- **Project stories:** dedicated pages for telemetry and Entra workflows with before/after comparisons, HackerOne responsibilities with a clearly labeled fictional validation walkthrough, plus RPM’s development and interface preview.
+- **Selected work.** The homepage leads with the observed endpoint investigation result and links to case studies on endpoint telemetry, Microsoft Entra automation, and vulnerability validation.
+- **Project stories.** The endpoint case includes an illustrative evidence walkthrough. The other stories cover Entra routing, HackerOne validation, and RPM’s development and interface preview.
 - **Professional background:** work history, education, certifications, cybersecurity competitions, and a downloadable résumé.
-- **Interactive design:** dark and light themes, a SOC-inspired alert panel, and an investigation workbench built for desktop and mobile.
-- **Shareable lab cases:** open the endpoint and identity investigations directly with `#lab-endpoint` and `#lab-identity` links.
-- **Small details:** a textured hero, visual project workflows, a telemetry routing diagram, and a searchable quick-jump palette (press `/` or use the navigation button).
-- **Currently tinkering:** RPM — Real Password Manager, the Trump countdown site, CTF challenges, and CCDC red teaming.
-- **Cookie challenge:** a separate, real HTTP challenge backed by a managed Azure Function. The flag is generated on the server.
+- **Interactive design.** Light and dark themes, a Response Lab built for desktop and mobile, and a searchable quick-jump palette. Press `/` or use the navigation button to open quick jump.
+- **Shareable lab cases.** Open the endpoint, sign-in, and mailbox investigations from the homepage with `#lab-endpoint`, `#lab-identity`, and `#lab-mailbox`.
+- **Independent projects.** RPM — Real Password Manager, the Trump countdown site, and CCDC red teaming.
+- **Experiments.** The Field Lab and the server-backed cookie challenge are linked under Independent projects.
 - **Blog:** static notes, with a LinkedIn archive importer that creates drafts for review.
-- **Accessibility-minded interactions:** keyboard navigation, reduced-motion support, optional alert effects that start paused, and core portfolio content that remains available without JavaScript.
+- **Accessibility.** Keyboard navigation, reduced-motion support, and core portfolio content available without JavaScript.
 
 ## Field Lab & product walkthrough
 
@@ -38,9 +37,9 @@ The Azure staging list includes the new pages and assets.
 
 ## Response Lab
 
-Take the analyst seat in two scenarios: suspicious endpoint execution and an impossible-travel alert. Collect simulated telemetry, review process, network, and identity evidence, then decide whether to contain a threat or close an alert as benign.
+Investigate three fictional alerts covering suspicious endpoint execution, impossible travel, and external mailbox forwarding. Collect simulated telemetry and decide whether to contain the threat or close the alert as benign. The mailbox case uses audit records, session context, and message trace to distinguish confirmed deliveries from rejected attempts.
 
-The lab includes an activity trail, feedback on decisions, recovery steps, and replayable cases. Each completed case ends with an evidence debrief and the reasoning behind the response. The emphasis is on context and judgment—not treating every alert as a confirmed incident.
+The lab includes an activity trail, feedback on decisions, recovery steps, and replayable cases. Each completed case ends with an evidence debrief and the reasoning behind the response.
 
 All cases and telemetry are fictional. The lab runs entirely in the browser, makes no connections to live security systems, and does not expose employer data or tooling.
 

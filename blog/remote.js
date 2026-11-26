@@ -11,26 +11,40 @@ function textNode(tag, value) {
 
 async function loadBlog() {
   if (list) {
-    const response = await fetch("/api/blog/posts", { credentials: "same-origin" });
-    if (!response.ok) return;
-    const posts = await response.json();
-    if (!posts.length) return;
-    list.querySelector(".blog-empty")?.remove();
-    for (const item of posts) {
-      const article = document.createElement("article");
-      article.className = "blog-card";
-      const date = textNode("time", item.date);
-      date.dateTime = item.date;
-      const heading = document.createElement("h2");
-      const link = textNode("a", item.title);
-      link.href = `/blog/post.html?slug=${encodeURIComponent(item.slug)}`;
-      heading.append(link);
-      article.append(date, heading, textNode("p", item.excerpt));
-      list.append(article);
+    const status = list.querySelector(".blog-empty");
+    if (status && !list.querySelector(".blog-card")) {
+      status.hidden = false;
+      status.textContent = "Loading notes…";
     }
-    const articles = [...list.querySelectorAll(".blog-card")];
-    articles.sort((a, b) => b.querySelector("time").dateTime.localeCompare(a.querySelector("time").dateTime));
-    list.append(...articles);
+    try {
+      const response = await fetch("/api/blog/posts", { credentials: "same-origin" });
+      if (!response.ok) throw new Error("Blog listing request failed");
+      const posts = await response.json();
+      const remoteArticles = posts.map(item => {
+        const article = document.createElement("article");
+        article.className = "blog-card";
+        const date = textNode("time", item.date);
+        date.dateTime = item.date;
+        const heading = document.createElement("h2");
+        const link = textNode("a", item.title);
+        link.href = `/blog/post.html?slug=${encodeURIComponent(item.slug)}`;
+        heading.append(link);
+        article.append(date, heading, textNode("p", item.excerpt));
+        return article;
+      });
+      const articles = [...list.querySelectorAll(".blog-card"), ...remoteArticles];
+      articles.sort((a, b) => b.querySelector("time").dateTime.localeCompare(a.querySelector("time").dateTime));
+      list.append(...articles);
+      if (status) {
+        status.hidden = articles.length > 0;
+        status.textContent = articles.length ? "" : "No notes published yet.";
+      }
+    } catch {
+      if (status) {
+        status.hidden = false;
+        status.textContent = "Couldn’t load the latest notes. Try refreshing.";
+      }
+    }
   }
   if (post) {
     const slug = new URLSearchParams(location.search).get("slug") || "";

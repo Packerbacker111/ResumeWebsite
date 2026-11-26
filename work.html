@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css?v=20261109-r2" />
-    <link rel="stylesheet" href="field-lab.css?v=20261109-r2" />
+    <link rel="stylesheet" href="field-lab.css?v=20261126-r1" />
     <script src="field-lab.js?v=20261109-r2" defer></script>
     <script src="theme.js?v=20260902-r1"></script>
   </head>
@@ -23,11 +23,35 @@
       <nav class="story-index" aria-label="Case studies"><a href="#endpoint-telemetry">01 / Endpoint telemetry <span aria-hidden="true">↓</span></a><a href="#entra-workflow">02 / Entra workflow <span aria-hidden="true">↓</span></a><a href="#vulnerability-validation">03 / Vulnerability validation <span aria-hidden="true">↓</span></a></nav>
 
       <article id="endpoint-telemetry" class="story-case" aria-labelledby="endpoint-title">
-        <div class="story-case-heading"><p class="eyebrow">01 / Internal AI tool</p><h2 id="endpoint-title">From hours of gathering to minutes of context.</h2><p>Querying separate endpoint telemetry sources was a bottleneck in investigations. I connected an enterprise AI assistant to a written playbook for querying those sources and gave it API access to retrieve the data.</p></div>
-        <div class="story-facts"><div><span>Problem</span><strong>Slow access to endpoint context</strong></div><div><span>Contribution</span><strong>Playbook + API connections</strong></div><div><span>Observed outcome</span><strong>Hours → minutes</strong></div></div>
-        <div class="story-columns"><section><h3>The work</h3><p>The playbook guides queries across multiple endpoint telemetry sources. An analyst can ask a question, get relevant telemetry, and spend more of the investigation assessing the evidence. The response decision stays with the analyst.</p></section><section><h3>What I observed</h3><p>I have seen hour-long investigations move to minutes for me and teammates on many occasions. That is a practical observation from use, not a controlled performance benchmark.</p></section></div>
-        <figure class="story-flow"><figcaption>Illustrative workflow</figcaption><ol><li><span>01</span><strong>Ask</strong><small>Analyst question</small></li><li><span>02</span><strong>Gather</strong><small>Endpoint context</small></li><li><span>03</span><strong>Investigate</strong><small>Human judgment</small></li></ol></figure>
-        <div class="workflow-comparison" aria-label="Endpoint investigation workflow comparison"><section><h3>Before / Gather separately</h3><p>Query individual telemetry sources and bring the context together before assessing the evidence.</p></section><section><h3>After / Ask for context</h3><p>An analyst question → enterprise AI assistant → written query playbook + APIs → telemetry from multiple sources → analyst assessment.</p></section></div>
+        <div class="story-case-heading">
+          <p class="eyebrow">Endpoint investigations</p>
+          <h2 id="endpoint-title">From hours of gathering to minutes of context.</h2>
+          <p>I connected an enterprise AI assistant to a written investigation playbook and gave it API access to query multiple telemetry sources. Analysts can start with a question and review the evidence together.</p>
+        </div>
+        <p class="endpoint-result"><strong>Observed in practice.</strong> In day-to-day use, my teammates and I saw some investigations go from about an hour to minutes.</p>
+        <figure class="evidence-summary">
+          <figcaption>Example evidence summary · Fictional data</figcaption>
+          <h3>Did this unusual software install come from an approved rollout?</h3>
+          <dl class="evidence-summary-sources">
+            <div>
+              <dt>Endpoint history</dt>
+              <dd>The managed updater started the install at 10:14 a.m.</dd>
+            </div>
+            <div>
+              <dt>Network logs</dt>
+              <dd>The workstation contacted the expected vendor domain in the same minute.</dd>
+            </div>
+            <div>
+              <dt>Still to verify</dt>
+              <dd>Was this workstation in the approved rollout, and does the installed version match the change record?</dd>
+            </div>
+          </dl>
+          <div class="evidence-summary-decision">
+            <h4>Analyst decision</h4>
+            <p>Keep the alert open while confirming the device and version against the rollout record. The assistant gathers the evidence. The analyst verifies it and decides whether to close or escalate.</p>
+          </div>
+        </figure>
+        <p class="endpoint-lab-link"><a class="text-link" href="index.html#lab-endpoint">Investigate a different endpoint alert in the Response Lab</a></p>
       </article>
 
       <article id="entra-workflow" class="story-case" aria-labelledby="entra-title">

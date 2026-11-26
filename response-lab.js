@@ -6,6 +6,12 @@
 
   const model = new ResponseLabModel.Investigation();
   const byId = id => document.getElementById(id);
+  const caseButtons = {
+    endpoint: byId("caseEndpoint"),
+    identity: byId("caseIdentity"),
+    mailbox: byId("caseMailbox")
+  };
+  const caseKeys = Object.keys(caseButtons);
   const tabs = [0, 1, 2].map(index => byId("labTab" + index));
   const steps = ["labStepAlert", "labStepEvidence", "labStepDecision", "labStepOutcome"].map(byId);
   let timers = [];
@@ -31,9 +37,10 @@
     const labels = { collecting: "Collecting", evidence: "Investigating", contained: "Contained", resolved: "Resolved" };
     status.textContent = labels[model.phase] || incident.severity;
     status.dataset.tone = ["contained", "resolved"].includes(model.phase) ? "success" : model.phase === "alert" ? incident.tone : "neutral";
-    for (const [id, key] of [["caseEndpoint", "endpoint"], ["caseIdentity", "identity"]]) {
-      byId(id).setAttribute("aria-pressed", String(model.key === key));
-      byId(id).classList.toggle("selected", model.key === key);
+    for (const [key, button] of Object.entries(caseButtons)) {
+      const selected = model.key === key;
+      button.setAttribute("aria-pressed", String(selected));
+      button.classList.toggle("selected", selected);
     }
     const stage = model.phase === "resolved" ? 3 : model.phase === "contained" || (model.phase === "evidence" && model.reviewed.size === 3) ? 2 : model.phase === "collecting" || model.phase === "evidence" ? 1 : 0;
     steps.forEach((step, index) => {
@@ -73,7 +80,7 @@
     const debrief = byId("labDebrief");
     debrief.replaceChildren();
     if (model.phase === "resolved") {
-      byId("labClosedLabel").textContent = model.key === "endpoint" ? "Incident closed" : "Alert closed / benign";
+      byId("labClosedLabel").textContent = incident.expected === "contain" ? "Incident closed" : "Alert closed / benign";
       byId("labClosedCase").textContent = incident.id + " / Evidence reviewed. Decision documented.";
       byId("labRationale").textContent = incident.rationale;
       incident.debrief.forEach(evidence => {
@@ -104,7 +111,9 @@
     if (focus) byId("labCollect").focus();
   }
   function caseFromHash() {
-    return window.location?.hash === "#lab-endpoint" ? "endpoint" : window.location?.hash === "#lab-identity" ? "identity" : null;
+    const hash = window.location?.hash || "";
+    const key = hash.slice("#lab-".length);
+    return hash.startsWith("#lab-") && Object.hasOwn(caseButtons, key) ? key : null;
   }
   function openLinkedCase() {
     const key = caseFromHash();
@@ -176,9 +185,13 @@
     if (caseFromHash()) window.history?.replaceState(null, "", window.location.pathname + window.location.search);
     opener.focus();
   });
-  byId("caseEndpoint").addEventListener("click", () => selectCase("endpoint"));
-  byId("caseIdentity").addEventListener("click", () => selectCase("identity"));
-  byId("labNext").addEventListener("click", () => selectCase(model.key === "endpoint" ? "identity" : "endpoint", true));
+  for (const [key, button] of Object.entries(caseButtons)) {
+    button.addEventListener("click", () => selectCase(key));
+  }
+  byId("labNext").addEventListener("click", () => {
+    const nextIndex = (caseKeys.indexOf(model.key) + 1) % caseKeys.length;
+    selectCase(caseKeys[nextIndex], true);
+  });
   byId("labReset").addEventListener("click", () => selectCase(model.key, true));
   byId("labCollect").addEventListener("click", collect);
   tabs.forEach((tab, index) => {

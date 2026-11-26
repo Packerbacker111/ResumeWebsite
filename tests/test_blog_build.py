@@ -29,7 +29,10 @@ class BlogBuildTests(unittest.TestCase):
                     blog.POSTS.write_text(json.dumps([replacement] if replacement else []), encoding="utf-8")
                     blog.build(output)
                     self.assertEqual([p.name for p in output.iterdir()], ["index.html"])
-                    self.assertNotIn("Secret", (output / "index.html").read_text(encoding="utf-8"))
+                    listing = (output / "index.html").read_text(encoding="utf-8")
+                    self.assertNotIn("Secret", listing)
+                    self.assertNotIn("No notes published yet", listing)
+                    self.assertIn('role="status"', listing)
             finally:
                 blog.POSTS = original
 

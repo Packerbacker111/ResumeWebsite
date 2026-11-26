@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css?v=20261109-r2" />
-  <link rel="stylesheet" href="field-lab.css?v=20261109-r2" />
+  <link rel="stylesheet" href="field-lab.css?v=20261126-r1" />
   <script src="theme.js?v=20260902-r1"></script>
   <script src="field-lab.js?v=20261109-r2" defer></script>
 </head>
@@ -19,11 +19,11 @@
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header"><nav class="site-nav" aria-label="Primary navigation"><a class="brand" href="index.html"><span class="brand-monogram" aria-hidden="true">sr<span>.</span></span><span class="brand-name">Samuel Regelbrugge<span class="brand-subtitle">Security, with perspective.</span></span></a><a class="text-link" href="index.html#field-notes">← Back to the portfolio</a></nav></header>
   <main id="main" class="story-page field-page">
-    <div class="story-intro"><p class="eyebrow">Interactive / Field Lab</p><h1>Break it.<br />Fix it. Verify it.</h1><p>Find an access-control flaw, apply the fix, and retest the boundary. Small exercises that connect a working exploit to a working defense.</p><p class="lab-disclosure">Fictional accounts and records. The two exercises below run locally in your browser.</p></div>
-    <nav class="story-index" aria-label="Field Lab sections"><a href="#authorization-exercise">01 / Object authorization ↓</a><a href="#role-exercise">02 / Trust boundaries ↓</a><a href="cookie-challenge.html">03 / Cookie challenge ↗</a></nav>
+    <div class="story-intro"><p class="eyebrow">Field Lab</p><h1>Access-control exercises</h1><p>Try two short browser exercises with fictional accounts and records.</p></div>
+    <nav class="story-index" aria-label="Field Lab sections"><a href="#authorization-exercise">Object authorization</a><a href="#role-exercise">Trust boundaries</a><a href="cookie-challenge.html">Cookie challenge</a></nav>
     <noscript><p class="lab-disclosure">Enable JavaScript to try the exercises. The vulnerable code, fixes, and remediation notes remain readable below.</p></noscript>
     <section id="challenges" class="field-section" aria-labelledby="challenges-title">
-      <div class="field-heading"><div><p class="eyebrow">Hands-on / Access control</p><h2 id="challenges-title">Find the gap.<br />Close the loop.</h2></div><span class="field-tag">BROWSER SANDBOX</span></div>
+      <h2 class="field-heading" id="challenges-title">Browser exercises</h2>
       <div class="challenge-grid">
         <article class="challenge-card" id="authorization-exercise"><p class="eyebrow">01 / Object authorization</p><h3>Whose export is it?</h3><p>You’re signed in as account B. Your export is 2002. Account A owns export 2001. Can you retrieve A’s fictional record?</p><label for="export-id">GET /exports/<span class="sr-only"> Export identifier</span></label><div class="request-row"><input id="export-id" type="number" value="2002" min="1" step="1" /><button id="export-request" type="button" class="button primary">Send request</button></div><pre id="export-response" class="challenge-response" aria-live="polite">Ready. Request a fictional export.</pre><p id="export-progress" class="challenge-feedback" aria-live="polite">Try changing the identifier.</p><button id="export-fix" type="button" class="button secondary" aria-pressed="false">Apply authorization fix</button><details class="field-notes"><summary>Inspect the code &amp; remediation</summary><pre>// Vulnerable: lookup without ownership check
 return exports.find(item =&gt; item.id === id);

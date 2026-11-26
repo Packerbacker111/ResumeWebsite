@@ -183,9 +183,10 @@ def build(output=None):
         content = f'<p class="eyebrow">Blog / {esc(post["date"])}</p><h1>{esc(post["title"])}</h1><article class="blog-body">{paragraphs(post["body"])}</article><div class="blog-source">{source}</div><a class="text-link" href="index.html">← All notes</a>'
         (output / f'{post["slug"]}.html').write_text(shell(post["title"], post["body"][:155], content), encoding="utf-8")
         cards.append(f'<article class="blog-card"><time datetime="{esc(post["date"])}">{esc(post["date"])}</time><h2><a href="/blog/{esc(post["slug"])}.html">{esc(post["title"])}</a></h2><p>{esc(excerpt(post["body"]))}</p>{source}</article>')
-    listing = "\n".join(cards) if cards else '<p class="blog-empty">No notes published yet. This is where I’ll share the ideas, experiments, and lessons that don’t fit in a résumé.</p>'
+    listing = "\n".join(cards) + ('<p class="blog-empty" role="status" hidden></p>'
+                                  '<noscript><p class="blog-empty">Enable JavaScript to load the latest notes.</p></noscript>')
     content = f'<p class="eyebrow">Notes / In progress</p><h1>Thinking out loud.</h1><p class="blog-intro">Occasional thoughts on security, building things, competitions, and whatever else catches my attention.</p><div class="blog-list" id="blogList">{listing}</div><p class="blog-editor-link"><a href="/.auth/login/aad?post_login_redirect_uri=/blog/editor.html">Editor sign in</a></p>'
-    (output / "index.html").write_text(shell("Blog", "Occasional notes from Samuel Regelbrugge on security, building things, and other interests.", content, extra_script='<script src="/blog/remote.js" defer></script>'), encoding="utf-8")
+    (output / "index.html").write_text(shell("Blog", "Occasional notes from Samuel Regelbrugge on security, building things, and other interests.", content, extra_script='<script src="/blog/remote.js?v=20261126-r1" defer></script>'), encoding="utf-8")
     print(f"Built blog with {len(published)} published posts and {len(posts) - len(published)} drafts")
 
 

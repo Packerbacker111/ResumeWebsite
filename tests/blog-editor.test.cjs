@@ -38,12 +38,12 @@ test("Azure protects the editor page and admin API by role", () => {
 test("the short /blog URL resolves its loader and post links", () => {
   const page = fs.readFileSync(path.join(__dirname, "../blog/index.html"), "utf8");
   const client = fs.readFileSync(path.join(__dirname, "../blog/remote.js"), "utf8");
-  assert.match(page, /src="\/blog\/remote\.js"/);
+  assert.match(page, /src="\/blog\/remote\.js(?:\?[^\"]+)?"/);
   assert.match(client, /\/blog\/post\.html\?slug=/);
   assert.match(client, /fetch\("\/api\/blog\/posts"/);
 });
 
-test("public blog combines static and API articles in reverse chronological order", async () => {
+function loadBlogIndex(fetch, staticDates = []) {
   function node(tag) {
     return {
       tag, children: [], className: "",
@@ -53,29 +53,61 @@ test("public blog combines static and API articles in reverse chronological orde
           this.children.push(child);
         }
       },
-      querySelector(selector) { return this.children.find(child => child.tag === selector) || null; },
-      querySelectorAll(selector) { return this.children.filter(child => `.${child.className}` === selector); }
+      querySelector(selector) { return this.querySelectorAll(selector)[0] || null; },
+      querySelectorAll(selector) {
+        return this.children.filter(child => child.tag === selector || `.${child.className}` === selector);
+      }
     };
   }
   const list = node("div");
-  const staticArticle = node("article");
-  staticArticle.className = "blog-card";
-  const staticDate = node("time");
-  staticDate.dateTime = "2026-10-24";
-  staticArticle.append(staticDate);
-  list.append(staticArticle);
+  for (const date of staticDates) {
+    const article = node("article");
+    article.className = "blog-card";
+    const time = node("time");
+    time.dateTime = date;
+    article.append(time);
+    list.append(article);
+  }
+  const status = node("p");
+  status.className = "blog-empty";
+  status.hidden = true;
+  list.append(status);
   const document = { getElementById: id => id === "blogList" ? list : null, createElement: node };
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../blog/remote.js"), "utf8"), { document, fetch });
+  return { list, status };
+}
+
+test("public blog combines static and API articles in reverse chronological order", async () => {
   const posts = [
     { slug: "newest", title: "Newest", date: "2026-10-26", excerpt: "New" },
     { slug: "oldest", title: "Oldest", date: "2026-10-20", excerpt: "Old" },
     { slug: "middle", title: "Middle", date: "2026-10-25", excerpt: "Middle" }
   ];
-  vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../blog/remote.js"), "utf8"), {
-    document, fetch: async () => ({ ok: true, json: async () => posts })
-  });
+  const { list, status } = loadBlogIndex(async () => ({ ok: true, json: async () => posts }), ["2026-10-24"]);
   await new Promise(resolve => setImmediate(resolve));
-  assert.deepEqual(list.children.map(article => article.querySelector("time").dateTime),
+  assert.deepEqual(list.querySelectorAll(".blog-card").map(article => article.querySelector("time").dateTime),
     ["2026-10-26", "2026-10-25", "2026-10-24", "2026-10-20"]);
+  assert.equal(status.hidden, true);
+});
+
+test("public blog shows an empty message only after a successful empty response", async () => {
+  const { status } = loadBlogIndex(async () => ({ ok: true, json: async () => [] }));
+  assert.equal(status.hidden, false);
+  assert.equal(status.textContent, "Loading notes…");
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(status.hidden, false);
+  assert.equal(status.textContent, "No notes published yet.");
+});
+
+test("public blog reports request failures and retains static articles", async () => {
+  const networkError = loadBlogIndex(async () => { throw new Error("Disconnected"); });
+  const responseError = loadBlogIndex(async () => ({ ok: false }), ["2026-10-24"]);
+  await new Promise(resolve => setImmediate(resolve));
+  for (const { status } of [networkError, responseError]) {
+    assert.equal(status.hidden, false);
+    assert.equal(status.textContent, "Couldn’t load the latest notes. Try refreshing.");
+  }
+  assert.equal(responseError.list.querySelectorAll(".blog-card").length, 1);
 });
 
 test("editor Markdown renders readable blocks without treating author text as HTML", () => {

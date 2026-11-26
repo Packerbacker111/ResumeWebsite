@@ -102,12 +102,9 @@ class Element {
   close() { this.open = false; this.dispatch("close"); }
 }
 
-function fixture(saved = {}, blocked = false, reducedMotion = false, observeVisibility = false, initialHash = "") {
+function fixture(saved = {}, blocked = false, reducedMotion = false, initialHash = "") {
   const elements = Object.fromEntries([...html.matchAll(/id="([^"]+)"/g)].map(match => [match[1], new Element()]));
   elements.themeToggle.firstElementChild = new Element();
-  elements.incidentDemo.dataset.stage = "detected";
-  elements.incidentDemo.children = Array.from({ length: 4 }, () => new Element());
-  elements.incidentDemo.children[0].setAttribute("aria-current", "step");
   elements.navLinks.children = Array.from({ length: 4 }, () => new Element());
   elements.commandResults.children = [...html.matchAll(/<button\b[^>]*data-command="([^"]+)"[^>]*data-keywords="([^"]+)"[^>]*>([\s\S]*?)<\/button>/g)].map(([, action, keywords, copy]) => {
     const command = action === "theme" ? elements.commandTheme : new Element();
@@ -118,7 +115,6 @@ function fixture(saved = {}, blocked = false, reducedMotion = false, observeVisi
     return command;
   });
   const document = new Element();
-  document.hidden = false;
   document.documentElement = new Element();
   document.body = new Element();
   document.querySelectorAll = () => [];
@@ -135,7 +131,6 @@ function fixture(saved = {}, blocked = false, reducedMotion = false, observeVisi
   let timerId = 0;
   const motionPreference = new Element();
   motionPreference.matches = reducedMotion;
-  let visibilityCallback;
   const opened = [];
   const window = new Element();
   window.matchMedia = () => motionPreference;
@@ -148,18 +143,11 @@ function fixture(saved = {}, blocked = false, reducedMotion = false, observeVisi
     setTimeout: callback => { timers.set(++timerId, callback); return timerId; },
     clearTimeout: id => timers.delete(id)
   });
-  if (observeVisibility) context.IntersectionObserver = class {
-    constructor(callback, options) { if (options.threshold === .1) visibilityCallback = callback; }
-    observe() {}
-    unobserve() {}
-    disconnect() {}
-  };
   vm.runInContext(headScript, context);
   vm.runInContext(script, context);
   vm.runInContext(labScript, context);
   const flush = () => { const pending = [...timers.values()]; timers.clear(); pending.forEach(callback => callback()); };
-  const setPanelVisible = visible => visibilityCallback([{ isIntersecting: visible, intersectionRatio: visible ? 1 : 0 }]);
-  return { elements, document, window, values, timers, flush, motionPreference, setPanelVisible, opened };
+  return { elements, document, window, values, timers, flush, opened };
 }
 
 test("all local assets and anchor destinations exist", () => {
@@ -193,8 +181,12 @@ test("project pages and their case study destinations exist", () => {
 });
 
 test("direct case links open the selected response lab case", () => {
-  const { elements: el, window } = fixture({}, false, false, false, "#lab-identity");
+  const { elements: el, window } = fixture({}, false, false, "#lab-mailbox");
   assert.equal(el.responseLab.open, true);
+  assert.equal(el.caseMailbox.attributes["aria-pressed"], "true");
+  assert.match(el.labCaseTitle.textContent, /forwarding externally/);
+  window.location.hash = "#lab-identity";
+  window.dispatch("hashchange");
   assert.equal(el.caseIdentity.attributes["aria-pressed"], "true");
   window.location.hash = "#lab-endpoint";
   window.dispatch("hashchange");
@@ -271,13 +263,12 @@ test("RPM view selection updates the accessible state and keyboard focus", () =>
 
 test("initial page stays calm and the demo is explicitly fictional", () => {
   const { elements, document } = fixture();
-  assert.equal(elements.incidentDemo.dataset.stage, "detected");
   assert.equal(elements.incidentAction.hidden, false);
   assert.equal(elements.themeToggle.hidden, false);
   assert.equal(document.documentElement.dataset.theme, undefined);
   assert.equal(elements.themeToggle.attributes["aria-label"], "Use light theme");
-  assert.match(html, /Simulated incident/);
-  assert.match(html, /Fictional cases, synthetic telemetry, no live systems/);
+  assert.match(html, /Investigate a fictional alert/);
+  assert.match(html, /synthetic telemetry and choose a response in three fictional cases/);
   assert.doesNotMatch(script + labScript, /\b(fetch|WebSocket|setInterval)\s*\(/);
 });
 
@@ -330,10 +321,10 @@ test("case evidence uses specific locations without announcing the verdict", () 
   assert.match(signIns, /Chicago source: 203\.0\.113\.18/);
   assert.match(cases.identity.evidence[2].data, /VPN exit: Chicago, USA/);
   assert.match(cases.identity.evidence[2].note, /Chicago event/);
-  for (const incident of Object.values(cases)) {
+  for (const [key, incident] of Object.entries(cases)) {
     const evidenceCopy = incident.evidence.map(view => [view.title, view.kicker, view.data, view.note].join(" ")).join(" ");
     assert.doesNotMatch(evidenceCopy, /Location [AB]|containment|benign closure|explains it|validated explanation|support the same finding/i);
-    const model = new Investigation(incident === cases.identity ? "identity" : "endpoint");
+    const model = new Investigation(key);
     model.collect(); model.completeCollection(); model.review(1); model.review(2);
     assert.equal(model.phase, "evidence");
     assert.equal(model.feedback, "");
@@ -448,54 +439,10 @@ test("navigation closes via Escape, destination selection, and outside interacti
   assert.equal(navLinks.classList.contains("open"), false);
 });
 
-test("critical effects repeat slowly and can be paused, resumed, and remembered", () => {
-  assert.equal(fixture().elements.incidentDemo.dataset.effects, "paused", "Decorative effects start paused unless enabled by the visitor");
-  const { elements, values } = fixture({ "samuel-alert-effects": "running" });
-  assert.equal(elements.incidentDemo.dataset.effects, "running");
-  assert.equal(elements.alertEffectsToggle.hidden, false);
-  elements.alertEffectsToggle.dispatch("click");
-  assert.equal(elements.incidentDemo.dataset.effects, "paused");
-  assert.equal(elements.alertEffectsToggle.attributes["aria-label"], "Resume critical alert effects");
-  assert.equal(values.get("samuel-alert-effects"), "paused");
-  elements.alertEffectsToggle.dispatch("click");
-  assert.equal(elements.incidentDemo.dataset.effects, "running");
-  assert.equal(values.get("samuel-alert-effects"), "running");
-  assert.equal(fixture({ "samuel-alert-effects": "paused" }).elements.incidentDemo.dataset.effects, "paused");
-  const blocked = fixture({}, true);
-  assert.equal(blocked.elements.incidentDemo.dataset.effects, "paused");
-  blocked.elements.alertEffectsToggle.dispatch("click");
-  assert.equal(blocked.elements.incidentDemo.dataset.effects, "running");
-  assert.match(css, /alert-pulse 3\.2s ease-out infinite/);
-  assert.match(css, /critical-glow 3\.2s ease-in-out infinite/);
-});
-
-test("alert effects stop off-screen, in hidden tabs, and for reduced-motion preferences", () => {
-  const { elements, document, motionPreference, setPanelVisible } = fixture({ "samuel-alert-effects": "running" }, false, false, true);
-  assert.equal(elements.incidentDemo.dataset.effects, "paused");
-  setPanelVisible(true);
-  assert.equal(elements.incidentDemo.dataset.effects, "running");
-  setPanelVisible(false);
-  assert.equal(elements.incidentDemo.dataset.effects, "paused");
-  setPanelVisible(true);
-  document.hidden = true;
-  document.dispatch("visibilitychange");
-  assert.equal(elements.incidentDemo.dataset.effects, "paused");
-  document.hidden = false;
-  document.dispatch("visibilitychange");
-  assert.equal(elements.incidentDemo.dataset.effects, "running");
-  motionPreference.matches = true;
-  motionPreference.dispatch("change");
-  assert.equal(elements.incidentDemo.dataset.effects, "paused");
-  assert.equal(elements.alertEffectsToggle.hidden, true);
-  motionPreference.matches = false;
-  motionPreference.dispatch("change");
-  assert.equal(elements.incidentDemo.dataset.effects, "running");
-  assert.equal(elements.alertEffectsToggle.hidden, false);
-  assert.equal(fixture({}, false, true).elements.incidentDemo.dataset.effects, "paused");
+test("page motion respects reduced-motion preferences", () => {
   assert.match(css, /prefers-reduced-motion: reduce/);
   assert.match(css, /animation: none !important/);
   assert.match(css, /scroll-behavior: auto/);
-  assert.match(css, /body\.lab-open #incidentDemo::after[^}]+animation-play-state: paused/);
 });
 
 test("basic document accessibility and no-JavaScript fallback are present", () => {
@@ -504,7 +451,6 @@ test("basic document accessibility and no-JavaScript fallback are present", () =
   assert.match(html, /class="skip-link" href="#main"/);
   assert.match(html, /role="status" aria-atomic="true"/);
   assert.match(html, /<noscript>/);
-  assert.match(html, /<details class="work-details">/);
   assert.match(css, /\.js \.nav-links \{ display: none;/);
   for (const [img] of html.matchAll(/<img\b[^>]*>/g)) assert.match(img, /alt="/);
   for (const [anchor] of html.matchAll(/<a\b[^>]*target="_blank"[^>]*>/g)) assert.match(anchor, /rel="noopener"/);
@@ -522,7 +468,8 @@ test("public content contains the current role without old metrics or phone link
   assert.match(selectedWork, /AI-assisted endpoint telemetry/);
   assert.match(selectedWork, /Tines stories that connect Entra risk data sources/);
   assert.match(currentRole, /HackerOne submissions, assess risk/);
-  assert.match(html, /hours move to minutes/);
+  assert.match(html, /Hours to <span>minutes\./);
+  assert.match(html, /Observed in some cases/);
   assert.match(html, /AI-assisted endpoint telemetry/);
   assert.match(html, /Equity Residential<\/dt><dd>Jul 2025–Aug 2026/);
   assert.match(html, /Vivmark Residential<\/dt><dd>Aug 2026–present/);
@@ -612,28 +559,33 @@ test("quick jump respects editing and modal boundaries and dispatches actions", 
   assert.equal(document.body.classList.contains("command-open"), false);
 });
 
-test("case debriefs stay hidden until resolution and reset with the case", () => {
+test("case debriefs stay hidden until resolution and clear when moving to the next case", () => {
   const { elements: el, flush } = fixture();
   el.incidentAction.click();
-  for (const key of ["endpoint", "identity"]) {
-    if (key === "identity") el.caseIdentity.click();
+  for (const [key, nextButton] of [["endpoint", el.caseIdentity], ["identity", el.caseMailbox], ["mailbox", el.caseEndpoint]]) {
     el.labCollect.click();
     flush();
     el.labTab1.click(); el.labTab2.click();
     assert.equal(el.labDebrief.children.length, 0);
     assert.equal(el.labOutcome.hidden, true);
-    if (key === "endpoint") {
+    if (key === "identity") el.labBenign.click();
+    else {
+      if (key === "mailbox") {
+        el.labBenign.click();
+        assert.match(el.labFeedback.textContent, /two messages were accepted externally/);
+      }
       el.labContain.click();
       assert.equal(el.labOutcome.hidden, true);
       el.labRecover.click();
-    } else el.labBenign.click();
+    }
     assert.equal(el.labOutcome.hidden, false);
     assert.equal(el.labOutcome.focused, true);
     assert.equal(el.labDebrief.children.length, 3);
     assert.equal(el.labRationale.textContent, cases[key].rationale);
-    assert.equal(el.labClosedLabel.textContent, key === "endpoint" ? "Incident closed" : "Alert closed / benign");
+    assert.equal(el.labClosedLabel.textContent, key === "identity" ? "Alert closed / benign" : "Incident closed");
     assert.deepEqual(el.labDebrief.children.map(item => item.children[0].textContent), cases[key].evidence.map(item => item.label));
-    el.labReset.click();
+    el.labNext.click();
+    assert.equal(nextButton.attributes["aria-pressed"], "true");
     assert.equal(el.labOutcome.hidden, true);
     assert.equal(el.labDebrief.children.length, 0);
   }

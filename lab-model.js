@@ -47,6 +47,28 @@
       ],
       rationale: "The combined session, device, and verified network context explained the alert. Documenting a benign closure avoided interrupting a validated user session.",
       outcome: "You documented the verified VPN transition and closed this alert as benign without disrupting the user. The lesson is correlation—not automatically trusting a VPN or an MFA result."
+    },
+    mailbox: {
+      id: "DEMO-003", name: "Mailbox forwarding", severity: "High", tone: "high",
+      entity: "demo.morgan", source: "Mail security",
+      title: "A mailbox began forwarding externally.",
+      summary: "A new rule forwards messages from a finance mailbox to an external address. Review who changed the rule, whether it was approved, and what left the mailbox.",
+      expected: "contain",
+      evidence: [
+        { label: "Audit", kicker: "Mailbox audit / synthetic capture", title: "A new rule with an external destination.", data: "14:21 UTC  Forwarding rule created\nMailbox: demo.morgan\nDestination: archive@outside.example\nRule scope: invoices folder\nApproved routing change: none recorded", note: "Check the affected mailbox, the rule’s scope, and the documented changes. A rule can be active even if no mail has matched it yet." },
+        { label: "Session", kicker: "Session context / synthetic capture", title: "An unfamiliar session made the change.", data: "Rule change session: DEMO-SESSION-39\nDevice: unfamiliar, unmanaged\nMailbox owner: denied creating the rule\nOwner’s usual session: managed workstation", note: "Compare the session that made the change with the owner’s activity. An unfamiliar device is a clue. Confirm the change with the owner through a trusted channel." },
+        { label: "Mail trace", kicker: "Message delivery / synthetic capture", title: "Two messages reached the destination server.", data: "14:23 UTC  Message 8012 accepted externally\n14:30 UTC  Message 8021 accepted externally\n14:32 UTC  Message 8030 rejected by destination\nTrace window: rule creation through alert", note: "Separate accepted deliveries from rejected attempts. The trace shows where the messages went. It cannot show who read them." }
+      ],
+      wrong: "Benign closure would leave an unapproved forwarding rule active. The mailbox owner denied the change, and mail trace confirms that two messages were accepted externally.",
+      contained: "You disabled the simulated forwarding rule, revoked the suspicious session, and preserved the audit and mail trace records. The two accepted deliveries still need an exposure review.",
+      outcomeTitle: "External forwarding stopped. Exposure scoped.",
+      debrief: [
+        { label: "Audit", finding: "An unapproved rule targeted invoices in one mailbox." },
+        { label: "Session", finding: "An unfamiliar session made the change, and the mailbox owner denied it." },
+        { label: "Mail trace", finding: "The external server accepted two messages and rejected a third. The trace could not establish who opened them." }
+      ],
+      rationale: "Containment stopped new forwarding. The mail trace gave the mailbox owner and incident team a specific set of messages to review for exposure.",
+      outcome: "You confirmed normal mail routing and no further forwarding. The incident team received the two confirmed external deliveries for review, with the rejected attempt recorded separately."
     }
   };
 

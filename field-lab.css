@@ -1,10 +1,24 @@
-/* Evidence trails: one quiet accent, state changes with a purpose. */
-.field-section { padding: 56px 0; scroll-margin-top: 100px; }
-.field-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
-.field-heading h2 { font-size: clamp(30px, 4vw, 48px); line-height: 1.12; letter-spacing: -.045em; margin-top: 12px; }
-.field-tag, .lab-disclosure { color: var(--muted); font: 12px/1.7 var(--mono); }
-.lab-disclosure { border-left: 2px solid var(--accent); padding-left: 14px; margin-top: 22px; }
-.field-page .story-intro .lab-disclosure { font: 12px/1.8 var(--mono); }
+/* Selected work and browser exercises. */
+.endpoint-result { max-width: 72ch; margin: 20px 0 32px; }
+.endpoint-result strong { color: var(--text); }
+.evidence-summary { margin: 0; padding: clamp(20px, 4vw, 34px); border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.evidence-summary figcaption { color: var(--accent); font: 14px/1.6 var(--mono); }
+.evidence-summary h3 { margin: 12px 0 22px; font-size: clamp(22px, 3vw, 32px); line-height: 1.25; letter-spacing: -.035em; }
+.evidence-summary-sources { margin: 0; }
+.evidence-summary-sources > div { display: grid; grid-template-columns: minmax(9rem, 1fr) minmax(0, 3fr); gap: 8px 20px; padding: 12px 0; border-top: 1px solid var(--line); }
+.evidence-summary-sources dt { font-weight: 600; }
+.evidence-summary-sources dd { margin: 0; color: var(--muted); }
+.evidence-summary-decision { margin-top: 14px; padding: 16px 18px; border-left: 2px solid var(--accent); background: var(--bg); }
+.evidence-summary-decision h4 { margin: 0 0 4px; font: 600 17px/1.4 var(--display); }
+.endpoint-lab-link { margin-top: 22px; }
+.endpoint-lab-link .text-link { color: var(--accent); font-size: 1rem; text-decoration-color: currentColor; }
+
+.field-page .story-intro { padding: 48px 0 28px; }
+.field-page .story-index { gap: 10px; padding-bottom: 0; }
+.field-page .story-index a { min-width: 0; font-size: 14px; }
+.field-section { padding: 36px 0 56px; scroll-margin-top: 100px; }
+.field-heading { margin-bottom: 24px; font-size: clamp(24px, 3vw, 34px); line-height: 1.2; letter-spacing: -.035em; }
+.lab-disclosure { border-left: 2px solid var(--accent); padding-left: 14px; margin-top: 22px; color: var(--muted); font: 12px/1.7 var(--mono); }
 .field-page input:focus-visible, .field-page select:focus-visible, .automation-demo select:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
 .automation-demo { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); overflow: hidden; }
 .challenge-card p { font-size: 14px; line-height: 1.8; }
@@ -41,10 +55,9 @@
 .automation-result h4 { margin-bottom: 8px; font-size: 18px; }
 .automation-result p { font-size: 14px; }
 @media(max-width: 760px) {
-  .field-heading { align-items: start; flex-direction: column; }
   .challenge-grid { grid-template-columns: 1fr; }
   .challenge-card, .automation-demo { padding: 20px; }
   .automation-path { grid-template-columns: 1fr 1fr; }
-  .field-tag { font-size: 10px; }
 }
+@media(max-width: 540px) { .evidence-summary-sources > div { grid-template-columns: 1fr; } }
 @media(prefers-reduced-motion: reduce) { .automation-path li { transition: none; } }
