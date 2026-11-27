@@ -102,7 +102,7 @@ class Element {
   close() { this.open = false; this.dispatch("close"); }
 }
 
-function fixture(saved = {}, blocked = false, reducedMotion = false, initialHash = "") {
+function fixture(saved = {}, blocked = false, reducedMotion = false, initialHash = "", clipboard) {
   const elements = Object.fromEntries([...html.matchAll(/id="([^"]+)"/g)].map(match => [match[1], new Element()]));
   elements.themeToggle.firstElementChild = new Element();
   elements.navLinks.children = Array.from({ length: 4 }, () => new Element());
@@ -134,6 +134,7 @@ function fixture(saved = {}, blocked = false, reducedMotion = false, initialHash
   const opened = [];
   const window = new Element();
   window.matchMedia = () => motionPreference;
+  window.navigator = { clipboard };
   window.open = (...args) => opened.push(args);
   window.location = { href: "https://samuel.regelbrugge.net/" + initialHash, hash: initialHash, pathname: "/", search: "" };
   window.history = { replaceState: () => { window.location.hash = ""; } };
@@ -372,6 +373,38 @@ test("dialog collection, keyboard tabs, decisions, and replay update accessible 
   assert.equal(el.responseLab.open, false);
   assert.equal(document.body.classList.contains("lab-open"), false);
   assert.equal(el.incidentAction.focused, true);
+});
+
+test("case link copy shows immediate and lasting accessible status without stale updates", async () => {
+  const pending = [];
+  const { elements: el } = fixture({}, false, false, "", {
+    writeText: url => new Promise((resolve, reject) => pending.push({ url, resolve, reject }))
+  });
+  el.incidentAction.click();
+  assert.equal(el.labShareControls.hidden, false);
+  el.labShare.click();
+  assert.equal(el.labShareStatus.textContent, "Copying link…");
+  assert.equal(el.labShare.attributes["aria-disabled"], "true");
+  el.labShare.click();
+  assert.equal(pending.length, 1);
+  assert.equal(pending[0].url, "https://samuel.regelbrugge.net/#lab-endpoint");
+  pending[0].resolve();
+  await new Promise(setImmediate);
+  assert.equal(el.labShareStatus.textContent, "Link copied ✓");
+  assert.equal(el.labShareStatus.dataset.tone, "success");
+  assert.equal(el.labShare.attributes["aria-disabled"], undefined);
+  el.labShare.click();
+  el.caseIdentity.click();
+  pending[1].resolve();
+  await new Promise(setImmediate);
+  assert.equal(el.labShareStatus.textContent, "");
+  el.labShare.click();
+  assert.match(pending[2].url, /#lab-identity$/);
+  pending[2].reject(new Error("Clipboard unavailable"));
+  await new Promise(setImmediate);
+  assert.match(el.labShareStatus.textContent, /Could not copy/);
+  el.labClose.click();
+  assert.equal(el.labShareStatus.textContent, "");
 });
 
 test("closing, resetting, or switching cases cancels collection playback", () => {
