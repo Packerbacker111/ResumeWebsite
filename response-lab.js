@@ -17,6 +17,19 @@
   let timers = [];
   let generation = 0;
   let collected = 0;
+  let shareGeneration = 0;
+  let sharePending = false;
+  let returnFocus = opener;
+  const share = byId("labShare");
+  const shareStatus = byId("labShareStatus");
+
+  function clearShareStatus() {
+    shareGeneration++;
+    sharePending = false;
+    share.removeAttribute("aria-disabled");
+    shareStatus.textContent = "";
+    delete shareStatus.dataset.tone;
+  }
 
   function stopPlayback() {
     generation++;
@@ -105,6 +118,7 @@
   }
   function selectCase(key, focus = false) {
     stopPlayback();
+    clearShareStatus();
     model.select(key);
     collected = 0;
     render();
@@ -121,6 +135,8 @@
     if (model.key !== key) selectCase(key);
     else render();
     if (!dialog.open) {
+      const link = byId("lab-" + key);
+      returnFocus = document.activeElement === link ? link : opener;
       dialog.showModal();
       document.body.classList.add("lab-open");
     }
@@ -151,28 +167,42 @@
         byId("labCollectProgress").value = collected;
         byId("labCollectStatus").textContent = "Collected " + model.case.evidence[index].label.toLowerCase() + " context (" + collected + "/3)";
         if (collected === 3) finish();
-      }, (index + 1) * 420));
+      }, (index + 1) * 120));
     }
   }
   opener.hidden = false;
   opener.addEventListener("click", () => {
+    returnFocus = opener;
     render();
     dialog.showModal();
     document.body.classList.add("lab-open");
   });
   window.addEventListener?.("hashchange", openLinkedCase);
   openLinkedCase();
-  const share = byId("labShare");
   if (window.navigator?.clipboard?.writeText) {
-    share.hidden = false;
+    byId("labShareControls").hidden = false;
     share.addEventListener("click", async () => {
+      if (sharePending) return;
+      const request = ++shareGeneration;
+      sharePending = true;
+      share.setAttribute("aria-disabled", "true");
+      delete shareStatus.dataset.tone;
+      shareStatus.textContent = "Copying link…";
       const url = new URL(window.location.href);
       url.hash = "lab-" + model.key;
       try {
         await window.navigator.clipboard.writeText(url.href);
-        byId("labShareStatus").textContent = "Link to this case copied.";
+        if (request !== shareGeneration) return;
+        shareStatus.textContent = "Link copied ✓";
+        shareStatus.dataset.tone = "success";
       } catch (_) {
-        byId("labShareStatus").textContent = "Could not copy the link. Use the case links on the page instead.";
+        if (request !== shareGeneration) return;
+        shareStatus.textContent = "Could not copy. Use the case links on the page.";
+      } finally {
+        if (request === shareGeneration) {
+          sharePending = false;
+          share.removeAttribute("aria-disabled");
+        }
       }
     });
   }
@@ -180,10 +210,11 @@
   dialog.addEventListener("close", () => {
     stopPlayback();
     model.cancelCollection();
+    clearShareStatus();
     document.body.classList.remove("lab-open");
     render();
     if (caseFromHash()) window.history?.replaceState(null, "", window.location.pathname + window.location.search);
-    opener.focus();
+    returnFocus.focus();
   });
   for (const [key, button] of Object.entries(caseButtons)) {
     button.addEventListener("click", () => selectCase(key));

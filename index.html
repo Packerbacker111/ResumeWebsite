@@ -52,14 +52,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css?v=20261126-r1" />
-    <link rel="stylesheet" href="response-lab.css?v=20261126-r1" />
+    <link rel="stylesheet" href="style.css?v=20261127-ux1" />
+    <link rel="stylesheet" href="response-lab.css?v=20261127-ux1" />
 
     <link rel="icon" href="favicon.ico" />
     <script src="theme.js?v=20260902-r1"></script>
     <script src="script.js?v=20261126-r1" defer></script>
     <script src="lab-model.js?v=20261126-r1" defer></script>
-    <script src="response-lab.js?v=20261126-r1" defer></script>
+    <script src="response-lab.js?v=20261127-ux1" defer></script>
   </head>
   <body id="top">
     <a class="skip-link" href="#main">Skip to content</a>
@@ -94,7 +94,7 @@
           <p class="hero-summary">I’m Samuel Regelbrugge. I investigate security incidents and build tools that help analysts get to the evidence faster.</p>
           <div class="hero-actions">
             <a href="#impact" class="button primary">Explore my work</a>
-            <a href="content/SRegelbruggeResume.pdf" class="text-link" target="_blank" rel="noopener">Résumé <span class="sr-only">(PDF, opens in a new tab)</span></a>
+            <a href="content/SRegelbruggeResume.pdf" class="text-link hero-resume" target="_blank" rel="noopener">Résumé <span class="sr-only">(PDF, opens in a new tab)</span></a>
           </div>
           <div class="hero-person">
             <picture><source type="image/webp" srcset="images/portrait/portrait-96.webp 96w, images/portrait/portrait-192.webp 192w" sizes="44px" /><img src="images/portrait/portrait-192.jpg" alt="Samuel Regelbrugge" width="44" height="44" decoding="async" /></picture>
@@ -137,12 +137,15 @@
             <noscript><p>Enable JavaScript to open a case in the lab.</p></noscript>
           </div>
           <div class="response-invite-actions">
-            <button type="button" class="button secondary" id="incidentAction" aria-haspopup="dialog" aria-controls="responseLab" hidden>Open Response Lab</button>
-            <nav class="lab-direct-links" aria-label="Open a specific Response Lab case">
-              <a id="lab-endpoint" href="#lab-endpoint">Endpoint</a>
-              <a id="lab-identity" href="#lab-identity">Sign-in</a>
-              <a id="lab-mailbox" href="#lab-mailbox">Mailbox</a>
-            </nav>
+            <button type="button" class="button primary" id="incidentAction" aria-haspopup="dialog" aria-controls="responseLab" hidden>Open Response Lab</button>
+            <details class="lab-case-picker">
+              <summary>Choose a case</summary>
+              <nav class="lab-direct-links" aria-label="Open a specific Response Lab case">
+                <a id="lab-endpoint" href="#lab-endpoint">Endpoint</a>
+                <a id="lab-identity" href="#lab-identity">Sign-in</a>
+                <a id="lab-mailbox" href="#lab-mailbox">Mailbox</a>
+              </nav>
+            </details>
           </div>
         </aside>
         <article class="entra-feature" aria-labelledby="entra-feature-title">
@@ -332,8 +335,10 @@
             <button id="caseIdentity" class="lab-case" type="button" aria-pressed="false"><span class="lab-case-top"><span class="lab-high">High</span><span>DEMO-002</span></span><strong>Impossible travel</strong><span>demo.avery · Identity</span></button>
             <button id="caseMailbox" class="lab-case" type="button" aria-pressed="false"><span class="lab-case-top"><span class="lab-high">High</span><span>DEMO-003</span></span><strong>Mailbox forwarding</strong><span>demo.morgan · Email</span></button>
           </div>
-          <button id="labShare" class="lab-share" type="button" hidden>Copy link to this case</button>
-          <span id="labShareStatus" class="sr-only" role="status" aria-live="polite"></span>
+          <div id="labShareControls" hidden>
+            <button id="labShare" class="lab-share" type="button">Copy link to this case</button>
+            <p id="labShareStatus" class="lab-share-status" role="status" aria-live="polite" aria-atomic="true"></p>
+          </div>
           <details class="lab-activity"><summary class="lab-label">Activity trail <span aria-hidden="true">+</span></summary><ol id="labActivity"></ol></details>
           <button id="labReset" class="lab-reset" type="button">↺ Reset this case</button>
         </aside>
